@@ -9,18 +9,24 @@
  * If you report a bug, make sure you give me enough information (include your code).
  *
  * Known Issues
- *  - savedSearchesDestroy isn't working correctly
- *  - trendsLocation isn't working correctly
  *  - oAuthAuthenticate isn't working correctly
  *  - accountUpdateProfileImage isn't implemented
  *  - accountUpdateProfileBackgroundImage isn't implemented
- *  - helpTest isn't working correctly
+ *  - geo* are untested
+ *
+ * Changelog since 2.0.1
+ * - Fixed some documentation
+ * - Added a new method: usersProfileImage
+ * - Fixed trendsLocation
+ * - Added new GEO-methods: geoSearch, geoSimilarPlaces, geoPlaceCreate (not tested because geo-services were disabled.)
+ * - Added legalToS
+ * - Added legalPrivacy
+ * - Fixed helpTest
  *
  * Changelog since 2.0.0
  * - no more fatal if twitter is over capacity
  * - fix for calculating the header-string (thx to Dextro)
  * - fix for userListsIdStatuses (thx to Josh)
- * -
  *
  * License
  * Copyright (c) 2010, Tijs Verkoyen. All rights reserved.
@@ -34,7 +40,7 @@
  * This software is provided by the author "as is" and any express or implied warranties, including, but not limited to, the implied warranties of merchantability and fitness for a particular purpose are disclaimed. In no event shall the author be liable for any direct, indirect, incidental, special, exemplary, or consequential damages (including, but not limited to, procurement of substitute goods or services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability, whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use of this software, even if advised of the possibility of such damage.
  *
  * @author		Tijs Verkoyen <php-twitter@verkoyen.eu>
- * @version		2.0.1
+ * @version		2.0.2
  *
  * @copyright	Copyright (c) 2010, Tijs Verkoyen. All rights reserved.
  * @license		BSD License
@@ -53,7 +59,7 @@ class Twitter
 	const SECURE_API_PORT = 443;
 
 	// current version
-	const VERSION = '2.0.1';
+	const VERSION = '2.0.2';
 
 
 	/**
@@ -233,8 +239,9 @@ class Twitter
 	 *
 	 * @return	string
 	 * @param	array $parameters
+	 * @param	string $url
 	 */
-	private function calculateHeader(array $parameters, $url = null)
+	private function calculateHeader(array $parameters, $url)
 	{
 		// redefine
 		$url = (string) $url;
@@ -300,7 +307,7 @@ class Twitter
 		$options[CURLOPT_POSTFIELDS] = $this->buildQuery($parameters);
 
 		// init
-		if($this->curl == null) $this->curl = curl_init();
+		$this->curl = curl_init();
 
 		// set options
 		curl_setopt_array($this->curl, $options);
@@ -331,12 +338,15 @@ class Twitter
 	 * Make the call
 	 *
 	 * @return	string
-	 * @param	string $url
-	 * @param	array[optiona] $aParameters
-	 * @param	bool[optional] $authenticate
-	 * @param	bool[optional] $usePost
+	 * @param	string $url						The url to call.
+	 * @param	array[optiona] $parameters		Optional parameters.
+	 * @param	bool[optional] $authenticate	Should we authenticate.
+	 * @param	bool[optional] $method			The method to use. Possible values are GET, POST.
+	 * @param	string[optional] $filePath		Teh path to the file to upload.
+	 * @param	bool[optional] $expectJSON		Do we expect JSON.
+	 * @param	bool[optional] $returnHeaders	Should the headers be returned?
 	 */
-	private function doCall($url, array $parameters = null, $authenticate = false, $method = 'GET', $filePath = null, $expectJSON = true)
+	private function doCall($url, array $parameters = null, $authenticate = false, $method = 'GET', $filePath = null, $expectJSON = true, $returnHeaders = false)
 	{
 		// allowed methods
 		$allowedMethods = array('GET', 'POST');
@@ -442,6 +452,9 @@ class Twitter
 		// fetch errors
 		$errorNumber = curl_errno($this->curl);
 		$errorMessage = curl_error($this->curl);
+
+		// return the headers
+		if($returnHeaders) return $headers;
 
 		// we don't expext JSON, return the response
 		if(!$expectJSON) return $response;
@@ -1167,6 +1180,37 @@ class Twitter
 	public function usersSuggestionsSlug($slug)
 	{
 		return (array) $this->doCall('users/suggestions/'. (string) $slug .'.json');
+	}
+
+
+	/**
+	 * Access the profile image in various sizes for the user with the indicated screen_name. If no size is provided the normal image is returned.
+	 * This method return an URL to the actual image resource.
+	 * This method should only be used by application developers to lookup or check the profile image URL for a user.
+	 * This method must not be used as the image source URL presented to users of your application.
+	 *
+	 * @return	string
+	 * @param	string $screenName			The screen name of the user for whom to return results for. Helpful for disambiguating when a valid screen name is also a user ID.
+	 * @param	string[optional] $size		Specifies the size of image to fetch. Not specifying a size will give the default, normal size of 48px by 48px. Valid options include: bigger (73x73px), normal (48x48px), mini (24x24px)
+	 */
+	public function usersProfileImage($screenName, $size = 'normal')
+	{
+		// possible modes
+		$allowedSizes = array('normal', 'bigger', 'mini');
+
+		// validate
+		if($size != null && !in_array($size, $allowedSizes)) throw new TwitterException('Invalid size ('. $size .'), possible values are: '. implode($allowedSizes) .'.');
+
+		// build parameters
+		$parameters['size'] = (string) $size;
+
+		$headers = $this->doCall('users/profile_image/'. (string) $screenName .'.json', $parameters, false, 'GET', null, false, true);
+
+		// return the URL
+		if(isset($headers['url'])) return $headers['url'];
+
+		// fallback
+		return false;
 	}
 
 
@@ -2296,7 +2340,6 @@ class Twitter
 
 	/**
 	 * Destroys a saved search for the authenticated user. The search specified by id must be owned by the authenticating user.
-	 * REMARK: This method seems not to work	@later
 	 *
 	 * @return	array
 	 * @param	string $id	The ID of the desired saved search.
@@ -2382,10 +2425,16 @@ class Twitter
 	 *
 	 * @return	void
 	 */
-	public function oAuthAuthenticate()
+	public function oAuthAuthenticate($force = false)
 	{
+		throw new TwitterException('Not implemented');
+
+		// build parameters
+		$parameters = null;
+		if((bool) $force) $parameters['force_login'] = 'true';
+
 		// make the call
-		return $this->doOAuthCall('authenticate');
+		return $this->doCall('/oauth/authenticate.oauth', $parameters);
 	}
 
 
@@ -2415,7 +2464,6 @@ class Twitter
 	 * Returns the top 10 trending topics for a specific location Twitter has trending topic information for.
 	 * The response is an array of "trend" objects that encode the name of the trending topic, the query parameter that can be used to search for the topic on Search, and the direct URL that can be issued against Search.
 	 * This information is cached for five minutes, and therefore users are discouraged from querying these endpoints faster than once every five minutes. Global trends information is also available from this API by using a WOEID of 1.
-	 * REMARK: This method seems not to work	@later
 	 *
 	 * @return	array
 	 * @param	string $woeid	The WOEID of the location to be querying for.
@@ -2423,11 +2471,79 @@ class Twitter
 	public function trendsLocation($woeid)
 	{
 		// make the call
-		return (array) $this->doCall('trends/location/'. (string) $woeid .'.json');
+		return (array) $this->doCall('trends/'. (string) $woeid .'.json');
 	}
 
 
 // Geo resources
+	/**
+	 * Search for places that can be attached to a statuses/update. Given a latitude and a longitude pair, an IP address, or a name, this request will return a list of all the valid places that can be used as the place_id when updating a status.
+	 * Conceptually, a query can be made from the user's location, retrieve a list of places, have the user validate the location he or she is at, and then send the ID of this location with a call to statuses/update.
+	 * This is the recommended method to use find places that can be attached to statuses/update. Unlike geo/reverse_geocode which provides raw data access, this endpoint can potentially re-order places with regards to the user who is authenticated. This approach is also preferred for interactive place matching with the user.
+	 *
+	 * @return	array
+	 * @param	float[optional] $lat				The latitude to search around. This parameter will be ignored unless it is inside the range -90.0 to +90.0 (North is positive) inclusive. It will also be ignored if there isn't a corresponding long parameter.
+	 * @param	float[optional] $long				The longitude to search around. The valid ranges for longitude is -180.0 to +180.0 (East is positive) inclusive. This parameter will be ignored if outside that range, if it is not a number, if geo_enabled is disabled, or if there not a corresponding lat parameter.
+	 * @param	string[optional] $query				Free-form text to match against while executing a geo-based query, best suited for finding nearby locations by name.
+	 * @param	string[optional] $ip				An IP address. Used when attempting to fix geolocation based off of the user's IP address.
+	 * @param	string[optional] $accuracy			A hint on the "region" in which to search. If a number, then this is a radius in meters, but it can also take a string that is suffixed with ft to specify feet. If this is not passed in, then it is assumed to be 0m. If coming from a device, in practice, this value is whatever accuracy the device has measuring its location (whether it be coming from a GPS, WiFi triangulation, etc.).
+	 * @param	string[optional] $granularity		The minimal granularity of data to return. If this is not passed in, then neighborhood is assumed. city can also be passed.
+	 * @param	int[optional] $maxResults			A hint as to the number of results to return. This does not guarantee that the number of results returned will equal max_results, but instead informs how many "nearby" results to return. Ideally, only pass in the number of places you intend to display to the user here.
+	 * @param	string[optional] $containedWithin	This is the place_id which you would like to restrict the search results to. Setting this value means only places within the given place_id will be found.
+	 * @param	array[optional] $attributes			This parameter searches for places which have this given. This should be an key-value-pair-array.
+	 */
+	public function geoSearch($lat = null, $long = null, $query = null, $ip = null, $accuracy = null, $granularity = null, $maxResults = null, $containedWithin = null, array $attributes = null)
+	{
+		// build parameters
+		if($lat != null) $parameters['lat'] = (float) $lat;
+		if($long != null) $parameters['long'] = (float) $long;
+		if($query != null) $parameters['query'] = (string) $query;
+		if($ip != null) $parameters['ip'] = (string) $ip;
+		if($accuracy != null) $parameters['accuracy'] = (string) $accuracy;
+		if($granularity != null) $parameters['granularity'] = (string) $granularity;
+		if($maxResults != null) $parameters['max_results'] = (int) $maxResults;
+		if($containedWithin != null) $parameters['contained_within'] = (string) $containedWithin;
+		if($attributes != null)
+		{
+			// loop
+			foreach($attributes as $key => $value) $parameters['attribute:'. $key] = (string) $value;
+		}
+
+		// make the call
+		return (array) $this->doCall('geo/search.json', $parameters);
+	}
+
+
+	/**
+	 * Locates places near the given coordinates which are similar in name.
+	 * Conceptually you would use this method to get a list of known places to choose from first. Then, if the desired place doesn't exist, make a request to post/geo/place to create a new one.
+	 * The token contained in the response is the token needed to be able to create a new place.
+	 *
+	 * @return	array
+	 * @param	float $lat							The location's latitude that this tweet refers to.
+	 * @param	float $long							The location's longitude that this tweet refers to.
+	 * @param	string $name						The name a place is known as.
+	 * @param	string[optional] $containedWithin	This is the place_id which you would like to restrict the search results to. Setting this value means only places within the given place_id will be found.
+	 * @param	array[optional] $attributes			This parameter searches for places which have this given. This should be an key-value-pair-array.
+	 */
+	public function geoSimilarPlaces($lat, $long, $name, $containedWithin = null, array $attributes = null)
+	{
+		// build parameters
+		$parameters['lat'] = (float) $lat;
+		$parameters['long'] = (float) $long;
+		$parameters['name'] = (string) $name;
+		if($containedWithin != null) $parameters['contained_within'] = (string) $containedWithin;
+		if($attributes != null)
+		{
+			// loop
+			foreach($attributes as $key => $value) $parameters['attribute:'. $key] = (string) $value;
+		}
+
+		// make the call
+		return (array) $this->doCall('geo/similar_places.json', $parameters);
+	}
+
+
 	/**
 	 * Search for places (cities and neighborhoods) that can be attached to a statuses/update. Given a latitude and a longitude, return a list of all the valid places that can be used as a place_id when updating a status.
 	 * Conceptually, a query can be made from the user's location, retrieve a list of places, have the user validate the location he or she is at, and then send the ID of this location up with a call to statuses/update.
@@ -2473,17 +2589,83 @@ class Twitter
 	}
 
 
+	/**
+	 * Creates a new place at the given latitude and longitude.
+	 *
+	 * @return	array
+	 * @param	string $name					The name a place is known as.
+	 * @param	string $containedWithin			This is the place_id which you would like to restrict the search results to. Setting this value means only places within the given place_id will be found.
+	 * @param	string $token					The token found in the response from geo/similar_places.
+	 * @param	float $lat						The latitude the place is located at. This parameter will be ignored unless it is inside the range -90.0 to +90.0 (North is positive) inclusive. It will also be ignored if there isn't a corresponding long parameter.
+	 * @param	float $long						The longitude the place is located at. The valid ranges for longitude is -180.0 to +180.0 (East is positive) inclusive. This parameter will be ignored if outside that range, if it is not a number, if geo_enabled is disabled, or if there not a corresponding lat parameter.
+	 * @param	array[optional] $attributes		This parameter searches for places which have this given. This should be an key-value-pair-array.
+	 */
+	public function geoPlaceCreate($name, $containedWithin, $token, $lat, $long, array $attributes = null)
+	{
+		// build parameters
+		$parameters['name'] = (string) $name;
+		$parameters['contained_within'] = (string) $containedWithin;
+		$parameters['token'] = (string) $token;
+		$parameters['lat'] = (float) $lat;
+		$parameters['long'] = (float) $long;
+		if($attributes != null)
+		{
+			// loop
+			foreach($attributes as $key => $value) $parameters['attribute:'. $key] = (string) $value;
+		}
+
+		// make the call
+		return (array) $this->doCall('geo/place.json', $parameters);
+	}
+
+
+// legal resources
+	/**
+	 * Returns Twitter's' Terms of Service in the requested format. These are not the same as the Developer Terms of Service.
+	 *
+	 * @return	string
+	 */
+	public function legalToS()
+	{
+		// make the call
+		$response = $this->doCall('legal/tos.json');
+
+		// validate and return
+		if(isset($response['tos'])) return $response['tos'];
+
+		// fallback
+		return false;
+	}
+
+
+	/**
+	 * Returns Twitter's Privacy Policy
+	 *
+	 * @return	string
+	 */
+	public function legalPrivacy()
+	{
+		// make the call
+		$response = $this->doCall('legal/privacy.json');
+
+		// validate and return
+		if(isset($response['privacy'])) return $response['privacy'];
+
+		// fallback
+		return false;
+	}
+
+
 // Help resources
 	/**
 	 * Test
-	 * REMARK: this methods seems not to work, so don't rely on it
 	 *
 	 * @return	bool
 	 */
 	public function helpTest()
 	{
 		// make the call
-		return ($this->doCall('help/test', null, null, 'GET', null, false) == 'ok');
+		return ($this->doCall('help/test.json', null, null, 'GET', null, false) == '"ok"');
 	}
 }
 
