@@ -10,9 +10,13 @@
  *
  * Known Issues
  *  - oAuthAuthenticate isn't working correctly
- *  - accountUpdateProfileImage isn't implemented
- *  - accountUpdateProfileBackgroundImage isn't implemented
- *  - geo* are untested
+ *
+ * Changelog since 2.0.2
+ * - tested geo*
+ * - implemented accountUpdateProfileImage
+ * - implemented accountUpdateProfileBackgroundImage
+ * - fixed issue with GET and POST (thx to Luiz Felipe)
+ * - added a way to detect open_basedir (thx to Lee Kindness)
  *
  * Changelog since 2.0.1
  * - Fixed some documentation
@@ -40,7 +44,7 @@
  * This software is provided by the author "as is" and any express or implied warranties, including, but not limited to, the implied warranties of merchantability and fitness for a particular purpose are disclaimed. In no event shall the author be liable for any direct, indirect, incidental, special, exemplary, or consequential damages (including, but not limited to, procurement of substitute goods or services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability, whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use of this software, even if advised of the possibility of such damage.
  *
  * @author		Tijs Verkoyen <php-twitter@verkoyen.eu>
- * @version		2.0.2
+ * @version		2.0.3
  *
  * @copyright	Copyright (c) 2010, Tijs Verkoyen. All rights reserved.
  * @license		BSD License
@@ -52,14 +56,16 @@ class Twitter
 
 	// url for the twitter-api
 	const API_URL = 'https://api.twitter.com/1';
+	const SEARCH_API_URL = 'https://search.twitter.com';
 	const SECURE_API_URL = 'https://api.twitter.com';
 
 	// port for the twitter-api
 	const API_PORT = 443;
+	const SEARCH_API_PORT = 443;
 	const SECURE_API_PORT = 443;
 
 	// current version
-	const VERSION = '2.0.2';
+	const VERSION = '2.0.3';
 
 
 	/**
@@ -297,13 +303,13 @@ class Twitter
 		$options[CURLOPT_URL] = self::SECURE_API_URL .'/oauth/'. $method;
 		$options[CURLOPT_PORT] = self::SECURE_API_PORT;
 		$options[CURLOPT_USERAGENT] = $this->getUserAgent();
-		$options[CURLOPT_FOLLOWLOCATION] = true;
+		if(ini_get('open_basedir') == '' && ini_get('safe_mode' == 'Off')) $options[CURLOPT_FOLLOWLOCATION] = true;
 		$options[CURLOPT_RETURNTRANSFER] = true;
 		$options[CURLOPT_TIMEOUT] = (int) $this->getTimeOut();
 		$options[CURLOPT_SSL_VERIFYPEER] = false;
 		$options[CURLOPT_SSL_VERIFYHOST] = false;
 		$options[CURLOPT_HTTPHEADER] = array('Expect:');
-		$options[CURLOPT_POST] = 1;
+		$options[CURLOPT_POST] = true;
 		$options[CURLOPT_POSTFIELDS] = $this->buildQuery($parameters);
 
 		// init
@@ -342,7 +348,7 @@ class Twitter
 	 * @param	array[optiona] $parameters		Optional parameters.
 	 * @param	bool[optional] $authenticate	Should we authenticate.
 	 * @param	bool[optional] $method			The method to use. Possible values are GET, POST.
-	 * @param	string[optional] $filePath		Teh path to the file to upload.
+	 * @param	string[optional] $filePath		The path to the file to upload.
 	 * @param	bool[optional] $expectJSON		Do we expect JSON.
 	 * @param	bool[optional] $returnHeaders	Should the headers be returned?
 	 */
@@ -373,15 +379,6 @@ class Twitter
 		$data = $oauth;
 		if(!empty($parameters)) $data = array_merge($data, $parameters);
 
-		// calculate the base string
-		$base = $this->calculateBaseString(self::API_URL .'/'. $url, $method, $data);
-
-		// add sign into the parameters
-		$oauth['oauth_signature'] = $this->hmacsha1($this->getConsumerSecret() .'&' . $this->getOAuthTokenSecret(), $base);
-
-		$headers[] = $this->calculateHeader($oauth, self::API_URL .'/'. $url);
-		$headers[] = 'Expect:';
-
 		// based on the method, we should handle the parameters in a different way
 		if($method == 'POST')
 		{
@@ -404,10 +401,15 @@ class Twitter
 				$content = '--'. $boundary ."\r\n";
 
 				// set file
-				$content = 'Content-Disposition: form-data; name="image";filename="'. $fileInfo['basename'] .'"' ."\r\n" . 'Content-Type: '. $mimeType . "\r\n\r\n" . file_get_contents($filePath) ."\r\n--". $boundary ."\r\n";
+				$content .= 'Content-Disposition: form-data; name=image; filename="'. $fileInfo['basename'] .'"' ."\r\n";
+				$content .= 'Content-Type: '. $mimeType ."\r\n";
+				$content .= "\r\n";
+				$content .= file_get_contents($filePath);
+				$content .="\r\n";
+				$content .="--". $boundary .'--';
 
 				// build headers
-				$headers[] = 'Content-Type: multipart/form-data; boundary=' . $boundary;
+				$headers[] = 'Content-Type: multipart/form-data; boundary='. $boundary;
 				$headers[] = 'Content-Length: '. strlen($content);
 
 				// set content
@@ -418,20 +420,31 @@ class Twitter
 			else $options[CURLOPT_POSTFIELDS] = $this->buildQuery($parameters);
 
 			// enable post
-			$options[CURLOPT_POST] = 1;
+			$options[CURLOPT_POST] = true;
 		}
 
 		else
 		{
 			// add the parameters into the querystring
 			if(!empty($parameters)) $url .= '?'. $this->buildQuery($parameters);
+
+			$options[CURLOPT_POST] = false;
 		}
+
+		// calculate the base string
+		$base = $this->calculateBaseString(self::API_URL .'/'. $url, $method, $data);
+
+		// add sign into the parameters
+		$oauth['oauth_signature'] = $this->hmacsha1($this->getConsumerSecret() .'&' . $this->getOAuthTokenSecret(), $base);
+
+		$headers[] = $this->calculateHeader($oauth, self::API_URL .'/'. $url);
+		$headers[] = 'Expect:';
 
 		// set options
 		$options[CURLOPT_URL] = self::API_URL .'/'. $url;
 		$options[CURLOPT_PORT] = self::API_PORT;
 		$options[CURLOPT_USERAGENT] = $this->getUserAgent();
-		$options[CURLOPT_FOLLOWLOCATION] = true;
+		if(ini_get('open_basedir') == '' && ini_get('safe_mode' == 'Off')) $options[CURLOPT_FOLLOWLOCATION] = true;
 		$options[CURLOPT_RETURNTRANSFER] = true;
 		$options[CURLOPT_TIMEOUT] = (int) $this->getTimeOut();
 		$options[CURLOPT_SSL_VERIFYPEER] = false;
@@ -547,6 +560,135 @@ class Twitter
 		return $json;
 	}
 
+
+	/**
+	 * Make the call
+	 *
+	 * @return	string
+	 * @param	string $url						The url to call.
+	 * @param	array[optiona] $parameters		Optional parameters.
+	 */
+	private function doSearchCall($url, array $parameters = null)
+	{
+		// redefine
+		$url = (string) $url;
+		$parameters = (array) $parameters;
+
+		// add the parameters into the querystring
+		if(!empty($parameters)) $url .= '?'. $this->buildQuery($parameters);
+
+		// set options
+		$options[CURLOPT_URL] = self::SEARCH_API_URL .'/'. $url;
+		$options[CURLOPT_PORT] = self::SEARCH_API_PORT;
+		$options[CURLOPT_USERAGENT] = $this->getUserAgent();
+		if(ini_get('open_basedir') == '' && ini_get('safe_mode' == 'Off')) $options[CURLOPT_FOLLOWLOCATION] = true;
+		$options[CURLOPT_RETURNTRANSFER] = true;
+		$options[CURLOPT_TIMEOUT] = (int) $this->getTimeOut();
+		$options[CURLOPT_SSL_VERIFYPEER] = false;
+		$options[CURLOPT_SSL_VERIFYHOST] = false;
+		$options[CURLOPT_HTTP_VERSION] = CURL_HTTP_VERSION_1_1;
+
+		// init
+		if($this->curl == null) $this->curl = curl_init();
+
+		// set options
+		curl_setopt_array($this->curl, $options);
+
+		// execute
+		$response = curl_exec($this->curl);
+		$headers = curl_getinfo($this->curl);
+
+		// fetch errors
+		$errorNumber = curl_errno($this->curl);
+		$errorMessage = curl_error($this->curl);
+
+		// replace ids with their string values, added because of some PHP-version can't handle these large values
+		$response = preg_replace('/id":(\d+)/', 'id":"\1"', $response);
+
+		// we expect JSON, so decode it
+		$json = @json_decode($response, true);
+
+		// validate JSON
+		if($json === null)
+		{
+			// should we provide debug information
+			if(self::DEBUG)
+			{
+				// make it output proper
+				echo '<pre>';
+
+				// dump the header-information
+				var_dump($headers);
+
+				// dump the error
+				var_dump($errorMessage);
+
+				// dump the raw response
+				var_dump($response);
+
+				// end proper format
+				echo '</pre>';
+			}
+
+			// throw exception
+			throw new TwitterException('Invalid response.');
+		}
+
+
+		// any errors
+		if(isset($json['errors']))
+		{
+			// should we provide debug information
+			if(self::DEBUG)
+			{
+				// make it output proper
+				echo '<pre>';
+
+				// dump the header-information
+				var_dump($headers);
+
+				// dump the error
+				var_dump($errorMessage);
+
+				// dump the raw response
+				var_dump($response);
+
+				// end proper format
+				echo '</pre>';
+			}
+
+			// throw exception
+			if(isset($json['errors'][0]['message'])) throw new TwitterException($json['errors'][0]['message']);
+			else throw new TwitterException('Invalid response.');
+		}
+
+
+		// any error
+		if(isset($json['error']))
+		{
+			// should we provide debug information
+			if(self::DEBUG)
+			{
+				// make it output proper
+				echo '<pre>';
+
+				// dump the header-information
+				var_dump($headers);
+
+				// dump the raw response
+				var_dump($response);
+
+				// end proper format
+				echo '</pre>';
+			}
+
+			// throw exception
+			throw new TwitterException($json['error']);
+		}
+
+		// return
+		return $json;
+	}
 
 	/**
 	 * Get the consumer key
@@ -2013,8 +2155,6 @@ class Twitter
 	 */
 	public function accountUpdateProfileImage($image)
 	{
-		throw new TwitterException('Not implemented');
-
 		// validate
 		if(!file_exists($image)) throw new TwitterException('Image ('. $image .') doesn\'t exists.');
 
@@ -2032,12 +2172,11 @@ class Twitter
 	 */
 	public function accountUpdateProfileBackgroundImage($image, $tile = false)
 	{
-		throw new TwitterException('Not implemented');
-
 		// validate
 		if(!file_exists($image)) throw new TwitterException('Image ('. $image .') doesn\'t exists.');
 
 		// build parameters
+		$parameters = null;
 		if($tile) $parameters['tile'] = 'true';
 
 		// make the call
@@ -2290,6 +2429,26 @@ class Twitter
 
 		// make the call
 		return (array) $this->doCall('report_spam.json', $parameters, true, 'POST');
+	}
+
+
+// Search resources
+
+	public function search($q, $lang = null, $locale = null, $rpp = null, $page = null, $sinceId = null, $until = null, $geocode = null, $showUser = false, $resultType = null)
+	{
+		$parameters['q'] = (string) $q;
+		if($lang !== null) $parameters['lang'] = (string) $lang;
+		if($locale !== null) $parameters['locale'] = (string) $locale;
+		if($rpp !== null) $parameters['rpp'] = (int) $rpp;
+		if($page !== null) $parameters['page'] = (int) $page;
+		if($sinceId !== null) $parameters['since_id'] = (string) $sinceId;
+		if($until !== null) $parameters['until'] = (string) $until;
+		if($geocode !== null) $parameters['geocode'] = (string) $geocode;
+		if($showUser === true) $parameters['show_user'] = 'true';
+		if($resultType !== null) $parameters['result_type'] = (string) $resultType;
+
+		return (array) $this->doSearchCall('search.json', $parameters);
+
 	}
 
 
@@ -2615,7 +2774,7 @@ class Twitter
 		}
 
 		// make the call
-		return (array) $this->doCall('geo/place.json', $parameters);
+		return (array) $this->doCall('geo/place.json', $parameters, true, 'POST');
 	}
 
 
