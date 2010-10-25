@@ -16,6 +16,12 @@
  *  - accountUpdateProfileBackgroundImage isn't implemented
  *  - helpTest isn't working correctly
  *
+ * Changelog since 2.0.0
+ * - no more fatal if twitter is over capacity
+ * - fix for calculating the header-string (thx to Dextro)
+ * - fix for userListsIdStatuses (thx to Josh)
+ * -
+ *
  * License
  * Copyright (c) 2010, Tijs Verkoyen. All rights reserved.
  *
@@ -28,7 +34,7 @@
  * This software is provided by the author "as is" and any express or implied warranties, including, but not limited to, the implied warranties of merchantability and fitness for a particular purpose are disclaimed. In no event shall the author be liable for any direct, indirect, incidental, special, exemplary, or consequential damages (including, but not limited to, procurement of substitute goods or services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability, whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use of this software, even if advised of the possibility of such damage.
  *
  * @author		Tijs Verkoyen <php-twitter@verkoyen.eu>
- * @version		2.0.0
+ * @version		2.0.1
  *
  * @copyright	Copyright (c) 2010, Tijs Verkoyen. All rights reserved.
  * @license		BSD License
@@ -47,7 +53,7 @@ class Twitter
 	const SECURE_API_PORT = 443;
 
 	// current version
-	const VERSION = '2.0.0';
+	const VERSION = '2.0.1';
 
 
 	/**
@@ -228,7 +234,7 @@ class Twitter
 	 * @return	string
 	 * @param	array $parameters
 	 */
-	private function calculateHeader(array $parameters, $url)
+	private function calculateHeader(array $parameters, $url = null)
 	{
 		// redefine
 		$url = (string) $url;
@@ -278,7 +284,7 @@ class Twitter
 		$parameters['oauth_signature'] = $this->hmacsha1($this->getConsumerSecret() .'&' . $this->getOAuthTokenSecret(), $base);
 
 		// calculate header
-		$header = $this->calculateHeader($parameters);
+		$header = $this->calculateHeader($parameters, self::SECURE_API_URL .'/oauth/'. $method);
 
 		// set options
 		$options[CURLOPT_URL] = self::SECURE_API_URL .'/oauth/'. $method;
@@ -440,6 +446,9 @@ class Twitter
 		// we don't expext JSON, return the response
 		if(!$expectJSON) return $response;
 
+		// replace ids with their string values, added because of some PHP-version can't handle these large values
+		$response = preg_replace('/id":(\d+)/', 'id":"\1"', $response);
+
 		// we expect JSON, so decode it
 		$json = @json_decode($response, true);
 
@@ -493,7 +502,8 @@ class Twitter
 			}
 
 			// throw exception
-			throw new TwitterException($json['errors'][0]['message']);
+			if(isset($json['errors'][0]['message'])) throw new TwitterException($json['errors'][0]['message']);
+			else throw new TwitterException('Invalid response.');
 		}
 
 
@@ -1388,7 +1398,7 @@ class Twitter
 		$parameters = array();
 		if($sinceId != null) $parameters['since_id'] = (string) $sinceId;
 		if($maxId != null) $parameters['max_id'] = (string) $maxId;
-		if($count != null) $parameters['count'] = (int) $count;
+		if($count != null) $parameters['per_page'] = (int) $count;
 		if($page != null) $parameters['page'] = (int) $page;
 
 		// make the call
