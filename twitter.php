@@ -11,6 +11,10 @@
  * Known Issues
  *  - oAuthAuthenticate isn't working correctly
  *
+ * Changelog since 2.1.0
+ * - fixed issue with generation of basestring
+ * - added a new method: http://dev.twitter.com/doc/post/:user/:list_id/create_all
+ *
  * Changelog since 2.0.3
  * - made a lot of changes to reflect the current API, some of the methods aren't backwards compatible, so be carefull before upgrading
  *
@@ -47,7 +51,7 @@
  * This software is provided by the author "as is" and any express or implied warranties, including, but not limited to, the implied warranties of merchantability and fitness for a particular purpose are disclaimed. In no event shall the author be liable for any direct, indirect, incidental, special, exemplary, or consequential damages (including, but not limited to, procurement of substitute goods or services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability, whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use of this software, even if advised of the possibility of such damage.
  *
  * @author		Tijs Verkoyen <php-twitter@verkoyen.eu>
- * @version		2.1.0
+ * @version		2.1.1
  *
  * @copyright	Copyright (c) 2010, Tijs Verkoyen. All rights reserved.
  * @license		BSD License
@@ -68,7 +72,7 @@ class Twitter
 	const SECURE_API_PORT = 443;
 
 	// current version
-	const VERSION = '2.1.0';
+	const VERSION = '2.1.1';
 
 
 	/**
