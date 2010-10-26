@@ -229,13 +229,16 @@ class Twitter
 		// process queries
 		foreach($parameters as $key => $value)
 		{
-			$chunks[] = self::urlencode_rfc3986($key) .'%3D'. self::urlencode_rfc3986($value);
+			// only add if not already in the url
+			if(substr_count($url, $key .'='. $value) == 0) $chunks[] = self::urlencode_rfc3986($key) .'%3D'. self::urlencode_rfc3986($value);
 		}
 
 		// buils base
 		$base = $method .'&';
-		$base .= urlencode($url) .'&';
+		$base .= urlencode($url);
+		$base .= (substr_count($url, '?')) ? '%26' : '&';
 		$base .= implode('%26', $chunks);
+		$base = str_replace('%3F', '&', $base);
 
 		// return
 		return $base;
@@ -382,6 +385,9 @@ class Twitter
 		$data = $oauth;
 		if(!empty($parameters)) $data = array_merge($data, $parameters);
 
+		// calculate the base string
+		$base = $this->calculateBaseString(self::API_URL .'/'. $url, $method, $data);
+
 		// based on the method, we should handle the parameters in a different way
 		if($method == 'POST')
 		{
@@ -433,9 +439,6 @@ class Twitter
 
 			$options[CURLOPT_POST] = false;
 		}
-
-		// calculate the base string
-		$base = $this->calculateBaseString(self::API_URL .'/'. $url, $method, $data);
 
 		// add sign into the parameters
 		$oauth['oauth_signature'] = $this->hmacsha1($this->getConsumerSecret() .'&' . $this->getOAuthTokenSecret(), $base);
@@ -1748,7 +1751,7 @@ class Twitter
 		if(!empty($screenNames)) $parameters['screen_name'] = implode(',', $screenNames);
 
 		// make the call
-		return (array) $this->doCall((string) $user .'/'. (string) $id .'/create_all.json', $parameters, true);
+		return (array) $this->doCall((string) $user .'/'. (string) $id .'/create_all.json', $parameters, true, 'POST');
 	}
 
 
