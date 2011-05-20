@@ -161,7 +161,7 @@ class Twitter
 	 * Format the parameters as a querystring
 	 *
 	 * @return	string
-	 * @param	array $parameters
+	 * @param	array $parameters	The parameters.
 	 */
 	private function buildQuery(array $parameters)
 	{
@@ -188,7 +188,7 @@ class Twitter
 		}
 
 		// process parameters
-		foreach($parameters as $key => $value) $chunks[] = $key .'='. str_replace('%25', '%', $value);
+		foreach($parameters as $key => $value) $chunks[] = $key . '=' . str_replace('%25', '%', $value);
 
 		// return
 		return implode('&', $chunks);
@@ -206,9 +206,9 @@ class Twitter
 	 * URL-escaped ampersand sign, "%26".
 	 *
 	 * @return	string
-	 * @param	string $url
-	 * @param	string $method
-	 * @param	array $parameters
+	 * @param	string $url			The URL.
+	 * @param	string $method		The method to use.
+	 * @param	array $parameters	The parameters.
 	 */
 	private function calculateBaseString($url, $method, array $parameters)
 	{
@@ -234,11 +234,11 @@ class Twitter
 		foreach($parameters as $key => $value)
 		{
 			// only add if not already in the url
-			if(substr_count($url, $key .'='. $value) == 0) $chunks[] = self::urlencode_rfc3986($key) .'%3D'. self::urlencode_rfc3986($value);
+			if(substr_count($url, $key . '=' . $value) == 0) $chunks[] = self::urlencode_rfc3986($key) . '%3D' . self::urlencode_rfc3986($value);
 		}
 
 		// buils base
-		$base = $method .'&';
+		$base = $method . '&';
 		$base .= urlencode($url);
 		$base .= (substr_count($url, '?')) ? '%26' : '&';
 		$base .= implode('%26', $chunks);
@@ -254,8 +254,8 @@ class Twitter
 	 * @later: fix me
 	 *
 	 * @return	string
-	 * @param	array $parameters
-	 * @param	string $url
+	 * @param	array $parameters	The parameters.
+	 * @param	string $url			The URL.
 	 */
 	private function calculateHeader(array $parameters, $url)
 	{
@@ -269,7 +269,7 @@ class Twitter
 		$chunks = array();
 
 		// process queries
-		foreach($parameters as $key => $value) $chunks[] = str_replace('%25', '%', self::urlencode_rfc3986($key) .'="'. self::urlencode_rfc3986($value) .'"');
+		foreach($parameters as $key => $value) $chunks[] = str_replace('%25', '%', self::urlencode_rfc3986($key) . '="' . self::urlencode_rfc3986($value) . '"');
 
 		// build return
 		$return = 'Authorization: OAuth realm="' . $parts['scheme'] . '://' . $parts['host'] . $parts['path'] . '", ';
@@ -285,8 +285,8 @@ class Twitter
 	 * @todo	refactor me
 	 *
 	 * @return	array
-	 * @param	string $method
-	 * @param	array[optional] $parameters
+	 * @param	string $method					The method.
+	 * @param	array[optional] $parameters		The parameters.
 	 */
 	private function doOAuthCall($method, array $parameters = null)
 	{
@@ -301,16 +301,16 @@ class Twitter
 		$parameters['oauth_version'] = '1.0';
 
 		// calculate the base string
-		$base = $this->calculateBaseString(self::SECURE_API_URL .'/oauth/'. $method, 'POST', $parameters);
+		$base = $this->calculateBaseString(self::SECURE_API_URL . '/oauth/' . $method, 'POST', $parameters);
 
 		// add sign into the parameters
-		$parameters['oauth_signature'] = $this->hmacsha1($this->getConsumerSecret() .'&' . $this->getOAuthTokenSecret(), $base);
+		$parameters['oauth_signature'] = $this->hmacsha1($this->getConsumerSecret() . '&' . $this->getOAuthTokenSecret(), $base);
 
 		// calculate header
-		$header = $this->calculateHeader($parameters, self::SECURE_API_URL .'/oauth/'. $method);
+		$header = $this->calculateHeader($parameters, self::SECURE_API_URL . '/oauth/' . $method);
 
 		// set options
-		$options[CURLOPT_URL] = self::SECURE_API_URL .'/oauth/'. $method;
+		$options[CURLOPT_URL] = self::SECURE_API_URL . '/oauth/' . $method;
 		$options[CURLOPT_PORT] = self::SECURE_API_PORT;
 		$options[CURLOPT_USERAGENT] = $this->getUserAgent();
 		if(ini_get('open_basedir') == '' && ini_get('safe_mode' == 'Off')) $options[CURLOPT_FOLLOWLOCATION] = true;
@@ -355,7 +355,7 @@ class Twitter
 	 *
 	 * @return	string
 	 * @param	string $url						The url to call.
-	 * @param	array[optiona] $parameters		Optional parameters.
+	 * @param	array[optional] $parameters		Optional parameters.
 	 * @param	bool[optional] $authenticate	Should we authenticate.
 	 * @param	bool[optional] $method			The method to use. Possible values are GET, POST.
 	 * @param	string[optional] $filePath		The path to the file to upload.
@@ -375,7 +375,7 @@ class Twitter
 		$expectJSON = (bool) $expectJSON;
 
 		// validate method
-		if(!in_array($method, $allowedMethods)) throw new TwitterException('Unknown method ('. $method .'). Allowed methods are: '. implode(', ', $allowedMethods));
+		if(!in_array($method, $allowedMethods)) throw new TwitterException('Unknown method (' . $method . '). Allowed methods are: ' . implode(', ', $allowedMethods));
 
 		// append default parameters
 		$oauth['oauth_consumer_key'] = $this->getConsumerKey();
@@ -390,7 +390,7 @@ class Twitter
 		if(!empty($parameters)) $data = array_merge($data, $parameters);
 
 		// calculate the base string
-		$base = $this->calculateBaseString(self::API_URL .'/'. $url, $method, $data);
+		$base = $this->calculateBaseString(self::API_URL . '/' . $url, $method, $data);
 
 		// based on the method, we should handle the parameters in a different way
 		if($method == 'POST')
@@ -411,19 +411,19 @@ class Twitter
 				elseif($fileInfo['extension'] == 'png') $mimeType = 'image/png';
 
 				// init var
-				$content = '--'. $boundary ."\r\n";
+				$content = '--' . $boundary . "\r\n";
 
 				// set file
-				$content .= 'Content-Disposition: form-data; name=image; filename="'. $fileInfo['basename'] .'"' ."\r\n";
-				$content .= 'Content-Type: '. $mimeType ."\r\n";
+				$content .= 'Content-Disposition: form-data; name=image; filename="' . $fileInfo['basename'] . '"' . "\r\n";
+				$content .= 'Content-Type: ' . $mimeType . "\r\n";
 				$content .= "\r\n";
 				$content .= file_get_contents($filePath);
-				$content .="\r\n";
-				$content .="--". $boundary .'--';
+				$content .= "\r\n";
+				$content .= "--" . $boundary . '--';
 
 				// build headers
-				$headers[] = 'Content-Type: multipart/form-data; boundary='. $boundary;
-				$headers[] = 'Content-Length: '. strlen($content);
+				$headers[] = 'Content-Type: multipart/form-data; boundary=' . $boundary;
+				$headers[] = 'Content-Length: ' . strlen($content);
 
 				// set content
 				$options[CURLOPT_POSTFIELDS] = $content;
@@ -439,19 +439,19 @@ class Twitter
 		else
 		{
 			// add the parameters into the querystring
-			if(!empty($parameters)) $url .= '?'. $this->buildQuery($parameters);
+			if(!empty($parameters)) $url .= '?' . $this->buildQuery($parameters);
 
 			$options[CURLOPT_POST] = false;
 		}
 
 		// add sign into the parameters
-		$oauth['oauth_signature'] = $this->hmacsha1($this->getConsumerSecret() .'&' . $this->getOAuthTokenSecret(), $base);
+		$oauth['oauth_signature'] = $this->hmacsha1($this->getConsumerSecret() . '&' . $this->getOAuthTokenSecret(), $base);
 
-		$headers[] = $this->calculateHeader($oauth, self::API_URL .'/'. $url);
+		$headers[] = $this->calculateHeader($oauth, self::API_URL . '/' . $url);
 		$headers[] = 'Expect:';
 
 		// set options
-		$options[CURLOPT_URL] = self::API_URL .'/'. $url;
+		$options[CURLOPT_URL] = self::API_URL . '/' . $url;
 		$options[CURLOPT_PORT] = self::API_PORT;
 		$options[CURLOPT_USERAGENT] = $this->getUserAgent();
 		if(ini_get('open_basedir') == '' && ini_get('safe_mode' == 'Off')) $options[CURLOPT_FOLLOWLOCATION] = true;
@@ -577,7 +577,7 @@ class Twitter
 	 *
 	 * @return	string
 	 * @param	string $url						The url to call.
-	 * @param	array[optiona] $parameters		Optional parameters.
+	 * @param	array[optional] $parameters		Optional parameters.
 	 */
 	private function doSearchCall($url, array $parameters = null)
 	{
@@ -586,10 +586,10 @@ class Twitter
 		$parameters = (array) $parameters;
 
 		// add the parameters into the querystring
-		if(!empty($parameters)) $url .= '?'. $this->buildQuery($parameters);
+		if(!empty($parameters)) $url .= '?' . $this->buildQuery($parameters);
 
 		// set options
-		$options[CURLOPT_URL] = self::SEARCH_API_URL .'/'. $url;
+		$options[CURLOPT_URL] = self::SEARCH_API_URL . '/' . $url;
 		$options[CURLOPT_PORT] = self::SEARCH_API_PORT;
 		$options[CURLOPT_USERAGENT] = $this->getUserAgent();
 		if(ini_get('open_basedir') == '' && ini_get('safe_mode' == 'Off')) $options[CURLOPT_FOLLOWLOCATION] = true;
@@ -765,7 +765,7 @@ class Twitter
 	 */
 	public function getUserAgent()
 	{
-		return (string) 'PHP Twitter/'. self::VERSION .' '. $this->userAgent;
+		return (string) 'PHP Twitter/' . self::VERSION . ' ' . $this->userAgent;
 	}
 
 
@@ -821,7 +821,7 @@ class Twitter
 	 * Set the timeout
 	 *
 	 * @return	void
-	 * @param	int $seconds	The timeout in seconds
+	 * @param	int $seconds	The timeout in seconds.
 	 */
 	public function setTimeOut($seconds)
 	{
@@ -834,7 +834,7 @@ class Twitter
 	 * It will look like: "PHP Twitter/<version> <your-user-agent>"
 	 *
 	 * @return	void
-	 * @param	string $userAgent	Your user-agent, it should look like <app-name>/<app-version>
+	 * @param	string $userAgent	Your user-agent, it should look like <app-name>/<app-version>.
 	 */
 	public function setUserAgent($userAgent)
 	{
@@ -1201,7 +1201,7 @@ class Twitter
 		if($includeEntities) $parameters['include_entities'] = 'true';
 
 		// make the call
-		return (array) $this->doCall('statuses/retweet/'. $id .'.json', $parameters, true, 'POST');
+		return (array) $this->doCall('statuses/retweet/' . $id . '.json', $parameters, true, 'POST');
 	}
 
 
@@ -1226,7 +1226,7 @@ class Twitter
 		if($includeEntities) $parameters['include_entities'] = 'true';
 
 		// make the call
-		return (array) $this->doCall('statuses/retweets/'. $id .'.json', $parameters);
+		return (array) $this->doCall('statuses/retweets/' . $id . '.json', $parameters);
 	}
 
 
@@ -1253,7 +1253,7 @@ class Twitter
 		if($includeEntities) $parameters['include_entities'] = 'true';
 
 		// make the call
-		return (array) $this->doCall('statuses/'. (string) $id .'/retweeted_by.json', $parameters, true);
+		return (array) $this->doCall('statuses/' . (string) $id . '/retweeted_by.json', $parameters, true);
 	}
 
 
@@ -1280,7 +1280,7 @@ class Twitter
 		if($includeEntities) $parameters['include_entities'] = 'true';
 
 		// make the call
-		return (array) $this->doCall('statuses/'. (string) $id .'/retweeted_by/ids.json', $parameters, true);
+		return (array) $this->doCall('statuses/' . (string) $id . '/retweeted_by/ids.json', $parameters, true);
 	}
 
 
@@ -1383,7 +1383,7 @@ class Twitter
 	 */
 	public function usersSuggestionsSlug($slug)
 	{
-		return (array) $this->doCall('users/suggestions/'. (string) $slug .'.json');
+		return (array) $this->doCall('users/suggestions/' . (string) $slug . '.json');
 	}
 
 
@@ -1395,7 +1395,7 @@ class Twitter
 	 *
 	 * @return	string
 	 * @param	string $screenName			The screen name of the user for whom to return results for. Helpful for disambiguating when a valid screen name is also a user ID.
-	 * @param	string[optional] $size		Specifies the size of image to fetch. Not specifying a size will give the default, normal size of 48px by 48px. Valid options include: bigger (73x73px), normal (48x48px), mini (24x24px)
+	 * @param	string[optional] $size		Specifies the size of image to fetch. Not specifying a size will give the default, normal size of 48px by 48px. Valid options include: bigger (73x73px), normal (48x48px), mini (24x24px).
 	 */
 	public function usersProfileImage($screenName, $size = 'normal')
 	{
@@ -1403,12 +1403,12 @@ class Twitter
 		$allowedSizes = array('normal', 'bigger', 'mini');
 
 		// validate
-		if($size != null && !in_array($size, $allowedSizes)) throw new TwitterException('Invalid size ('. $size .'), possible values are: '. implode($allowedSizes) .'.');
+		if($size != null && !in_array($size, $allowedSizes)) throw new TwitterException('Invalid size (' . $size . '), possible values are: ' . implode($allowedSizes) . '.');
 
 		// build parameters
 		$parameters['size'] = (string) $size;
 
-		$headers = $this->doCall('users/profile_image/'. (string) $screenName .'.json', $parameters, false, 'GET', null, false, true);
+		$headers = $this->doCall('users/profile_image/' . (string) $screenName . '.json', $parameters, false, 'GET', null, false, true);
 
 		// return the URL
 		if(isset($headers['url'])) return $headers['url'];
@@ -1554,7 +1554,7 @@ class Twitter
 		$allowedModes = array('public', 'private');
 
 		// validate
-		if($mode != null && !in_array($mode, $allowedModes)) throw new TwitterException('Invalid mode (), possible values are: '. implode($allowedModes) .'.');
+		if($mode != null && !in_array($mode, $allowedModes)) throw new TwitterException('Invalid mode (), possible values are: ' . implode($allowedModes) . '.');
 
 		// build parameters
 		$parameters['name'] = (string) $name;
@@ -1562,7 +1562,7 @@ class Twitter
 		if($description != null) $parameters['description'] = (string) $description;
 
 		// make the call
-		return (array) $this->doCall((string) $user .'/lists.json', $parameters, true, 'POST');
+		return (array) $this->doCall((string) $user . '/lists.json', $parameters, true, 'POST');
 	}
 
 
@@ -1579,7 +1579,7 @@ class Twitter
 		if($cursor != null) $parameters['cursor'] = (string) $cursor;
 
 		// make the call
-		return (array) $this->doCall((string) $user .'/lists.json', $parameters, true);
+		return (array) $this->doCall((string) $user . '/lists.json', $parameters, true);
 	}
 
 
@@ -1593,7 +1593,7 @@ class Twitter
 	public function userListsId($user, $id)
 	{
 		// make the call
-		return (array) $this->doCall((string) $user .'/lists/'. (string) $id .'.json', null, true);
+		return (array) $this->doCall((string) $user . '/lists/' . (string) $id . '.json', null, true);
 	}
 
 
@@ -1613,7 +1613,7 @@ class Twitter
 		$allowedModes = array('public', 'private');
 
 		// validate
-		if($mode != null && !in_array($mode, $allowedModes)) throw new TwitterException('Invalid mode (), possible values are: '. implode($allowedModes) .'.');
+		if($mode != null && !in_array($mode, $allowedModes)) throw new TwitterException('Invalid mode (), possible values are: ' . implode($allowedModes) . '.');
 
 		// build parameters
 		if($name != null) $parameters['name'] = (string) $name;
@@ -1621,7 +1621,7 @@ class Twitter
 		if($description != null) $parameters['description'] = (string) $description;
 
 		// make the call
-		return (array) $this->doCall((string) $user .'/lists/'. (string) $id .'.json', $parameters, true, 'POST');
+		return (array) $this->doCall((string) $user . '/lists/' . (string) $id . '.json', $parameters, true, 'POST');
 	}
 
 
@@ -1651,7 +1651,7 @@ class Twitter
 		if($includeEntities) $parameters['include_entities'] = 'true';
 
 		// make the call
-		return (array) $this->doCall((string) $user .'/lists/'. (string) $id .'/statuses.json', $parameters);
+		return (array) $this->doCall((string) $user . '/lists/' . (string) $id . '/statuses.json', $parameters);
 	}
 
 
@@ -1669,7 +1669,7 @@ class Twitter
 		if($cursor != null) $parameters['cursor'] = (string) $cursor;
 
 		// make the call
-		return (array) $this->doCall((string) $user .'/lists/memberships.json', $parameters, true);
+		return (array) $this->doCall((string) $user . '/lists/memberships.json', $parameters, true);
 	}
 
 
@@ -1687,7 +1687,7 @@ class Twitter
 		if($cursor != null) $parameters['cursor'] = (string) $cursor;
 
 		// make the call
-		return (array) $this->doCall((string) $user .'/lists/subscriptions.json', $parameters, true);
+		return (array) $this->doCall((string) $user . '/lists/subscriptions.json', $parameters, true);
 	}
 
 
@@ -1709,7 +1709,7 @@ class Twitter
 		if($includeEntities) $parameters['include_entities'] = 'true';
 
 		// make the call
-		return (array) $this->doCall((string) $user .'/'. (string) $id .'/members.json', $parameters, true);
+		return (array) $this->doCall((string) $user . '/' . (string) $id . '/members.json', $parameters, true);
 	}
 
 
@@ -1727,7 +1727,7 @@ class Twitter
 		$parameters['id'] = (string) $userId;
 
 		// make the call
-		return (array) $this->doCall((string) $user .'/'. (string) $id .'/members.json', $parameters, true, 'POST');
+		return (array) $this->doCall((string) $user . '/' . (string) $id . '/members.json', $parameters, true, 'POST');
 	}
 
 
@@ -1755,7 +1755,7 @@ class Twitter
 		if(!empty($screenNames)) $parameters['screen_name'] = implode(',', $screenNames);
 
 		// make the call
-		return (array) $this->doCall((string) $user .'/'. (string) $id .'/create_all.json', $parameters, true, 'POST');
+		return (array) $this->doCall((string) $user . '/' . (string) $id . '/create_all.json', $parameters, true, 'POST');
 	}
 
 
@@ -1774,7 +1774,7 @@ class Twitter
 		$parameters['_method'] = 'DELETE';
 
 		// make the call
-		return (array) $this->doCall((string) $user .'/'. (string) $id .'/members.json', $parameters, true, 'POST');
+		return (array) $this->doCall((string) $user . '/' . (string) $id . '/members.json', $parameters, true, 'POST');
 	}
 
 
@@ -1796,7 +1796,7 @@ class Twitter
 			if($includeEntities) $parameters['include_entities'] = 'true';
 
 			// make the call
-			return (array) $this->doCall((string) $user .'/'. (string) $id .'/members/'. (string) $userId .'.json', $parameters, true);
+			return (array) $this->doCall((string) $user . '/' . (string) $id . '/members/' . (string) $userId . '.json', $parameters, true);
 		}
 
 		// catch exceptions
@@ -1826,7 +1826,7 @@ class Twitter
 		if($includeEntities) $parameters['include_entities'] = 'true';
 
 		// make the call
-		return (array) $this->doCall((string) $user .'/'. (string) $id .'/subscribers.json', $parameters, true);
+		return (array) $this->doCall((string) $user . '/' . (string) $id . '/subscribers.json', $parameters, true);
 	}
 
 
@@ -1840,7 +1840,7 @@ class Twitter
 	public function userListSubscribersCreate($user, $id)
 	{
 		// make the call
-		return (array) $this->doCall((string) $user .'/'. (string) $id .'/subscribers.json', null, true, 'POST');
+		return (array) $this->doCall((string) $user . '/' . (string) $id . '/subscribers.json', null, true, 'POST');
 	}
 
 
@@ -1857,7 +1857,7 @@ class Twitter
 		$parameters['_method'] = 'DELETE';
 
 		// make the call
-		return (array) $this->doCall((string) $user .'/'. (string) $id .'/subscribers.json', $parameters, true, 'POST');
+		return (array) $this->doCall((string) $user . '/' . (string) $id . '/subscribers.json', $parameters, true, 'POST');
 	}
 
 
@@ -1879,7 +1879,7 @@ class Twitter
 			if($includeEntities) $parameters['include_entities'] = 'true';
 
 			// make the call
-			return (array) $this->doCall((string) $user .'/'. (string) $id .'/subscribers/'. (string) $userId .'.json', $parameters, true);
+			return (array) $this->doCall((string) $user . '/' . (string) $id . '/subscribers/' . (string) $userId . '.json', $parameters, true);
 		}
 
 		// catch exceptions
@@ -2283,7 +2283,7 @@ class Twitter
 	public function accountUpdateProfileImage($image, $includeEntities = false)
 	{
 		// validate
-		if(!file_exists($image)) throw new TwitterException('Image ('. $image .') doesn\'t exists.');
+		if(!file_exists($image)) throw new TwitterException('Image (' . $image . ') doesn\'t exists.');
 
 		// build parameters
 		$parameters = null;
@@ -2299,13 +2299,13 @@ class Twitter
 	 *
 	 * @return	array
 	 * @param	string $image						The path to the background image for the profile. Must be a valid GIF, JPG, or PNG image of less than 800 kilobytes in size. Images with width larger than 2048 pixels will be forceably scaled down.
-	 * @param	bool $tile							Whether or not to tile the background image. If set to true the background image will be displayed tiled. The image will not be tiled otherwise.
+	 * @param	bool[optional] $tile				Whether or not to tile the background image. If set to true the background image will be displayed tiled. The image will not be tiled otherwise.
 	 * @param	bool[optional] $includeEntities		When set to true each tweet will include a node called "entities,". This node offers a variety of metadata about the tweet in a discreet structure, including: user_mentions, urls, and hashtags.
 	 */
 	public function accountUpdateProfileBackgroundImage($image, $tile = false, $includeEntities = false)
 	{
 		// validate
-		if(!file_exists($image)) throw new TwitterException('Image ('. $image .') doesn\'t exists.');
+		if(!file_exists($image)) throw new TwitterException('Image (' . $image . ') doesn\'t exists.');
 
 		// build parameters
 		$parameters = null;
@@ -2378,7 +2378,7 @@ class Twitter
 		if($includeEntities) $parameters['include_entities'] = 'true';
 
 		// make the call
-		return (array) $this->doCall('favorites/create/'. $id .'.json', $parameters, true, 'POST');
+		return (array) $this->doCall('favorites/create/' . $id . '.json', $parameters, true, 'POST');
 	}
 
 
@@ -2396,7 +2396,7 @@ class Twitter
 		if($includeEntities) $parameters['include_entities'] = 'true';
 
 		// make the call
-		return (array) $this->doCall('favorites/destroy/'. $id .'.json', $parameters, true, 'POST');
+		return (array) $this->doCall('favorites/destroy/' . $id . '.json', $parameters, true, 'POST');
 	}
 
 
@@ -2585,6 +2585,7 @@ class Twitter
 	/**
 	 * Returns tweets that match a specified query.
 	 *
+	 * @return	array
 	 * @param	string $q						Search query. Should be URL encoded. Queries will be limited by complexity.
 	 * @param 	string[optional] $lang			Restricts tweets to the given language, given by an ISO 639-1 code.
 	 * @param 	string[optional] $locale		Specify the language of the query you are sending (only ja is currently effective). This is intended for language-specific clients and the default should work in the majority of cases.
@@ -2594,7 +2595,7 @@ class Twitter
 	 * @param 	string[optional] $until			Returns tweets generated before the given date. Date should be formatted as YYYY-MM-DD.
 	 * @param 	string[optional] $geocode		Returns tweets by users located within a given radius of the given latitude/longitude. The location is preferentially taking from the Geotagging API, but will fall back to their Twitter profile. The parameter value is specified by "latitude,longitude,radius", where radius units must be specified as either "mi" (miles) or "km" (kilometers). Note that you cannot use the near operator via the API to geocode arbitrary locations; however you can use this geocode parameter to search near geocodes directly.
 	 * @param 	bool[optional] $showUser		When true, prepends ":" to the beginning of the tweet. This is useful for readers that do not display Atom's author field. The default is false.
-	 * @param 	string[optional] $resultType	Specifies what type of search results you would prefer to receive. The current default is "mixed." Valid values include: mixed, recent, popular
+	 * @param 	string[optional] $resultType	Specifies what type of search results you would prefer to receive. The current default is "mixed." Valid values include: mixed, recent, popular.
 	 */
 	public function search($q, $lang = null, $locale = null, $rpp = null, $page = null, $sinceId = null, $until = null, $geocode = null, $showUser = false, $resultType = null)
 	{
@@ -2635,7 +2636,7 @@ class Twitter
 	public function savedSearchesShow($id)
 	{
 		// make the call
-		return (array) $this->doCall('saved_searches/show/'. (string) $id .'.json', null, true);
+		return (array) $this->doCall('saved_searches/show/' . (string) $id . '.json', null, true);
 	}
 
 
@@ -2663,7 +2664,7 @@ class Twitter
 	 */
 	public function savedSearchesDestroy($id)
 	{
-		return (array) $this->doCall('saved_searches/destroy/'. (string) $id .'.json', null, true, 'POST');
+		return (array) $this->doCall('saved_searches/destroy/' . (string) $id . '.json', null, true, 'POST');
 	}
 
 
@@ -2672,8 +2673,8 @@ class Twitter
 	 * Allows a Consumer application to obtain an OAuth Request Token to request user authorization.
 	 * This method fulfills Secion 6.1 of the OAuth 1.0 authentication flow.
 	 *
-	 * @return	array					An array containg the token and the secret
-	 * @param	string $callbackURL
+	 * @return	array							An array containg the token and the secret
+	 * @param	string[optional] $callbackURL	The callback URL.
 	 */
 	public function oAuthRequestToken($callbackURL = null)
 	{
@@ -2703,8 +2704,8 @@ class Twitter
 	 * This method fulfills Secion 6.3 of the OAuth 1.0 authentication flow.
 	 *
 	 * @return	array
-	 * @param	string $token
-	 * @param	string $verifier
+	 * @param	string $token		The token to use.
+	 * @param	string $verifier	The verifier.
 	 */
 	public function oAuthAccessToken($token, $verifier)
 	{
@@ -2729,10 +2730,11 @@ class Twitter
 	 * Will redirect to the page to authorize the applicatione
 	 *
 	 * @return	void
+	 * @param	string	$token		The token.
 	 */
-	public function oAuthAuthorize()
+	public function oAuthAuthorize($token)
 	{
-		header('Location: '. self::SECURE_API_URL .'/oauth/authorize?oauth_token='. $this->oAuthToken);
+		header('Location: ' . self::SECURE_API_URL . '/oauth/authorize?oauth_token=' . $token);
 	}
 
 
@@ -2741,6 +2743,7 @@ class Twitter
 	 * REMARK: This method seems not to work	@later
 	 *
 	 * @return	void
+	 * @param	bool[optional] $force	Force the authentication.
 	 */
 	public function oAuthAuthenticate($force = false)
 	{
@@ -2788,7 +2791,7 @@ class Twitter
 	public function trendsLocation($woeid)
 	{
 		// make the call
-		return (array) $this->doCall('trends/'. (string) $woeid .'.json');
+		return (array) $this->doCall('trends/' . (string) $woeid . '.json');
 	}
 
 
@@ -2823,7 +2826,7 @@ class Twitter
 		if($attributes != null)
 		{
 			// loop
-			foreach($attributes as $key => $value) $parameters['attribute:'. $key] = (string) $value;
+			foreach($attributes as $key => $value) $parameters['attribute:' . $key] = (string) $value;
 		}
 
 		// make the call
@@ -2853,7 +2856,7 @@ class Twitter
 		if($attributes != null)
 		{
 			// loop
-			foreach($attributes as $key => $value) $parameters['attribute:'. $key] = (string) $value;
+			foreach($attributes as $key => $value) $parameters['attribute:' . $key] = (string) $value;
 		}
 
 		// make the call
@@ -2892,7 +2895,7 @@ class Twitter
 	 * Find out more details of a place that was returned from the geo/reverse_geocode method.
 	 *
 	 * @return	array
-	 * @param	string $id
+	 * @param	string $id					The id of the place.
 	 * @param	string[optional] $placeId	A place in the world. These IDs can be retrieved from geo/reverse_geocode.
 	 */
 	public function geoId($id, $placeId = null)
@@ -2902,7 +2905,7 @@ class Twitter
 		if($placeId != null) $parameters['place_id'] = (string) $placeId;
 
 		// make the call
-		return (array) $this->doCall('geo/id/'. (string) $id .'.json', $parameters);
+		return (array) $this->doCall('geo/id/' . (string) $id . '.json', $parameters);
 	}
 
 
@@ -2928,7 +2931,7 @@ class Twitter
 		if($attributes != null)
 		{
 			// loop
-			foreach($attributes as $key => $value) $parameters['attribute:'. $key] = (string) $value;
+			foreach($attributes as $key => $value) $parameters['attribute:' . $key] = (string) $value;
 		}
 
 		// make the call
