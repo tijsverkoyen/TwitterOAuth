@@ -8,8 +8,9 @@
  * The class is documented in the file itself. If you find any bugs help me out and report them. Reporting can be done by sending an email to php-twitter-bugs[at]verkoyen[dot]eu.
  * If you report a bug, make sure you give me enough information (include your code).
  *
- * Known Issues
- *  - oAuthAuthenticate isn't working correctly
+ * Changelog since 2.1.1
+ * - code styling
+ * - no more converting to integer for the cursor (thx to Jamaica)
  *
  * Changelog since 2.1.0
  * - fixed issue with generation of basestring
@@ -1438,7 +1439,7 @@ class Twitter
 		$parameters = array();
 		if($userId != null) $parameters['user_id'] = (string) $userId;
 		if($screenName != null) $parameters['screen_name'] = (string) $screenName;
-		if($cursor != null) $parameters['cursor'] = (int) $cursor;
+		if($cursor != null) $parameters['cursor'] = $cursor;
 		if($includeEntities) $parameters['include_entities'] = 'true';
 
 		// make the call
@@ -1462,7 +1463,7 @@ class Twitter
 		$parameters = array();
 		if($userId != null) $parameters['user_id'] = (string) $userId;
 		if($screenName != null) $parameters['screen_name'] = (string) $screenName;
-		if($cursor != null) $parameters['cursor'] = (int) $cursor;
+		if($cursor != null) $parameters['cursor'] = $cursor;
 		if($includeEntities) $parameters['include_entities'] = 'true';
 
 		// make the call
