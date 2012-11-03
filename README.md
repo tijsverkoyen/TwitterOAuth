@@ -19,4 +19,4 @@ More documentation can be found on [http://classes.verkoyen.eu/twitter_oauth/doc
 
 * [SumoCoders](http://www.sumocoders.be)
 * [Alexander De Croo](http://www.alexanderdecroo.be)
-* [Twitter data extration](http://laurensgoessemantic.wordpress.com/2010/11/09/twitterdata-extraction/)
+* [Twitter data extraction](http://laurensgoessemantic.wordpress.com/2010/11/09/twitterdata-extraction/)
