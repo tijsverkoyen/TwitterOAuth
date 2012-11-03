@@ -5,7 +5,7 @@ namespace TijsVerkoyen\Twitter;
  * Twitter class
  *
  * @author		Tijs Verkoyen <php-twitter@verkoyen.eu>
- * @version		2.2.1
+ * @version		2.2.2
  * @copyright	Copyright (c), Tijs Verkoyen. All rights reserved.
  * @license		BSD License
  */
@@ -25,7 +25,7 @@ class Twitter
     const SECURE_API_PORT = 443;
 
     // current version
-    const VERSION = '2.2.1';
+    const VERSION = '2.2.2';
 
     /**
      * A cURL instance
@@ -302,7 +302,7 @@ class Twitter
 
         // error?
         if ($errorNumber != '') {
-            throw new TwitterException($errorMessage, $errorNumber);
+            throw new Exception($errorMessage, $errorNumber);
         }
 
         // init var
@@ -344,7 +344,7 @@ class Twitter
 
         // validate method
         if (!in_array($method, $allowedMethods)) {
-            throw new TwitterException(
+            throw new Exception(
                 'Unknown method (' . $method . '). Allowed methods are: ' .
                 implode(', ', $allowedMethods)
             );
@@ -487,7 +487,7 @@ class Twitter
             }
 
             // throw exception
-            throw new TwitterException('Invalid response.');
+            throw new Exception('Invalid response.');
         }
 
         // any errors
@@ -512,10 +512,10 @@ class Twitter
 
             // throw exception
             if (isset($json['errors'][0]['message'])) {
-                throw new TwitterException($json['errors'][0]['message']);
+                throw new Exception($json['errors'][0]['message']);
             } elseif (isset($json['errors']) && is_string($json['errors'])) {
-                throw new TwitterException($json['errors']);
-            } else throw new TwitterException('Invalid response.');
+                throw new Exception($json['errors']);
+            } else throw new Exception('Invalid response.');
         }
 
         // any error
@@ -536,7 +536,7 @@ class Twitter
             }
 
             // throw exception
-            throw new TwitterException($json['error']);
+            throw new Exception($json['error']);
         }
 
         // return
@@ -614,7 +614,7 @@ class Twitter
             }
 
             // throw exception
-            throw new TwitterException('Invalid response.');
+            throw new Exception('Invalid response.');
         }
 
 
@@ -640,8 +640,8 @@ class Twitter
 
             // throw exception
             if (isset($json['errors'][0]['message'])) {
-                throw new TwitterException($json['errors'][0]['message']);
-            } else throw new TwitterException('Invalid response.');
+                throw new Exception($json['errors'][0]['message']);
+            } else throw new Exception('Invalid response.');
         }
 
 
@@ -663,7 +663,7 @@ class Twitter
             }
 
             // throw exception
-            throw new TwitterException($json['error']);
+            throw new Exception($json['error']);
         }
 
         // return
@@ -996,7 +996,7 @@ class Twitter
     {
         // validate
         if ($count != null && $count > 200) {
-            throw new TwitterException('Count may not be greater than 200.');
+            throw new Exception('Count may not be greater than 200.');
         }
 
         // build parameters
@@ -1032,7 +1032,7 @@ class Twitter
     {
         // validate
         if ($count != null && $count > 200) {
-            throw new TwitterException('Count may not be greater than 200.');
+            throw new Exception('Count may not be greater than 200.');
         }
 
         // build parameters
@@ -1069,7 +1069,7 @@ class Twitter
     {
         // validate
         if ($count != null && $count > 200) {
-            throw new TwitterException('Count may not be greater than 200.');
+            throw new Exception('Count may not be greater than 200.');
         }
 
         // build parameters
@@ -1106,7 +1106,7 @@ class Twitter
     {
         // validate
         if ($count != null && $count > 200) {
-            throw new TwitterException('Count may not be greater than 200.');
+            throw new Exception('Count may not be greater than 200.');
         }
 
         // build parameters
@@ -1246,7 +1246,7 @@ class Twitter
     {
         // validate
         if ($count != null && $count > 100) {
-            throw new TwitterException('Count may not be greater than 100.');
+            throw new Exception('Count may not be greater than 100.');
         }
 
         // build parameters
@@ -1279,7 +1279,7 @@ class Twitter
     {
         // validate
         if ($count != null && $count > 200) {
-            throw new TwitterException('Count may not be greater than 200.');
+            throw new Exception('Count may not be greater than 200.');
         }
 
         // build parameters
@@ -1310,7 +1310,7 @@ class Twitter
     {
         // validate
         if ($count != null && $count > 200) {
-            throw new TwitterException('Count may not be greater than 200.');
+            throw new Exception('Count may not be greater than 200.');
         }
 
         // build parameters
@@ -1344,7 +1344,7 @@ class Twitter
     {
         // validate
         if ($userId == '' && $screenName == '') {
-            throw new TwitterException('Specify an userId or a screenName.');
+            throw new Exception('Specify an userId or a screenName.');
         }
 
         // build parameters
@@ -1382,7 +1382,7 @@ class Twitter
 
         // validate
         if (empty($userIds) && empty($screenNames)) {
-            throw new TwitterException('Specify an userId or a screenName.');
+            throw new Exception('Specify an userId or a screenName.');
         }
 
         // build parameters
@@ -1469,7 +1469,7 @@ class Twitter
 
         // validate
         if ($size != null && !in_array($size, $allowedSizes)) {
-            throw new TwitterException('Invalid size (' . $size . '), possible values are: ' . implode($allowedSizes) . '.');
+            throw new Exception('Invalid size (' . $size . '), possible values are: ' . implode($allowedSizes) . '.');
         }
 
         // build parameters
@@ -1649,7 +1649,7 @@ class Twitter
 
         // validate
         if ($mode != null && !in_array($mode, $allowedModes)) {
-            throw new TwitterException('Invalid mode (), possible values are: ' .
+            throw new Exception('Invalid mode (), possible values are: ' .
                                        implode($allowedModes) . '.');
         }
 
@@ -1723,7 +1723,7 @@ class Twitter
 
         // validate
         if ($mode != null && !in_array($mode, $allowedModes)) {
-            throw new TwitterException('Invalid mode (), possible values are: ' .
+            throw new Exception('Invalid mode (), possible values are: ' .
                                        implode($allowedModes) . '.');
         }
 
@@ -1756,7 +1756,7 @@ class Twitter
     {
         // validate
         if ($count != null && $count > 200) {
-            throw new TwitterException('Count may not be greater than 200.');
+            throw new Exception('Count may not be greater than 200.');
         }
 
         // build parameters
@@ -1879,7 +1879,7 @@ class Twitter
 
         // validate
         if (empty($userIds) && empty($screenNames)) {
-            throw new TwitterException('Specify an userId or a screenName.');
+            throw new Exception('Specify an userId or a screenName.');
         }
 
         // build parameters
@@ -1946,7 +1946,7 @@ class Twitter
         }
 
         // catch exceptions
-        catch(TwitterException $e) {
+        catch(Exception $e) {
             if ($e->getMessage() == 'The specified user is not a member of this list') {
                 return false;
             } else throw $e;
@@ -2041,7 +2041,7 @@ class Twitter
         }
 
         // catch exceptions
-        catch(TwitterException $e) {
+        catch(Exception $e) {
             if ($e->getMessage() == 'The specified user is not a subscriber of this list') {
                 return false;
             } else throw $e;
@@ -2067,7 +2067,7 @@ class Twitter
     {
         // validate
         if ($count != null && $count > 200) {
-            throw new TwitterException('Count may not be greater than 200.');
+            throw new Exception('Count may not be greater than 200.');
         }
 
         // build parameters
@@ -2099,7 +2099,7 @@ class Twitter
     {
         // validate
         if ($count != null && $count > 200) {
-            throw new TwitterException('Count may not be greater than 200.');
+            throw new Exception('Count may not be greater than 200.');
         }
 
         // build parameters
@@ -2132,7 +2132,7 @@ class Twitter
     {
         // validate
         if ($userId == '' && $screenName == '') {
-            throw new TwitterException('Specify an userId or a screenName.');
+            throw new Exception('Specify an userId or a screenName.');
         }
 
         // build parameters
@@ -2182,7 +2182,7 @@ class Twitter
     {
         // validate
         if ($userId == '' && $screenName == '') {
-            throw new TwitterException('Specify an userId or a screenName.');
+            throw new Exception('Specify an userId or a screenName.');
         }
 
         // build parameters
@@ -2219,7 +2219,7 @@ class Twitter
     {
         // validate
         if ($userId == '' && $screenName == '') {
-            throw new TwitterException('Specify an userId or a screenName.');
+            throw new Exception('Specify an userId or a screenName.');
         }
 
         // build parameters
@@ -2271,10 +2271,10 @@ class Twitter
     {
         // validate
         if ($sourceId == '' && $sourceScreenName == '') {
-            throw new TwitterException('Specify an sourceId or a sourceScreenName.');
+            throw new Exception('Specify an sourceId or a sourceScreenName.');
         }
         if ($targetId == '' && $targetScreenName == '') {
-            throw new TwitterException('Specify an targetId or a targetScreenName.');
+            throw new Exception('Specify an targetId or a targetScreenName.');
         }
 
         // build parameters
@@ -2347,7 +2347,7 @@ class Twitter
     {
         // validate
         if ($userId == '' && $screenName == '') {
-            throw new TwitterException('Specify an userId or a screenName.');
+            throw new Exception('Specify an userId or a screenName.');
         }
 
         // build parameters
@@ -2381,7 +2381,7 @@ class Twitter
     {
         // validate
         if ($userId == '' && $screenName == '') {
-            throw new TwitterException('Specify an userId or a screenName.');
+            throw new Exception('Specify an userId or a screenName.');
         }
 
         // build parameters
@@ -2444,7 +2444,7 @@ class Twitter
         }
 
         // catch exceptions
-        catch(TwitterException $e) {
+        catch(Exception $e) {
             if($e->getMessage() == 'Logged out.') return true;
             else throw $e;
         }
@@ -2493,7 +2493,7 @@ class Twitter
             $profileSidebarBorderColor == ''
         )
         {
-            throw new TwitterException('Specify a profileBackgroundColor, profileTextColor, profileLinkColor, profileSidebarFillColor or a profileSidebarBorderColor.');
+            throw new Exception('Specify a profileBackgroundColor, profileTextColor, profileLinkColor, profileSidebarFillColor or a profileSidebarBorderColor.');
         }
 
         // build parameters
@@ -2534,7 +2534,7 @@ class Twitter
     {
         // validate
         if (!file_exists($image)) {
-            throw new TwitterException('Image (' . $image . ') doesn\'t exists.');
+            throw new Exception('Image (' . $image . ') doesn\'t exists.');
         }
 
         // build parameters
@@ -2560,7 +2560,7 @@ class Twitter
     {
         // validate
         if (!file_exists($image)) {
-            throw new TwitterException('Image (' . $image . ') doesn\'t exists.');
+            throw new Exception('Image (' . $image . ') doesn\'t exists.');
         }
 
         // build parameters
@@ -2683,7 +2683,7 @@ class Twitter
     {
         // validate
         if ($userId == '' && $screenName == '') {
-            throw new TwitterException('Specify an userId or a screenName.');
+            throw new Exception('Specify an userId or a screenName.');
         }
 
         // build parameters
@@ -2711,7 +2711,7 @@ class Twitter
     {
         // validate
         if ($userId == '' && $screenName == '') {
-            throw new TwitterException('Specify an userId or a screenName.');
+            throw new Exception('Specify an userId or a screenName.');
         }
 
         // build parameters
@@ -2746,7 +2746,7 @@ class Twitter
     {
         // validate
         if ($userId == '' && $screenName == '') {
-            throw new TwitterException('Specify an userId or a screenName.');
+            throw new Exception('Specify an userId or a screenName.');
         }
 
         // build parameters
@@ -2780,7 +2780,7 @@ class Twitter
     {
         // validate
         if ($userId == '' && $screenName == '') {
-            throw new TwitterException('Specify an userId or a screenName.');
+            throw new Exception('Specify an userId or a screenName.');
         }
 
         // build parameters
@@ -2814,7 +2814,7 @@ class Twitter
     {
         // validate
         if ($userId == '' && $screenName == '') {
-            throw new TwitterException('Specify an userId or a screenName.');
+            throw new Exception('Specify an userId or a screenName.');
         }
 
         // build parameters
@@ -2835,7 +2835,7 @@ class Twitter
             );
         }
         // catch exceptions
-        catch(TwitterException $e) {
+        catch(Exception $e) {
             if ($e->getMessage() == 'You are not blocking this user.') {
                 return false;
             } else throw $e;
@@ -2886,7 +2886,7 @@ class Twitter
     {
         // validate
         if ($userId == '' && $screenName == '') {
-            throw new TwitterException('Specify an userId or a screenName.');
+            throw new Exception('Specify an userId or a screenName.');
         }
 
         // build parameters
@@ -3041,7 +3041,7 @@ class Twitter
 
         // validate
         if (!isset($response['oauth_token'], $response['oauth_token_secret'])) {
-            throw new TwitterException(implode(', ', array_keys($response)));
+            throw new Exception(implode(', ', array_keys($response)));
         }
 
         // set some properties
@@ -3107,7 +3107,7 @@ class Twitter
      */
     public function oAuthAuthenticate($force = false)
     {
-        throw new TwitterException('Not implemented');
+        throw new Exception('Not implemented');
 
         // build parameters
         $parameters = null;

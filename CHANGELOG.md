@@ -1,6 +1,10 @@
+# Changelog since 2.2.1
+
+* Fixed issue with wrong classname for Exceptions
+
 # Changelog since 2.2.0
 
-* made the class available through composer
+* Made the class available through composer
 
 # Changelog since 2.1.2
 
@@ -8,25 +12,25 @@
 
 # Changelog since 2.1.1
 
-* code styling
-* no more converting to integer for the cursor (thx to Jamaica)
+* Code styling
+* No more converting to integer for the cursor (thx to Jamaica)
 
 # Changelog since 2.1.0
 
-* fixed issue with generation of basestring
-* added a new method: http://dev.twitter.com/doc/post/:user/:list_id/create_all
+* Fixed issue with generation of basestring
+* Added a new method: http://dev.twitter.com/doc/post/:user/:list_id/create_all
 
 # Changelog since 2.0.3
 
-* made a lot of changes to reflect the current API, some of the methods aren't backwards compatible, so be carefull before upgrading
+* Made a lot of changes to reflect the current API, some of the methods aren't backwards compatible, so be carefull before upgrading
 
 # Changelog since 2.0.2
 
-* tested geo*
-* implemented accountUpdateProfileImage
-* implemented accountUpdateProfileBackgroundImage
-* fixed issue with GET and POST (thx to Luiz Felipe)
-* added a way to detect open_basedir (thx to Lee Kindness)
+* Tested geo*
+* Implemented accountUpdateProfileImage
+* Implemented accountUpdateProfileBackgroundImage
+* Fixed issue with GET and POST (thx to Luiz Felipe)
+* Added a way to detect open_basedir (thx to Lee Kindness)
 
 # Changelog since 2.0.1
 
@@ -40,6 +44,6 @@
 
 # Changelog since 2.0.0
 
-* no more fatal if twitter is over capacity
-* fix for calculating the header-string (thx to Dextro)
-* fix for userListsIdStatuses (thx to Josh)
+* No more fatal if twitter is over capacity
+* Fix for calculating the header-string (thx to Dextro)
+* Fix for userListsIdStatuses (thx to Josh)
