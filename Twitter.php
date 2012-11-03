@@ -16,12 +16,10 @@ class Twitter
 
     // url for the twitter-api
     const API_URL = 'https://api.twitter.com/1.1';
-    const SEARCH_API_URL = 'https://search.twitter.com';
     const SECURE_API_URL = 'https://api.twitter.com';
 
     // port for the twitter-api
     const API_PORT = 443;
-    const SEARCH_API_PORT = 443;
     const SECURE_API_PORT = 443;
 
     // current version
@@ -157,7 +155,7 @@ class Twitter
      * @param  string $url        The URL.
      * @param  string $method     The method to use.
      * @param  array  $parameters The parameters.
-	 * @return string
+     * @return string
      */
     private function calculateBaseString($url, $method, array $parameters)
     {
@@ -204,7 +202,7 @@ class Twitter
      *
      * @param  array  $parameters The parameters.
      * @param  string $url        The URL.
-	 * @return string
+     * @return string
      */
     private function calculateHeader(array $parameters, $url)
     {
@@ -240,7 +238,7 @@ class Twitter
      *
      * @param  string          $method     The method.
      * @param  array[optional] $parameters The parameters.
-	 * @return array
+     * @return array
      */
     private function doOAuthCall($method, array $parameters = null)
     {
@@ -325,7 +323,7 @@ class Twitter
      * @param  string[optional] $filePath      The path to the file to upload.
      * @param  bool[optional]   $expectJSON    Do we expect JSON.
      * @param  bool[optional]   $returnHeaders Should the headers be returned?
-	 * @return string
+     * @return string
      */
     private function doCall(
         $url, array $parameters = null, $authenticate = false, $method = 'GET',
@@ -544,134 +542,6 @@ class Twitter
     }
 
     /**
-     * Make the call
-     *
-     * @param  string          $url        The url to call.
-     * @param  array[optional] $parameters Optional parameters.
-	 * @return string
-     */
-    private function doSearchCall($url, array $parameters = null)
-    {
-        // redefine
-        $url = (string) $url;
-        $parameters = (array) $parameters;
-
-        // add the parameters into the querystring
-        if(!empty($parameters)) $url .= '?' . $this->buildQuery($parameters);
-
-        // set options
-        $options[CURLOPT_URL] = self::SEARCH_API_URL . '/' . $url;
-        $options[CURLOPT_PORT] = self::SEARCH_API_PORT;
-        $options[CURLOPT_USERAGENT] = $this->getUserAgent();
-        if (ini_get('open_basedir') == '' && ini_get('safe_mode' == 'Off')) {
-            $options[CURLOPT_FOLLOWLOCATION] = true;
-        }
-        $options[CURLOPT_RETURNTRANSFER] = true;
-        $options[CURLOPT_TIMEOUT] = (int) $this->getTimeOut();
-        $options[CURLOPT_SSL_VERIFYPEER] = false;
-        $options[CURLOPT_SSL_VERIFYHOST] = false;
-        $options[CURLOPT_HTTP_VERSION] = CURL_HTTP_VERSION_1_1;
-
-        // init
-        if($this->curl == null) $this->curl = curl_init();
-
-        // set options
-        curl_setopt_array($this->curl, $options);
-
-        // execute
-        $response = curl_exec($this->curl);
-        $headers = curl_getinfo($this->curl);
-
-        // fetch errors
-        $errorNumber = curl_errno($this->curl);
-        $errorMessage = curl_error($this->curl);
-
-        // replace ids with their string values, added because of some
-        // PHP-version can't handle these large values
-        $response = preg_replace('/id":(\d+)/', 'id":"\1"', $response);
-
-        // we expect JSON, so decode it
-        $json = @json_decode($response, true);
-
-        // validate JSON
-        if ($json === null) {
-            // should we provide debug information
-            if (self::DEBUG) {
-                // make it output proper
-                echo '<pre>';
-
-                // dump the header-information
-                var_dump($headers);
-
-                // dump the error
-                var_dump($errorMessage);
-
-                // dump the raw response
-                var_dump($response);
-
-                // end proper format
-                echo '</pre>';
-            }
-
-            // throw exception
-            throw new Exception('Invalid response.');
-        }
-
-
-        // any errors
-        if (isset($json['errors'])) {
-            // should we provide debug information
-            if (self::DEBUG) {
-                // make it output proper
-                echo '<pre>';
-
-                // dump the header-information
-                var_dump($headers);
-
-                // dump the error
-                var_dump($errorMessage);
-
-                // dump the raw response
-                var_dump($response);
-
-                // end proper format
-                echo '</pre>';
-            }
-
-            // throw exception
-            if (isset($json['errors'][0]['message'])) {
-                throw new Exception($json['errors'][0]['message']);
-            } else throw new Exception('Invalid response.');
-        }
-
-
-        // any error
-        if (isset($json['error'])) {
-            // should we provide debug information
-            if (self::DEBUG) {
-                // make it output proper
-                echo '<pre>';
-
-                // dump the header-information
-                var_dump($headers);
-
-                // dump the raw response
-                var_dump($response);
-
-                // end proper format
-                echo '</pre>';
-            }
-
-            // throw exception
-            throw new Exception($json['error']);
-        }
-
-        // return
-        return $json;
-    }
-
-
-    /**
      * Get the consumer key
      *
      * @return string
@@ -680,7 +550,6 @@ class Twitter
     {
         return $this->consumerKey;
     }
-
 
     /**
      * Get the consumer secret
@@ -692,7 +561,6 @@ class Twitter
         return $this->consumerSecret;
     }
 
-
     /**
      * Get the oAuth-token
      *
@@ -702,7 +570,6 @@ class Twitter
     {
         return $this->oAuthToken;
     }
-
 
     /**
      * Get the oAuth-token-secret
@@ -714,7 +581,6 @@ class Twitter
         return $this->oAuthTokenSecret;
     }
 
-
     /**
      * Get the timeout
      *
@@ -724,7 +590,6 @@ class Twitter
     {
         return (int) $this->timeOut;
     }
-
 
     /**
      * Get the useragent that will be used. Our version will be prepended to yours.
@@ -737,92 +602,84 @@ class Twitter
         return (string) 'PHP Twitter/' . self::VERSION . ' ' . $this->userAgent;
     }
 
-
     /**
      * Set the consumer key
      *
-     * @param  string $key The consumer key to use.
+     * @param string $key The consumer key to use.
      */
     private function setConsumerKey($key)
     {
         $this->consumerKey = (string) $key;
     }
 
-
     /**
      * Set the consumer secret
      *
-     * @param  string $secret The consumer secret to use.
+     * @param string $secret The consumer secret to use.
      */
     private function setConsumerSecret($secret)
     {
         $this->consumerSecret = (string) $secret;
     }
 
-
     /**
      * Set the oAuth-token
      *
-     * @param  string $token The token to use.
+     * @param string $token The token to use.
      */
     public function setOAuthToken($token)
     {
         $this->oAuthToken = (string) $token;
     }
 
-
     /**
      * Set the oAuth-secret
      *
-     * @param  string $secret The secret to use.
+     * @param string $secret The secret to use.
      */
     public function setOAuthTokenSecret($secret)
     {
         $this->oAuthTokenSecret = (string) $secret;
     }
 
-
     /**
      * Set the timeout
      *
-     * @param  int  $seconds The timeout in seconds.
+     * @param int $seconds The timeout in seconds.
      */
     public function setTimeOut($seconds)
     {
         $this->timeOut = (int) $seconds;
     }
 
-
     /**
      * Get the useragent that will be used. Our version will be prepended to yours.
      * It will look like: "PHP Twitter/<version> <your-user-agent>"
      *
-     * @param  string $userAgent Your user-agent, it should look like <app-name>/<app-version>.
+     * @param string $userAgent Your user-agent, it should look like <app-name>/<app-version>.
      */
     public function setUserAgent($userAgent)
     {
         $this->userAgent = (string) $userAgent;
     }
 
-
     /**
      * Build the signature for the data
      *
      * @param  string $key  The key to use for signing.
      * @param  string $data The data that has to be signed.
-	 * @return string
+     * @return string
      */
     private function hmacsha1($key, $data)
     {
         return base64_encode(hash_hmac('SHA1', $data, $key, true));
     }
 
-
     /**
      * URL-encode method for internal use
      *
      * @param  mixed  $value The value to encode.
-	 * @return string
+     * @return string
      */
     private static function urlencode_rfc3986($value)
     {
@@ -836,7 +693,6 @@ class Twitter
         }
     }
 
-
 // Timeline resources
     /**
      * Returns the 20 most recent mentions (tweets containing a users's @screen_name) for the authenticating user.
@@ -849,7 +705,7 @@ class Twitter
      * @param  bool[optional]   $trimUser           When set to true, each tweet returned in a timeline will include a user object including only the status authors numerical ID. Omit this parameter to receive the complete user object.
      * @param  bool[optional]   $contributorDetails This parameter enhances the contributors element of the status response to include the screen_name of the contributor. By default only the user_id of the contributor is included.
      * @param  bool[optional]   $includeEntities    The entities node will be disincluded when set to false.
-	 * @return array
+     * @return array
      */
     public function statusesMentionsTimeline(
         $count = null, $sinceId = null, $maxId = null,
@@ -900,7 +756,7 @@ class Twitter
      * @param  bool[optional]   $excludeReplies     This parameter will prevent replies from appearing in the returned timeline. Using exclude_replies with the count parameter will mean you will receive up-to count tweets — this is because the count parameter retrieves that many tweets before filtering out retweets and replies.
      * @param  bool[optional]   $contributorDetails This parameter enhances the contributors element of the status response to include the screen_name of the contributor. By default only the user_id of the contributor is included.
      * @param  bool[optional]   $includeRts         When set to false, the timeline will strip any native retweets (though they will still count toward both the maximal length of the timeline and the slice selected by the count parameter). Note: If you're using the trim_user parameter in conjunction with include_rts, the retweets will still contain a full user object.
-	 * @return array
+     * @return array
      */
     public function statusesUserTimeline(
         $userId = null, $screenName = null, $sinceId = null, $count = null,
@@ -956,7 +812,7 @@ class Twitter
      * @param  bool[optional]   $excludeReplies     This parameter will prevent replies from appearing in the returned timeline. Using exclude_replies with the count parameter will mean you will receive up-to count tweets — this is because the count parameter retrieves that many tweets before filtering out retweets and replies.
      * @param  bool[optional]   $contributorDetails This parameter enhances the contributors element of the status response to include the screen_name of the contributor. By default only the user_id of the contributor is included.
      * @param  bool[optional]   $includeEntities    The entities node will be disincluded when set to false.
-	 * @return array
+     * @return array
      */
     public function statusesHomeTimeline(
         $count = null, $sinceId = null, $maxId = null, $trimUser = null,
@@ -1004,7 +860,7 @@ class Twitter
      * @param  bool[optional]   $trimUser            When set to true, each tweet returned in a timeline will include a user object including only the status authors numerical ID. Omit this parameter to receive the complete user object.
      * @param  bool[optional]   $includeEntities     The tweet entities node will be disincluded when set to false.
      * @param  bool[optional]   $includeUserEntities The user entities node will be disincluded when set to false.
-	 * @return array
+     * @return array
      */
     public function statusesRetweetsOfMe(
         $count = null, $sinceId = null, $maxId = null,
@@ -1046,7 +902,7 @@ class Twitter
      * @param  string         $id       The numerical ID of the desired status.
      * @param  int[optional]  $count    Specifies the number of records to retrieve. Must be less than or equal to 100.
      * @param  bool[optional] $trimUser When set to true, each tweet returned in a timeline will include a user object including only the status authors numerical ID. Omit this parameter to receive the complete user object.
-	 * @return array
+     * @return array
      */
     public function statusesRetweets($id, $count = null, $trimUser = null)
     {
@@ -1073,7 +929,7 @@ class Twitter
      * @param  bool[optional] $trimUser         When set to true, each tweet returned in a timeline will include a user object including only the status authors numerical ID. Omit this parameter to receive the complete user object.
      * @param  bool[optional] $includeMyRetweet When set to true, any Tweets returned that have been retweeted by the authenticating user will include an additional current_user_retweet node, containing the ID of the source status for the retweet.
      * @param  bool[optional] $includeEntities  The entities node will be disincluded when set to false.
-	 * @return array
+     * @return array
      */
     public function statusesShow(
         $id, $trimUser = null, $includeMyRetweet = null, $includeEntities = null
@@ -1103,7 +959,7 @@ class Twitter
      *
      * @param  string         $id       The numerical ID of the desired status.
      * @param  bool[optional] $trimUser When set to true, each tweet returned in a timeline will include a user object including only the status authors numerical ID. Omit this parameter to receive the complete user object.
-	 * @return array
+     * @return array
      */
     public function statusesDestroy($id, $trimUser = null)
     {
@@ -1128,7 +984,7 @@ class Twitter
      * @param  string[optional] $placeId            A place in the world. These IDs can be retrieved from GET geo/reverse_geocode.
      * @param  bool[optional]   $displayCoordinates Whether or not to put a pin on the exact coordinates a tweet has been sent from.
      * @param  bool[optional]   $trimUser           When set to true, each tweet returned in a timeline will include a user object including only the status authors numerical ID. Omit this parameter to receive the complete user object.
-	 * @return array
+     * @return array
      */
     public function statusesUpdate(
         $status, $inReplyToStatusId = null, $lat = null, $long = null,
@@ -1168,7 +1024,7 @@ class Twitter
      *
      * @param  string         $id       The numerical ID of the desired status.
      * @param  bool[optional] $trimUser When set to true, each tweet returned in a timeline will include a user object including only the status authors numerical ID. Omit this parameter to receive the complete user object.
-	 * @return array
+     * @return array
      */
     public function statusesRetweet($id, $trimUser = null)
     {
@@ -1193,19 +1049,19 @@ class Twitter
         throw new Exception('Not Implemented');
     }
 
-	/**
-	 * @param string[optional] $id			The Tweet/status ID to return embed code for.
-	 * @param string[optional] $url			The URL of the Tweet/status to be embedded.
-	 * @param int[optional] $maxwidth		The maximum width in pixels that the embed should be rendered at. This value is constrained to be between 250 and 550 pixels. Note that Twitter does not support the oEmbed maxheight parameter. Tweets are fundamentally text, and are therefore of unpredictable height that cannot be scaled like an image or video. Relatedly, the oEmbed response will not provide a value for height. Implementations that need consistent heights for Tweets should refer to the hide_thread and hide_media parameters below.
-	 * @param bool[optional] $hideMedia		Specifies whether the embedded Tweet should automatically expand images which were uploaded via POST statuses/update_with_media. When set to true images will not be expanded. Defaults to false.
-	 * @param bool[optional] $hideThread	Specifies whether the embedded Tweet should automatically show the original message in the case that the embedded Tweet is a reply. When set to true the original Tweet will not be shown. Defaults to false.
-	 * @param bool[optional] $omitScript	Specifies whether the embedded Tweet HTML should include a <script> element pointing to widgets.js. In cases where a page already includes widgets.js, setting this value to true will prevent a redundant script element from being included. When set to true the <script> element will not be included in the embed HTML, meaning that pages must include a reference to widgets.js manually. Defaults to false.
-	 * @param string[optional] $align		Specifies whether the embedded Tweet should be left aligned, right aligned, or centered in the page. Valid values are left, right, center, and none. Defaults to none, meaning no alignment styles are specified for the Tweet.
-	 * @param string[optional] $related		A value for the TWT related parameter, as described in Web Intents. This value will be forwarded to all Web Intents calls.
-	 * @param string[optional] $lang		Language code for the rendered embed. This will affect the text and localization of the rendered HTML.
-	 * @return array
-	 */
-	public function statusesOEmbed(
+    /**
+     * @param  string[optional] $id         The Tweet/status ID to return embed code for.
+     * @param  string[optional] $url        The URL of the Tweet/status to be embedded.
+     * @param  int[optional]    $maxwidth   The maximum width in pixels that the embed should be rendered at. This value is constrained to be between 250 and 550 pixels. Note that Twitter does not support the oEmbed maxheight parameter. Tweets are fundamentally text, and are therefore of unpredictable height that cannot be scaled like an image or video. Relatedly, the oEmbed response will not provide a value for height. Implementations that need consistent heights for Tweets should refer to the hide_thread and hide_media parameters below.
+     * @param  bool[optional]   $hideMedia  Specifies whether the embedded Tweet should automatically expand images which were uploaded via POST statuses/update_with_media. When set to true images will not be expanded. Defaults to false.
+     * @param  bool[optional]   $hideThread Specifies whether the embedded Tweet should automatically show the original message in the case that the embedded Tweet is a reply. When set to true the original Tweet will not be shown. Defaults to false.
+     * @param  bool[optional]   $omitScript Specifies whether the embedded Tweet HTML should include a <script> element pointing to widgets.js. In cases where a page already includes widgets.js, setting this value to true will prevent a redundant script element from being included. When set to true the <script> element will not be included in the embed HTML, meaning that pages must include a reference to widgets.js manually. Defaults to false.
+     * @param  string[optional] $align      Specifies whether the embedded Tweet should be left aligned, right aligned, or centered in the page. Valid values are left, right, center, and none. Defaults to none, meaning no alignment styles are specified for the Tweet.
+     * @param  string[optional] $related    A value for the TWT related parameter, as described in Web Intents. This value will be forwarded to all Web Intents calls.
+     * @param  string[optional] $lang       Language code for the rendered embed. This will affect the text and localization of the rendered HTML.
+     * @return array
+     */
+    public function statusesOEmbed(
         $id = null, $url = null, $maxwidth = null, $hideMedia = null,
         $hideThread = null, $omitScript = null, $align = null, $related = null,
         $lang = null
@@ -1252,6 +1108,62 @@ class Twitter
         );
     }
 
+// Search resources
+    /**
+     * Returns tweets that match a specified query.
+     *
+     * @param  string           $q               A UTF-8, URL-encoded search query of 1,000 characters maximum, including operators. Queries may additionally be limited by complexity.
+     * @param  string[optional] $geocode         Returns tweets by users located within a given radius of the given latitude/longitude. The location is preferentially taking from the Geotagging API, but will fall back to their Twitter profile. The parameter value is specified by "latitude,longitude,radius", where radius units must be specified as either "mi" (miles) or "km" (kilometers). Note that you cannot use the near operator via the API to geocode arbitrary locations; however you can use this geocode parameter to search near geocodes directly. A maximum of 1,000 distinct "sub-regions" will be considered when using the radius modifier.
+     * @param  string[optional] $lang            Restricts tweets to the given language, given by an ISO 639-1 code. Language detection is best-effort.
+     * @param  string[optional] $locale          Specify the language of the query you are sending (only ja is currently effective). This is intended for language-specific consumers and the default should work in the majority of cases.
+     * @param  string[optional] $resultType      Specifies what type of search results you would prefer to receive. The current default is "mixed." Valid values include: mixed: Include both popular and real time results in the response, recent: return only the most recent results in the response, popular: return only the most popular results in the response.
+     * @param  int[optional]    $count           The number of tweets to return per page, up to a maximum of 100. Defaults to 15. This was formerly the "rpp" parameter in the old Search API.
+     * @param  string[optional] $until           Returns tweets generated before the given date. Date should be formatted as YYYY-MM-DD. Keep in mind that the search index may not go back as far as the date you specify here.
+     * @param  string[optional] $sinceId         Returns results with an ID greater than (that is, more recent than) the specified ID. There are limits to the number of Tweets which can be accessed through the API. If the limit of Tweets has occured since the since_id, the since_id will be forced to the oldest ID available.
+     * @param  string[optional] $maxId           Returns results with an ID less than (that is, older than) or equal to the specified ID.
+     * @param  bool[optional]   $includeEntities The entities node will be disincluded when set to false.
+     * @return array
+     */
+    public function searchTweets(
+        $q, $geocode = null, $lang = null, $locale = null, $resultType= null,
+        $count = null, $until = null, $sinceId = null, $maxId = null,
+        $includeEntities = null
+    )
+    {
+        $parameters['q'] = (string) $q;
+        if ($geocode !== null) {
+            $parameters['geocode'] = (string) $geocode;
+        }
+        if ($lang !== null) {
+            $parameters['lang'] = (string) $lang;
+        }
+        if ($locale !== null) {
+            $parameters['locale'] = (string) $locale;
+        }
+        if ($resultType !== null) {
+            $parameters['result_type'] = (string) $resultType;
+        }
+        if ($count !== null) {
+            $parameters['count'] = (int) $count;
+        }
+        if ($until !== null) {
+            $parameters['until'] = (string) $until;
+        }
+        if ($sinceId !== null) {
+            $parameters['since_id'] = (string) $sinceId;
+        }
+        if ($maxId !== null) {
+            $parameters['max_id'] = (string) $maxId;
+        }
+        if ($includeEntities !== null) {
+            $parameters['include_entities'] = ($includeEntities) ? 'true' : 'false';
+        }
+
+        return (array) $this->doCall(
+            'search/tweets.json',
+            $parameters
+        );
+    }
 
 // User resources
     /**
@@ -2805,61 +2717,6 @@ class Twitter
         );
     }
 
-// Search resources
-    /**
-     * Returns tweets that match a specified query.
-     *
-     * @return array
-     * @param  string           $q          Search query. Should be URL encoded. Queries will be limited by complexity.
-     * @param  string[optional] $lang       Restricts tweets to the given language, given by an ISO 639-1 code.
-     * @param  string[optional] $locale     Specify the language of the query you are sending (only ja is currently effective). This is intended for language-specific clients and the default should work in the majority of cases.
-     * @param  int[optional]    $rpp        The number of tweets to return per page, up to a max of 100.
-     * @param  int[optional]    $page       The page number (starting at 1) to return, up to a max of roughly 1500 results (based on rpp * page).
-     * @param  string[optional] $sinceId    Returns results with an ID greater than (that is, more recent than) the specified ID. There are limits to the number of Tweets which can be accessed through the API. If the limit of Tweets has occured since the since_id, the since_id will be forced to the oldest ID available.
-     * @param  string[optional] $until      Returns tweets generated before the given date. Date should be formatted as YYYY-MM-DD.
-     * @param  string[optional] $geocode    Returns tweets by users located within a given radius of the given latitude/longitude. The location is preferentially taking from the Geotagging API, but will fall back to their Twitter profile. The parameter value is specified by "latitude,longitude,radius", where radius units must be specified as either "mi" (miles) or "km" (kilometers). Note that you cannot use the near operator via the API to geocode arbitrary locations; however you can use this geocode parameter to search near geocodes directly.
-     * @param  bool[optional]   $showUser   When true, prepends ":" to the beginning of the tweet. This is useful for readers that do not display Atom's author field. The default is false.
-     * @param  string[optional] $resultType Specifies what type of search results you would prefer to receive. The current default is "mixed." Valid values include: mixed, recent, popular.
-     */
-    public function search(
-        $q, $lang = null, $locale = null, $rpp = null, $page = null,
-        $sinceId = null, $until = null, $geocode = null, $showUser = false,
-        $resultType = null
-    )
-    {
-        $parameters['q'] = (string) $q;
-        if ($lang !== null) {
-            $parameters['lang'] = (string) $lang;
-        }
-        if ($locale !== null) {
-            $parameters['locale'] = (string) $locale;
-        }
-        if ($rpp !== null) {
-            $parameters['rpp'] = (int) $rpp;
-        }
-        if ($page !== null) {
-            $parameters['page'] = (int) $page;
-        }
-        if ($sinceId !== null) {
-            $parameters['since_id'] = (string) $sinceId;
-        }
-        if ($until !== null) {
-            $parameters['until'] = (string) $until;
-        }
-        if ($geocode !== null) {
-            $parameters['geocode'] = (string) $geocode;
-        }
-        if ($showUser === true) {
-            $parameters['show_user'] = 'true';
-        }
-        if ($resultType !== null) {
-            $parameters['result_type'] = (string) $resultType;
-        }
-
-        return (array) $this->doSearchCall('search.json', $parameters);
-    }
-
-
 // Saved Searches resources
     /**
      * Returns the authenticated user's saved search queries.
@@ -3037,7 +2894,6 @@ class Twitter
         return (array) $this->doCall('trends/available.json', $parameters);
     }
 
-
     /**
      * Returns the top 10 trending topics for a specific location Twitter has trending topic information for.
      * The response is an array of "trend" objects that encode the name of the trending topic, the query parameter that can be used to search for the topic on Search, and the direct URL that can be issued against Search.
@@ -3051,7 +2907,6 @@ class Twitter
         // make the call
         return (array) $this->doCall('trends/' . (string) $woeid . '.json');
     }
-
 
 // Geo resources
     /**
@@ -3144,7 +2999,6 @@ class Twitter
         return (array) $this->doCall('geo/similar_places.json', $parameters);
     }
 
-
     /**
      * Search for places (cities and neighborhoods) that can be attached to a statuses/update. Given a latitude and a longitude, return a list of all the valid places that can be used as a place_id when updating a status.
      * Conceptually, a query can be made from the user's location, retrieve a list of places, have the user validate the location he or she is at, and then send the ID of this location up with a call to statuses/update.
@@ -3231,7 +3085,6 @@ class Twitter
         );
     }
 
-
 // legal resources
     /**
      * Returns Twitter's' Terms of Service in the requested format. These are not the same as the Developer Terms of Service.
@@ -3249,7 +3102,6 @@ class Twitter
         // fallback
         return false;
     }
-
 
     /**
      * Returns Twitter's Privacy Policy

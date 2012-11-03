@@ -190,4 +190,23 @@ class TwitterTest extends PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('width', $response);
         $this->assertArrayHasKey('html', $response);
     }
+
+    /**
+     * Tests Twitter->searchTweets()
+     */
+    public function testSearchTweets()
+    {
+        $response = $this->twitter->searchTweets('#freebandnames');
+        $this->assertArrayHasKey('statuses', $response);
+        foreach ($response['statuses'] as $row) {
+            $this->isTweet($row);
+        }
+        $this->assertArrayHasKey('search_metadata', $response);
+        $this->assertArrayHasKey('completed_in', $response['search_metadata']);
+        $this->assertArrayHasKey('max_id', $response['search_metadata']);
+        $this->assertArrayHasKey('query', $response['search_metadata']);
+        $this->assertArrayHasKey('refresh_url', $response['search_metadata']);
+        $this->assertArrayHasKey('count', $response['search_metadata']);
+        $this->assertArrayHasKey('since_id', $response['search_metadata']);
+    }
 }

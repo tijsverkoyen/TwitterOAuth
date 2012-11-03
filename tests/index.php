@@ -32,6 +32,8 @@ try {
 //	$response = $twitter->statusesRetweet('241259202004267009');
 //	@todo $response = $twitter->statusesUpdateWithMedia();
 //	$response = $twitter->statusesOEmbed('240192632003911681');
+
+//	$response = $twitter->searchTweets('#freebandnames');
 } catch (Exception $e) {
     var_dump($e);
 }
