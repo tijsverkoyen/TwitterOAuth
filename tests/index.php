@@ -24,6 +24,14 @@ try {
 //    $response = $twitter->statusesUserTimeline();
 //    $response = $twitter->statusesHomeTimeline();
 //    $response = $twitter->statusesRetweetsOfMe();
+
+//	$response = $twitter->statusesRetweets('21947795900469248');
+//	$response = $twitter->statusesShow('210462857140252672');
+//	$response = $twitter->statusesDestroy('264832934299705344');
+//	$response = $twitter->statusesUpdate('Running the tests.. 私のさえずりを設定する '. time());
+//	$response = $twitter->statusesRetweet('241259202004267009');
+//	@todo $response = $twitter->statusesUpdateWithMedia();
+//	$response = $twitter->statusesOEmbed('240192632003911681');
 } catch (Exception $e) {
     var_dump($e);
 }

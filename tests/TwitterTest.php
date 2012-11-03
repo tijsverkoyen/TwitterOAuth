@@ -39,6 +39,18 @@ class TwitterTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test if an array is a tweet
+     * @param array $item
+     */
+    private function isTweet(array $item)
+    {
+        $this->assertArrayHasKey('id', $item);
+        $this->assertArrayHasKey('text', $item);
+        $this->assertArrayHasKey('created_at', $item);
+        $this->assertArrayHasKey('user', $item);
+    }
+
+    /**
      * Tests Twitter->getTimeOut()
      */
     public function testGetTimeOut()
@@ -65,10 +77,7 @@ class TwitterTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals(count($response), 2);
         foreach ($response as $row) {
-            $this->assertArrayHasKey('id', $row);
-            $this->assertArrayHasKey('text', $row);
-            $this->assertArrayHasKey('created_at', $row);
-            $this->assertArrayHasKey('user', $row);
+            $this->isTweet($row);
         }
     }
 
@@ -81,10 +90,7 @@ class TwitterTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals(count($response), 2);
         foreach ($response as $row) {
-            $this->assertArrayHasKey('id', $row);
-            $this->assertArrayHasKey('text', $row);
-            $this->assertArrayHasKey('created_at', $row);
-            $this->assertArrayHasKey('user', $row);
+            $this->isTweet($row);
         }
     }
 
@@ -97,14 +103,11 @@ class TwitterTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals(count($response), 2);
         foreach ($response as $row) {
-            $this->assertArrayHasKey('id', $row);
-            $this->assertArrayHasKey('text', $row);
-            $this->assertArrayHasKey('created_at', $row);
-            $this->assertArrayHasKey('user', $row);
+            $this->isTweet($row);
         }
     }
 
-	/**
+    /**
      * Tests Twitter->statusesRetweetsOfMe()
      */
     public function testStatusesRetweetsOfMe()
@@ -113,10 +116,78 @@ class TwitterTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals(count($response), 2);
         foreach ($response as $row) {
-            $this->assertArrayHasKey('id', $row);
-            $this->assertArrayHasKey('text', $row);
-            $this->assertArrayHasKey('created_at', $row);
-            $this->assertArrayHasKey('user', $row);
+            $this->isTweet($row);
         }
+    }
+
+    /**
+     * Tests Twitter->statusesRetweets()
+     */
+    public function testStatusesRetweets()
+    {
+        $response = $this->twitter->statusesRetweets('21947795900469248', 2);
+
+        $this->assertEquals(count($response), 2);
+        foreach ($response as $row) {
+            $this->isTweet($row);
+        }
+    }
+
+    /**
+     * Tests Twitter->statusesShow()
+     */
+    public function testStatusesShow()
+    {
+        $response = $this->twitter->statusesShow('210462857140252672');
+        $this->isTweet($response);
+    }
+
+    /**
+     * Tests Twitter->statusesDestroy()
+     */
+    public function testStatusesDestroy()
+    {
+        $var = $this->twitter->statusesUpdate('Running the tests.. 私のさえずりを設定する '. time());
+        $response = $this->twitter->statusesDestroy($var['id']);
+        $this->isTweet($response);
+    }
+
+    /**
+     * Tests Twitter->statusesUpdate()
+     */
+    public function testStatusesUpdate()
+    {
+        $response = $this->twitter->statusesUpdate('Running the tests.. 私のさえずりを設定する '. time());
+        $this->isTweet($response);
+        $this->twitter->statusesDestroy($response['id']);
+    }
+
+    /**
+     * Tests Twitter->statusesRetweet()
+     */
+    public function testStatusesRetweet()
+    {
+        $response = $this->twitter->statusesRetweet('241259202004267009');
+        $this->isTweet($response);
+        $this->twitter->statusesDestroy($response['id']);
+    }
+
+    /**
+     * Tests Twitter->statusesOEmbed()
+     */
+    public function testStatusesOEmbed()
+    {
+        $response = $this->twitter->statusesOEmbed('240192632003911681');
+        $this->assertArrayHasKey('provider_name', $response);
+        $this->assertArrayHasKey('provider_url', $response);
+        $this->assertArrayHasKey('author_name', $response);
+        $this->assertArrayHasKey('author_url', $response);
+        $this->assertArrayHasKey('url', $response);
+        $this->assertArrayHasKey('cache_age', $response);
+        $this->assertArrayHasKey('type', $response);
+        $this->assertArrayHasKey('version', $response);
+        $this->assertArrayHasKey('height', $response);
+        $this->assertArrayHasKey('width', $response);
+        $this->assertArrayHasKey('html', $response);
     }
 }
