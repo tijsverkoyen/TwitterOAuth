@@ -3,15 +3,9 @@
 /**
  * Twitter class
  *
- * This source file can be used to communicate with Twitter (http://twitter.com)
- *
- * The class is documented in the file itself. If you find any bugs help me out and report them. Reporting can be done by sending an email to php-twitter-bugs[at]verkoyen[dot]eu.
- * If you report a bug, make sure you give me enough information (include your code).
- *
  * @author		Tijs Verkoyen <php-twitter@verkoyen.eu>
- * @version		2.1.2
- *
- * @copyright	Copyright (c) 2010, Tijs Verkoyen. All rights reserved.
+ * @version		2.2.0
+ * @copyright	Copyright (c), Tijs Verkoyen. All rights reserved.
  * @license		BSD License
  */
 class Twitter
