@@ -38,6 +38,17 @@ class TwitterTest extends PHPUnit_Framework_TestCase
         parent::tearDown();
     }
 
+    private function isDirectMessage(array $item)
+    {
+        $this->assertArrayHasKey('id', $item);
+        $this->assertArrayHasKey('text', $item);
+        $this->assertArrayHasKey('created_at', $item);
+        $this->assertArrayHasKey('sender', $item);
+        $this->isUser($item['sender']);
+        $this->assertArrayHasKey('recipient', $item);
+        $this->isUser($item['recipient']);
+    }
+
     /**
      * Test if an array is a tweet
      * @param array $item
@@ -48,6 +59,17 @@ class TwitterTest extends PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('text', $item);
         $this->assertArrayHasKey('created_at', $item);
         $this->assertArrayHasKey('user', $item);
+    }
+
+    private function isUser(array $item)
+    {
+        $this->assertArrayHasKey('id', $item);
+        $this->assertArrayHasKey('created_at', $item);
+        $this->assertArrayHasKey('url', $item);
+        $this->assertArrayHasKey('lang', $item);
+        $this->assertArrayHasKey('name', $item);
+        $this->assertArrayHasKey('screen_name', $item);
+        $this->assertArrayHasKey('verified', $item);
     }
 
     /**
@@ -147,8 +169,8 @@ class TwitterTest extends PHPUnit_Framework_TestCase
      */
     public function testStatusesDestroy()
     {
-        $var = $this->twitter->statusesUpdate('Running the tests.. 私のさえずりを設定する '. time());
-        $response = $this->twitter->statusesDestroy($var['id']);
+        $$response = $this->twitter->statusesUpdate('Running the tests.. 私のさえずりを設定する '. time());
+        $response = $this->twitter->statusesDestroy($response['id']);
         $this->isTweet($response);
     }
 
@@ -208,5 +230,56 @@ class TwitterTest extends PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('refresh_url', $response['search_metadata']);
         $this->assertArrayHasKey('count', $response['search_metadata']);
         $this->assertArrayHasKey('since_id', $response['search_metadata']);
+    }
+
+    /**
+     * Tests Twitter->directMessages()
+     */
+    public function testDirectMessages()
+    {
+        $response = $this->twitter->directMessages();
+        foreach ($response as $row) {
+            $this->isDirectMessage($row);
+        }
+    }
+
+    /**
+     * Tests Twitter->directMessagesSent()
+     */
+    public function testDirectMessagesSent()
+    {
+        $response = $this->twitter->directMessagesSent();
+        foreach ($response as $row) {
+            $this->isDirectMessage($row);
+        }
+    }
+
+    /**
+     * Tests Twitter->directMessagesShow()
+     */
+    public function testDirectMessagesShow()
+    {
+        $response = $this->twitter->directMessagesShow('264022285470547969');
+        $this->isDirectMessage($response);
+    }
+
+    /**
+     * Tests Twitter->directMessagesDestroy
+     */
+    public function testDirectMessagesDestroy()
+    {
+        $response = $this->twitter->directMessagesNew(null, 'tijs_dev', 'Running the tests.. 私のさえずりを設定する '. time());
+        $response = $this->twitter->directMessagesDestroy($response['id']);
+        $this->isDirectMessage($response);
+    }
+
+    /**
+     * Tests Twitter->directMessagesNew
+     */
+    public function testDirectMessagesNew()
+    {
+        $response = $this->twitter->directMessagesNew(null, 'tijs_dev', 'Running the tests.. 私のさえずりを設定する '. time());
+        $this->isDirectMessage($response);
+        $this->twitter->directMessagesDestroy($response['id']);
     }
 }

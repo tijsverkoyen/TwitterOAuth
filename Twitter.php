@@ -78,9 +78,8 @@ class Twitter
     /**
      * Default constructor
      *
-     * @return void
-     * @param  string $consumerKey    The consumer key to use.
-     * @param  string $consumerSecret The consumer secret to use.
+     * @param string $consumerKey    The consumer key to use.
+     * @param string $consumerSecret The consumer secret to use.
      */
     public function __construct($consumerKey, $consumerSecret)
     {
@@ -90,8 +89,6 @@ class Twitter
 
     /**
      * Default destructor
-     *
-     * @return void
      */
     public function __destruct()
     {
@@ -101,8 +98,8 @@ class Twitter
     /**
      * Format the parameters as a querystring
      *
-     * @return string
      * @param  array  $parameters The parameters.
+     * @return string
      */
     private function buildQuery(array $parameters)
     {
@@ -1165,6 +1162,166 @@ class Twitter
         );
     }
 
+// Direct Messages resources
+    /**
+     * Returns the 20 most recent direct messages sent to the authenticating user. Includes detailed information about the sender and recipient user. You can request up to 200 direct messages per call, up to a maximum of 800 incoming DMs.
+     * Important: This method requires an access token with RWD (read, write & direct message) permissions. Consult The Application Permission Model for more information.
+     *
+     * @param  string[optional] $sinceId         Returns results with an ID greater than (that is, more recent than) the specified ID. There are limits to the number of Tweets which can be accessed through the API. If the limit of Tweets has occured since the since_id, the since_id will be forced to the oldest ID available.
+     * @param  string[optional] $maxId           Returns results with an ID less than (that is, older than) or equal to the specified ID.
+     * @param  int[optional]    $count           Specifies the number of direct messages to try and retrieve, up to a maximum of 200. The value of count is best thought of as a limit to the number of Tweets to return because suspended or deleted content is removed after the count has been applied.
+     * @param  int[optional]    $page            Specifies the page of results to retrieve.
+     * @param  bool[optional]   $includeEntities The entities node will not be included when set to false.
+     * @param  bool[optional]   $skipStatus      When set to either true, t or 1 statuses will not be included in the returned user objects.
+     * @return array
+     */
+    public function directMessages(
+        $sinceId = null, $maxId = null, $count = null, $page = null,
+        $includeEntities = null, $skipStatus = null
+    )
+    {
+        // build parameters
+        $parameters = array();
+        if ($sinceId != null) {
+            $parameters['since_id'] = (string) $sinceId;
+        }
+        if ($maxId != null) {
+            $parameters['max_id'] = (string) $maxId;
+        }
+        if ($count != null) {
+            $parameters['count'] = (int) $count;
+        }
+        if ($page != null) {
+            $parameters['page'] = (int) $page;
+        }
+        if ($includeEntities != null) {
+            $parameters['include_entities'] = ($includeEntities) ? 'true' : 'false';
+        }
+        if ($skipStatus != null) {
+            $parameters['skip_status'] = ($skipStatus) ? 'true' : 'false';
+        }
+
+        // make the call
+        return (array) $this->doCall(
+            'direct_messages.json',
+            $parameters, true
+        );
+    }
+
+    /**
+     * Returns the 20 most recent direct messages sent by the authenticating user. Includes detailed information about the sender and recipient user. You can request up to 200 direct messages per call, up to a maximum of 800 outgoing DMs.
+     * Important: This method requires an access token with RWD (read, write & direct message) permissions. Consult The Application Permission Model for more information.
+     *
+     * @param  string[optional] $sinceId         Returns results with an ID greater than (that is, more recent than) the specified ID. There are limits to the number of Tweets which can be accessed through the API. If the limit of Tweets has occured since the since_id, the since_id will be forced to the oldest ID available.
+     * @param  string[optional] $maxId           Returns results with an ID less than (that is, older than) or equal to the specified ID.
+     * @param  int[optional]    $count           Specifies the number of records to retrieve. Must be less than or equal to 200.
+     * @param  int[optional]    $page            Specifies the page of results to retrieve.
+     * @param  bool[optional]   $includeEntities The entities node will not be included when set to false.
+     * @return array
+     */
+    public function directMessagesSent(
+        $sinceId = null, $maxId = null, $count = null, $page = null,
+        $includeEntities = null
+    )
+    {
+        // build parameters
+        $parameters = array();
+        if ($sinceId != null) {
+            $parameters['since_id'] = (string) $sinceId;
+        }
+        if ($maxId != null) {
+            $parameters['max_id'] = (string) $maxId;
+        }
+        if ($count != null) {
+            $parameters['count'] = (int) $count;
+        }
+        if ($page != null) {
+            $parameters['page'] = (int) $page;
+        }
+        if ($includeEntities != null) {
+            $parameters['include_entities'] = ($includeEntities) ? 'true' : 'false';
+        }
+
+        // make the call
+        return (array) $this->doCall(
+            'direct_messages/sent.json',
+            $parameters, true
+        );
+    }
+
+    /**
+     *
+     * @param  string $id The ID of the direct message.
+     * @return array
+     */
+    public function directMessagesShow($id)
+    {
+        // build parameters
+        $parameters['id'] = (string) $id;
+
+        // make the call
+        return (array) $this->doCall(
+            'direct_messages/show.json',
+            $parameters, true
+        );
+    }
+
+    /**
+     * Destroys the direct message specified in the required ID parameter. The authenticating user must be the recipient of the specified direct message.
+     * Important: This method requires an access token with RWD (read, write & direct message) permissions. Consult The Application Permission Model for more information.
+     *
+     * @param  string         $id              The ID of the direct message to delete.
+     * @param  bool[optional] $includeEntities The entities node will not be included when set to false.
+     * @return array
+     */
+    public function directMessagesDestroy($id, $includeEntities = null)
+    {
+        // build parameters
+        $parameters['id'] = (string) $id;
+        if ($includeEntities != null) {
+            $parameters['include_entities'] = ($includeEntities) ? 'true' : 'false';
+        }
+
+        // make the call
+        return (array) $this->doCall(
+            'direct_messages/destroy.json',
+            $parameters, true, 'POST'
+        );
+    }
+
+    /**
+     * Sends a new direct message to the specified user from the authenticating user. Requires both the user and text parameters and must be a POST. Returns the sent message in the requested format if successful.
+     *
+     * @param  string[optional] $userId     The ID of the user who should receive the direct message. Helpful for disambiguating when a valid user ID is also a valid screen name.
+     * @param  string[optional] $screenName The screen name of the user who should receive the direct message. Helpful for disambiguating when a valid screen name is also a user ID.
+     * @param  string           $text       The text of your direct message. Be sure to URL encode as necessary, and keep the message under 140 characters.
+     * @return array
+     */
+    public function directMessagesNew(
+        $userId = null, $screenName = null, $text
+    )
+    {
+        // validate
+        if ($userId == null && $screenName == null) {
+            throw new Exception('One of user_id or screen_name are required.');
+        }
+
+        // build parameters
+        $parameters['text'] = (string) $text;
+        if ($userId != null) {
+            $parameters['user_id'] = (string) $userId;
+        }
+        if ($screenName != null) {
+            $parameters['screen_name'] = (string) $screenName;
+        }
+
+        // make the call
+        return (array) $this->doCall(
+            'direct_messages/new.json',
+            $parameters, true, 'POST'
+        );
+    }
+
 // User resources
     /**
      * Returns extended information of a given user, specified by ID or screen name as per the required id parameter.
@@ -1864,123 +2021,6 @@ class Twitter
             } else throw $e;
         }
 
-    }
-
-// Direct Messages resources
-    /**
-     * Returns a list of the 20 most recent direct messages sent to the authenticating user.
-     *
-     * @return array
-     * @param  string[optional] $sinceId         Returns results with an ID greater than (that is, more recent than) the specified ID.
-     * @param  string[optional] $maxId           Returns results with an ID less than (that is, older than) or equal to the specified ID.
-     * @param  int[optional]    $count           Specifies the number of records to retrieve. May not be greater than 200.
-     * @param  int[optional]    $page            Specifies the page of results to retrieve.
-     * @param  bool[optional]   $includeEntities When set to true each tweet will include a node called "entities,". This node offers a variety of metadata about the tweet in a discreet structure, including: user_mentions, urls, and hashtags.
-     */
-    public function directMessages(
-        $sinceId = null, $maxId = null, $count = null, $page = null,
-        $includeEntities = false
-    )
-    {
-        // validate
-        if ($count != null && $count > 200) {
-            throw new Exception('Count may not be greater than 200.');
-        }
-
-        // build parameters
-        $parameters = array();
-        if($sinceId != null) $parameters['since_id'] = (string) $sinceId;
-        if($maxId != null) $parameters['max_id'] = (string) $maxId;
-        if($count != null) $parameters['count'] = (int) $count;
-        if($page != null) $parameters['page'] = (int) $page;
-        if($includeEntities) $parameters['include_entities'] = 'true';
-
-        // make the call
-        return (array) $this->doCall('direct_messages.json', $parameters, true);
-    }
-
-    /**
-     * Returns a list of the 20 most recent direct messages sent by the authenticating user.
-     *
-     * @return array
-     * @param  string[optional] $sinceId         Returns results with an ID greater than (that is, more recent than) the specified ID.
-     * @param  string[optional] $maxId           Returns results with an ID less than (that is, older than) or equal to the specified ID.
-     * @param  int[optional]    $count           Specifies the number of records to retrieve. May not be greater than 200.
-     * @param  int[optional]    $page            Specifies the page of results to retrieve.
-     * @param  bool[optional]   $includeEntities When set to true each tweet will include a node called "entities,". This node offers a variety of metadata about the tweet in a discreet structure, including: user_mentions, urls, and hashtags.
-     */
-    public function directMessagesSent(
-        $sinceId = null, $maxId = null, $count = null, $page = null,
-        $includeEntities = false
-    )
-    {
-        // validate
-        if ($count != null && $count > 200) {
-            throw new Exception('Count may not be greater than 200.');
-        }
-
-        // build parameters
-        $parameters = array();
-        if($sinceId != null) $parameters['since_id'] = (string) $sinceId;
-        if($maxId != null) $parameters['max_id'] = (string) $maxId;
-        if($count != null) $parameters['count'] = (int) $count;
-        if($page != null) $parameters['page'] = (int) $page;
-        if($includeEntities) $parameters['include_entities'] = 'true';
-
-        // make the call
-        return (array) $this->doCall(
-            'direct_messages/sent.json', $parameters, true
-        );
-    }
-
-    /**
-     * Sends a new direct message to the specified user from the authenticating user.
-     * Requires both the user and text parameters. Returns the sent message in the requested format when successful.
-     *
-     * @return array
-     * @param  string           $text            The text of your direct message. Be sure to URL encode as necessary, and keep it under 140 characters.
-     * @param  string[optional] $userId          Specfies the screen name of the user for whom to return results for. Helpful for disambiguating when a valid screen name is also a user ID.
-     * @param  string[optional] $screenName      Specfies the ID of the user for whom to return results for. Helpful for disambiguating when a valid user ID is also a valid screen name.
-     * @param  bool[optional]   $includeEntities When set to true each tweet will include a node called "entities,". This node offers a variety of metadata about the tweet in a discreet structure, including: user_mentions, urls, and hashtags.
-     */
-    public function directMessagesNew(
-        $text, $userId = null, $screenName = null, $includeEntities = false
-    )
-    {
-        // validate
-        if ($userId == '' && $screenName == '') {
-            throw new Exception('Specify an userId or a screenName.');
-        }
-
-        // build parameters
-        $parameters['text'] = (string) $text;
-        if($userId != null) $parameters['user_id'] = (string) $userId;
-        if($screenName != null) $parameters['screen_name'] = (string) $screenName;
-        if($includeEntities) $parameters['include_entities'] = 'true';
-
-        // make the call
-        return (array) $this->doCall(
-            'direct_messages/new.json', $parameters, true, 'POST'
-        );
-    }
-
-    /**
-     * Destroys the direct message specified in the required ID parameter. The authenticating user must be the recipient of the specified direct message.
-     *
-     * @return array
-     * @param  string         $id              The ID of the desired direct message.
-     * @param  bool[optional] $includeEntities When set to true each tweet will include a node called "entities,". This node offers a variety of metadata about the tweet in a discreet structure, including: user_mentions, urls, and hashtags.
-     */
-    public function directMessagesDestroy($id, $includeEntities = false)
-    {
-        // build parameters
-        $parameters['id'] = (string) $id;
-        if($includeEntities) $parameters['include_entities'] = 'true';
-
-        // make the call
-        return (array) $this->doCall(
-            'direct_messages/destroy.json', $parameters, true, 'POST'
-        );
     }
 
 // Friendship resources

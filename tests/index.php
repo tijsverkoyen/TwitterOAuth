@@ -34,6 +34,12 @@ try {
 //	$response = $twitter->statusesOEmbed('240192632003911681');
 
 //	$response = $twitter->searchTweets('#freebandnames');
+
+//	$response = $twitter->directMessages();
+//	$response = $twitter->directMessagesSent();
+//  $response = $twitter->directMessagesShow('264022285470547969');
+//	$response = $twitter->directMessagesDestroy('264854339762393088');
+//	$response = $twitter->directMessagesNew(null, 'tijs_dev', 'Running the tests.. 私のさえずりを設定する '. time());
 } catch (Exception $e) {
     var_dump($e);
 }
