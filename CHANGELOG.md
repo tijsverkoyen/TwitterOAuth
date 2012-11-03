@@ -1,3 +1,11 @@
+# Changelog since 2.2.0
+
+* made the class available through composer
+
+# Changelog since 2.1.2
+
+* Made it compliant with PSR
+
 # Changelog since 2.1.1
 
 * code styling

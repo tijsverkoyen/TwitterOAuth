@@ -5,7 +5,7 @@ namespace TijsVerkoyen\Twitter;
  * Twitter class
  *
  * @author		Tijs Verkoyen <php-twitter@verkoyen.eu>
- * @version		2.2.0
+ * @version		2.2.1
  * @copyright	Copyright (c), Tijs Verkoyen. All rights reserved.
  * @license		BSD License
  */
@@ -25,7 +25,7 @@ class Twitter
     const SECURE_API_PORT = 443;
 
     // current version
-    const VERSION = '2.2.0';
+    const VERSION = '2.2.1';
 
     /**
      * A cURL instance
