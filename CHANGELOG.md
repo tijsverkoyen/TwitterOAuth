@@ -2,6 +2,7 @@
 
 * Fixed issue with wrong classname for Exceptions
 * Fixed issue with reference to class itself
+* Removed/Updated methods to reflect the current Twitter API
 
 # Changelog since 2.2.0
 
