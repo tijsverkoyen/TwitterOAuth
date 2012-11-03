@@ -40,6 +40,12 @@ try {
 //  $response = $twitter->directMessagesShow('264022285470547969');
 //	$response = $twitter->directMessagesDestroy('264854339762393088');
 //	$response = $twitter->directMessagesNew(null, 'tijs_dev', 'Running the tests.. 私のさえずりを設定する '. time());
+
+//	$response = $twitter->helpConfiguration();
+//	$response = $twitter->helpLanguages();
+//	$response = $twitter->helpPrivacy();
+//	$response = $twitter->helpTos();
+//	$response = $twitter->applicationRateLimitStatus();
 } catch (Exception $e) {
     var_dump($e);
 }

@@ -38,6 +38,10 @@ class TwitterTest extends PHPUnit_Framework_TestCase
         parent::tearDown();
     }
 
+    /**
+     * Test if an array is a direct message
+     * @param array $item
+     */
     private function isDirectMessage(array $item)
     {
         $this->assertArrayHasKey('id', $item);
@@ -61,6 +65,10 @@ class TwitterTest extends PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('user', $item);
     }
 
+    /**
+     * Test if an array is a user
+     * @param array $item
+     */
     private function isUser(array $item)
     {
         $this->assertArrayHasKey('id', $item);
@@ -169,7 +177,7 @@ class TwitterTest extends PHPUnit_Framework_TestCase
      */
     public function testStatusesDestroy()
     {
-        $$response = $this->twitter->statusesUpdate('Running the tests.. 私のさえずりを設定する '. time());
+        $response = $this->twitter->statusesUpdate('Running the tests.. 私のさえずりを設定する '. time());
         $response = $this->twitter->statusesDestroy($response['id']);
         $this->isTweet($response);
     }
@@ -281,5 +289,68 @@ class TwitterTest extends PHPUnit_Framework_TestCase
         $response = $this->twitter->directMessagesNew(null, 'tijs_dev', 'Running the tests.. 私のさえずりを設定する '. time());
         $this->isDirectMessage($response);
         $this->twitter->directMessagesDestroy($response['id']);
+    }
+
+    /**
+     * Tests Twitter->helpConfiguration()
+     */
+    public function testHelpConfiguration()
+    {
+        $response = $this->twitter->helpConfiguration();
+        $this->assertArrayHasKey('non_username_paths', $response);
+        $this->assertArrayHasKey('photo_size_limit', $response);
+        $this->assertArrayHasKey('max_media_per_upload', $response);
+        $this->assertArrayHasKey('characters_reserved_per_media', $response);
+        $this->assertArrayHasKey('short_url_length', $response);
+        $this->assertArrayHasKey('photo_sizes', $response);
+        $this->assertArrayHasKey('short_url_length_https', $response);
+    }
+
+    /**
+     * Tests Twitter->helpLanguages()
+     */
+    public function testHelpLanguages()
+    {
+        $response = $this->twitter->helpLanguages();
+        foreach ($response as $row) {
+            $this->assertArrayHasKey('name', $row);
+            $this->assertArrayHasKey('status', $row);
+            $this->assertArrayHasKey('code', $row);
+        }
+    }
+
+    /**
+     * Tests Twitter->helpPrivacy()
+     */
+    public function testHelpPrivacy()
+    {
+        $response = $this->twitter->helpPrivacy();
+        $this->assertArrayHasKey('privacy', $response);
+    }
+
+    /**
+     * Tests Twitter->helpTos()
+     */
+    public function testHelpTos()
+    {
+        $response = $this->twitter->helpTos();
+        $this->assertArrayHasKey('tos', $response);
+    }
+
+    /**
+     * Tests Twitter->applicationRateLimitStatus()
+     */
+    public function testApplicationRateLimitStatus()
+    {
+        $response = $this->twitter->applicationRateLimitStatus();
+        $this->assertArrayHasKey('rate_limit_context', $response);
+        $this->assertArrayHasKey('resources', $response);
+        foreach ($response['resources'] as $row) {
+            foreach ($row as $subRow) {
+                $this->assertArrayHasKey('limit', $subRow);
+                $this->assertArrayHasKey('remaining', $subRow);
+                $this->assertArrayHasKey('reset', $subRow);
+            }
+        }
     }
 }

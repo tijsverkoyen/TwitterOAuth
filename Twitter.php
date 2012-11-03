@@ -3162,15 +3162,78 @@ class Twitter
 
 // Help resources
     /**
-     * Test
+     * Returns the current configuration used by Twitter including twitter.com slugs which are not usernames, maximum photo resolutions, and t.co URL lengths.
+     * It is recommended applications request this endpoint when they are loaded, but no more than once a day.
      *
-     * @return bool
+     * @return array
      */
-    public function helpTest()
+    public function helpConfiguration()
     {
         // make the call
-        return ($this->doCall(
-            'help/test.json', null, null, 'GET', null, false) == '"ok"'
+        return $this->doCall(
+            'help/configuration.json'
+        );
+    }
+
+    /**
+     * Returns the list of languages supported by Twitter along with their ISO 639-1 code. The ISO 639-1 code is the two letter value to use if you include lang with any of your requests.
+     *
+     * @return array
+     */
+    public function helpLanguages()
+    {
+        // make the call
+        return $this->doCall(
+            'help/languages.json'
+        );
+    }
+
+    /**
+     * Returns Twitter's Privacy Policy
+     *
+     * @return array
+     */
+    public function helpPrivacy()
+    {
+        // make the call
+        return $this->doCall(
+            'help/privacy.json'
+        );
+    }
+
+    /**
+     * Returns the Twitter Terms of Service in the requested format. These are not the same as the Developer Rules of the Road.
+     *
+     * @return array
+     */
+    public function helpTos()
+    {
+        // make the call
+        return $this->doCall(
+            'help/tos.json'
+        );
+    }
+
+    /**
+     * Returns the current rate limits for methods belonging to the specified resource families.
+     * Each 1.1 API resource belongs to a "resource family" which is indicated in its method documentation. You can typically determine a method's resource family from the first component of the path after the resource version.
+     * This method responds with a map of methods belonging to the families specified by the resources parameter, the current remaining uses for each of those resources within the current rate limiting window, and its expiration time in epoch time. It also includes a rate_limit_context field that indicates the current access token context.
+     * You may also issue requests to this method without any parameters to receive a map of all rate limited GET methods. If your application only uses a few of methods, please explicitly provide a resources parameter with the specified resource families you work with.
+     *
+     * @param  array  $resources A comma-separated list of resource families you want to know the current rate limit disposition for. For best performance, only specify the resource families pertinent to your application.
+     * @return string
+     */
+    public function applicationRateLimitStatus(array $resources = null)
+    {
+        $parameters = null;
+        if (!empty($resources)) {
+            $parameters['resources'] = implode(',', $resources);
+        }
+
+        // make the call
+        return $this->doCall(
+            'application/rate_limit_status.json',
+            $parameters
         );
     }
 }
