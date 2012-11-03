@@ -1,6 +1,7 @@
 # Changelog since 2.2.1
 
 * Fixed issue with wrong classname for Exceptions
+* Fixed issue with reference to class itself
 
 # Changelog since 2.2.0
 
