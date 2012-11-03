@@ -292,6 +292,15 @@ class TwitterTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * Tests Twitter->reportSpam()
+     */
+    public function testReportSpam()
+    {
+        $response = $this->twitter->reportSpam('FujitaKatsuhisa');
+        $this->isUser($response);
+    }
+
+    /**
      * Tests Twitter->helpConfiguration()
      */
     public function testHelpConfiguration()

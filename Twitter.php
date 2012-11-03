@@ -2726,18 +2726,15 @@ class Twitter
     /**
      * The user specified in the id is blocked by the authenticated user and reported as a spammer.
      *
+     * @param  string[optional] $screenName The ID or screen_name of the user you want to report as a spammer. Helpful for disambiguating when a valid screen name is also a user ID.
+     * @param  string[optional] $userId     The ID of the user you want to report as a spammer. Helpful for disambiguating when a valid user ID is also a valid screen name.
      * @return array
-     * @param  string[optional] $userId          Specfies the screen name of the user for whom to return results for. Helpful for disambiguating when a valid screen name is also a user ID.
-     * @param  string[optional] $screenName      Specfies the ID of the user for whom to return results for. Helpful for disambiguating when a valid user ID is also a valid screen name.
-     * @param  bool[optional]   $includeEntities When set to true each tweet will include a node called "entities,". This node offers a variety of metadata about the tweet in a discreet structure, including: user_mentions, urls, and hashtags.
      */
-    public function reportSpam(
-        $userId = null, $screenName = null, $includeEntities = false
-    )
+    public function reportSpam($screenName = null, $userId = null)
     {
         // validate
         if ($userId == '' && $screenName == '') {
-            throw new Exception('Specify an userId or a screenName.');
+            throw new Exception('One of these parameters must be provided.');
         }
 
         // build parameters
@@ -2747,13 +2744,11 @@ class Twitter
         if ($screenName != null) {
             $parameters['screen_name'] = (string) $screenName;
         }
-        if ($includeEntities) {
-            $parameters['include_entities'] = 'true';
-        }
 
         // make the call
         return (array) $this->doCall(
-            'report_spam.json', $parameters, true, 'POST'
+            'users/report_spam.json',
+            $parameters, true, 'POST'
         );
     }
 

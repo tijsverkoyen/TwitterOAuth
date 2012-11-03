@@ -41,6 +41,78 @@ try {
 //	$response = $twitter->directMessagesDestroy('264854339762393088');
 //	$response = $twitter->directMessagesNew(null, 'tijs_dev', 'Running the tests.. 私のさえずりを設定する '. time());
 
+//	@todo $response = $twitter->friendsIds();
+//	@todo $response = $twitter->followersIds();
+//	@todo $response = $twitter->friendshipsLookup();
+//	@todo $response = $twitter->friendshipsIncoming();
+//	@todo $response = $twitter->friendshpsOutgoing();
+//	@todo $response = $twitter->friendshipsCreate();
+//	@todo $response = $twitter->friendshipsDestroy();
+//	@todo $response = $twitter->friendshipsUpdate();
+//	@todo $response = $twitter->friendshipsShow();
+
+//	@todo $response = $twitter->accountSettings();
+//	@todo $response = $twitter->accountVerifyCredentials();
+//	@todo $response = $twitter->accountSettingsUpdate();
+//	@todo $response = $twitter->accountUpdateDeliveryDevice();
+//	@todo $response = $twitter->accountUpdateProfile();
+//	@todo $response = $twitter->accountUpdateProfileBackgroundImage();
+//	@todo $response = $twitter->accountUpdateProfileColors();
+//	@todo $response = $twitter->accountUpdateProfileImage();
+//	@todo $response = $twitter->blocksLists();
+//	@todo $response = $twitter->blocksIds();
+//	@todo $response = $twitter->blocksCreate();
+//	@todo $response = $twitter->blocksDestroy();
+//	@todo $response = $twitter->usersLookup();
+//	@todo $response = $twitter->usersShow();
+//	@todo $response = $twitter->usersSearch();
+//	@todo $response = $twitter->usersContributees();
+//	@todo $response = $twitter->usersContributors();
+
+//	@todo $response = $twitter->usersSuggestionsSlug();
+//	@todo $response = $twitter->usersSuggestions();
+//	@todo $response = $twitter->usersSuggestionsMembers();
+
+//	@todo $response = $twitter->favoritesList();
+//	@todo $response = $twitter->favoritesDestroy();
+//	@todo $response = $twitter->favoritesCreate();
+
+//	@todo $response = $twitter->listsList();
+//	@todo $response = $twitter->listsStatuses();
+//	@todo $response = $twitter->listsMembersDestroy();
+//	@todo $response = $twitter->listsMemberships();
+//	@todo $response = $twitter->listsSubscribers();
+//	@todo $response = $twitter->listsSubscribersCreate();
+//	@todo $response = $twitter->listsSubscribersShow();
+//	@todo $response = $twitter->listsSubscribersDestroy();
+//	@todo $response = $twitter->listsMembersCreateAll();
+//	@todo $response = $twitter->listsMembersShow();
+//	@todo $response = $twitter->listsMembers():
+//	@todo $response = $twitter->listsMembersCreate();
+//	@todo $response = $twitter->listsDestroy();
+//	@todo $response = $twitter->listsUpdate();
+//	@todo $response = $twitter->listsCreate();
+//	@todo $response = $twitter->listsShow();
+//	@todo $response = $twitter->listsSubscriptions();
+//	@todo $response = $twitter->listsMembersDestroyAll();
+
+//	@todo $response = $twitter->savedSearchesList();
+//	@todo $response = $twitter->savedSearchesShow();
+//	@todo $response = $twitter->savedSearchesCreate();
+//	@todo $response = $twitter->savedSearchesDestroy();
+
+//	@todo $response = $twitter->geoId();
+//	@todo $response = $twitter->geoReverseGeoCode();
+//	@todo $response = $twitter->geoSearch();
+//	@todo $response = $twitter->geoSimilarPlaces();
+//	@todo $response = $twitter->geoPlace();
+
+//	@todo $response = $twitter->trendsPlace();
+//	@todo $response = $twitter->trendsAvailable();
+//	@todo $response = $twitter->trendsClosest();
+
+//	$response = $twitter->reportSpam('FujitaKatsuhisa');
+
 //	$response = $twitter->helpConfiguration();
 //	$response = $twitter->helpLanguages();
 //	$response = $twitter->helpPrivacy();
