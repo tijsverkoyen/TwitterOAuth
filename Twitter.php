@@ -1553,70 +1553,6 @@ class Twitter
         );
     }
 
-// Trends resources
-    /**
-     * Returns the top ten topics that are currently trending on Twitter.
-     * The response includes the time of the request, the name of each trend, and the url to the Twitter Search results page for that topic.
-     *
-     * @return array
-     */
-    public function trends()
-    {
-        return (array) $this->doCall('trends.json');
-    }
-
-    /**
-     * Returns the current top 10 trending topics on Twitter. The response includes the time of the request, the name of each trending topic, and query used on Twitter Search results page for that topic.
-     *
-     * @return array
-     * @param  string[optional] $exclude Setting this equal to hashtags will remove all hashtags from the trends list.
-     */
-    public function trendsCurrent($exclude = null)
-    {
-        // build parameters
-        $parameters = null;
-        if($exclude != null) $parameters['exclude'] = (string) $exclude;
-
-        // make the call
-        return (array) $this->doCall('trends/current.json', $parameters);
-    }
-
-    /**
-     * Returns the top 20 trending topics for each hour in a given day.
-     *
-     * @return array
-     * @param  string[optional] $date    Permits specifying a start date for the report. The date should be formatted YYYY-MM-DD.
-     * @param  string[optional] $exclude Setting this equal to hashtags will remove all hashtags from the trends list.
-     */
-    public function trendsDaily($date = null, $exclude = null)
-    {
-        // build parameters
-        $parameters = null;
-        if($date != null) $parameters['date'] = (string) $date;
-        if($exclude != null) $parameters['exclude'] = (string) $exclude;
-
-        // make the call
-        return (array) $this->doCall('trends/daily.json', $parameters);
-    }
-
-    /**
-     * Returns the top 30 trending topics for each day in a given week.
-     *
-     * @return array
-     * @param  string[optional] $date    Permits specifying a start date for the report. The date should be formatted YYYY-MM-DD.
-     * @param  string[optional] $exclude Setting this equal to hashtags will remove all hashtags from the trends list.
-     */
-    public function trendsWeekly($date = null, $exclude = null)
-    {
-        // build parameters
-        $parameters = null;
-        if($date != null) $parameters['date'] = (string) $date;
-        if($exclude != null) $parameters['exclude'] = (string) $exclude;
-
-        // make the call
-        return (array) $this->doCall('trends/weekly.json', $parameters);
-    }
-
 // List resources
     /**
      * Creates a new list for the authenticated user. Accounts are limited to 20 lists.
@@ -2722,36 +2658,6 @@ class Twitter
         return (array) $this->doCall('blocks/blocking/ids.json', null, true);
     }
 
-// Spam Reporting resources
-    /**
-     * The user specified in the id is blocked by the authenticated user and reported as a spammer.
-     *
-     * @param  string[optional] $screenName The ID or screen_name of the user you want to report as a spammer. Helpful for disambiguating when a valid screen name is also a user ID.
-     * @param  string[optional] $userId     The ID of the user you want to report as a spammer. Helpful for disambiguating when a valid user ID is also a valid screen name.
-     * @return array
-     */
-    public function reportSpam($screenName = null, $userId = null)
-    {
-        // validate
-        if ($userId == '' && $screenName == '') {
-            throw new Exception('One of these parameters must be provided.');
-        }
-
-        // build parameters
-        if ($userId != null) {
-            $parameters['user_id'] = (string) $userId;
-        }
-        if ($screenName != null) {
-            $parameters['screen_name'] = (string) $screenName;
-        }
-
-        // make the call
-        return (array) $this->doCall(
-            'users/report_spam.json',
-            $parameters, true, 'POST'
-        );
-    }
-
 // Saved Searches resources
     /**
      * Returns the authenticated user's saved search queries.
@@ -2807,140 +2713,6 @@ class Twitter
             'saved_searches/destroy/' . (string) $id . '.json',
             null, true, 'POST'
         );
-    }
-
-// OAuth resources
-    /**
-     * Allows a Consumer application to obtain an OAuth Request Token to request user authorization.
-     * This method fulfills Secion 6.1 of the OAuth 1.0 authentication flow.
-     *
-     * @return array            An array containg the token and the secret
-     * @param  string[optional] $callbackURL The callback URL.
-     */
-    public function oAuthRequestToken($callbackURL = null)
-    {
-        // init var
-        $parameters = null;
-
-        // set callback
-        if ($callbackURL != null) {
-            $parameters['oauth_callback'] = (string) $callbackURL;
-        }
-
-        // make the call
-        $response = $this->doOAuthCall('request_token', $parameters);
-
-        // validate
-        if (!isset($response['oauth_token'], $response['oauth_token_secret'])) {
-            throw new Exception(implode(', ', array_keys($response)));
-        }
-
-        // set some properties
-        if (isset($response['oauth_token'])) {
-            $this->setOAuthToken($response['oauth_token']);
-        }
-        if (isset($response['oauth_token_secret'])) {
-            $this->setOAuthTokenSecret($response['oauth_token_secret']);
-        }
-
-        // return
-        return $response;
-    }
-
-    /**
-     * Allows a Consumer application to exchange the OAuth Request Token for an OAuth Access Token.
-     * This method fulfills Secion 6.3 of the OAuth 1.0 authentication flow.
-     *
-     * @return array
-     * @param  string $token    The token to use.
-     * @param  string $verifier The verifier.
-     */
-    public function oAuthAccessToken($token, $verifier)
-    {
-        // init var
-        $parameters = array();
-        $parameters['oauth_token'] = (string) $token;
-        $parameters['oauth_verifier'] = (string) $verifier;
-
-        // make the call
-        $response = $this->doOAuthCall('access_token', $parameters);
-
-        // set some properties
-        if (isset($response['oauth_token'])) {
-            $this->setOAuthToken($response['oauth_token']);
-        }
-        if (isset($response['oauth_token_secret'])) {
-            $this->setOAuthTokenSecret($response['oauth_token_secret']);
-        }
-
-        // return
-        return $response;
-    }
-
-    /**
-     * Will redirect to the page to authorize the applicatione
-     *
-     * @return void
-     * @param  string $token The token.
-     */
-    public function oAuthAuthorize($token)
-    {
-        header('Location: ' . self::SECURE_API_URL .
-               '/oauth/authorize?oauth_token=' . $token);
-    }
-
-    /**
-     * Allows a Consumer application to use an OAuth request_token to request user authorization. This method is a replacement fulfills Secion 6.2 of the OAuth 1.0 authentication flow for applications using the Sign in with Twitter authentication flow. The method will use the currently logged in user as the account to for access authorization unless the force_login parameter is set to true
-     * REMARK: This method seems not to work	@later
-     *
-     * @return void
-     * @param  bool[optional] $force Force the authentication.
-     */
-    public function oAuthAuthenticate($force = false)
-    {
-        throw new Exception('Not implemented');
-
-        // build parameters
-        $parameters = null;
-        if((bool) $force) $parameters['force_login'] = 'true';
-
-        // make the call
-        return $this->doCall('/oauth/authenticate.oauth', $parameters);
-    }
-
-// Local Trends resources
-    /**
-     * Returns the locations that Twitter has trending topic information for.
-     * The response is an array of "locations" that encode the location's WOEID (a Yahoo! Where On Earth ID) and some other human-readable information such as a canonical name and country the location belongs in.
-     * The WOEID that is returned in the location object is to be used when querying for a specific trend.
-     *
-     * @return array
-     * @param  float[optional] $lat  If passed in conjunction with long, then the available trend locations will be sorted by distance to the lat  and long passed in. The sort is nearest to furthest.
-     * @param  float[optional] $long If passed in conjunction with lat, then the available trend locations will be sorted by distance to the lat  and long passed in. The sort is nearest to furthest.
-     */
-    public function trendsAvailable($lat = null, $long = null)
-    {
-        // build parameters
-        $parameters = null;
-        if($lat != null) $parameters['lat_for_trends'] = (float) $lat;
-        if($long != null) $parameters['long_for_trends'] = (float) $long;
-
-        // make the call
-        return (array) $this->doCall('trends/available.json', $parameters);
-    }
-
-    /**
-     * Returns the top 10 trending topics for a specific location Twitter has trending topic information for.
-     * The response is an array of "trend" objects that encode the name of the trending topic, the query parameter that can be used to search for the topic on Search, and the direct URL that can be issued against Search.
-     * This information is cached for five minutes, and therefore users are discouraged from querying these endpoints faster than once every five minutes. Global trends information is also available from this API by using a WOEID of 1.
-     *
-     * @return array
-     * @param  string $woeid The WOEID of the location to be querying for.
-     */
-    public function trendsLocation($woeid)
-    {
-        // make the call
-        return (array) $this->doCall('trends/' . (string) $woeid . '.json');
     }
 
 // Geo resources
@@ -3120,40 +2892,139 @@ class Twitter
         );
     }
 
-// legal resources
-    /**
-     * Returns Twitter's' Terms of Service in the requested format. These are not the same as the Developer Terms of Service.
-     *
-     * @return string
-     */
-    public function legalToS()
-    {
-        // make the call
-        $response = $this->doCall('legal/tos.json');
 
-        // validate and return
-        if(isset($response['tos'])) return $response['tos'];
 
-        // fallback
-        return false;
-    }
 
-    /**
-     * Returns Twitter's Privacy Policy
-     *
-     * @return string
-     */
-    public function legalPrivacy()
-    {
-        // make the call
-        $response = $this->doCall('legal/privacy.json');
 
-        // validate and return
-        if(isset($response['privacy'])) return $response['privacy'];
 
-        // fallback
-        return false;
-    }
+// Spam Reporting resources
+	/**
+	 * The user specified in the id is blocked by the authenticated user and reported as a spammer.
+	 *
+	 * @param  string[optional] $screenName The ID or screen_name of the user you want to report as a spammer. Helpful for disambiguating when a valid screen name is also a user ID.
+	 * @param  string[optional] $userId     The ID of the user you want to report as a spammer. Helpful for disambiguating when a valid user ID is also a valid screen name.
+	 * @return array
+	 */
+	public function reportSpam($screenName = null, $userId = null)
+	{
+		// validate
+		if ($userId == '' && $screenName == '') {
+			throw new Exception('One of these parameters must be provided.');
+		}
+
+		// build parameters
+		if ($userId != null) {
+			$parameters['user_id'] = (string) $userId;
+		}
+		if ($screenName != null) {
+			$parameters['screen_name'] = (string) $screenName;
+		}
+
+		// make the call
+		return (array) $this->doCall(
+			'users/report_spam.json',
+			$parameters, true, 'POST'
+		);
+	}
+
+	// OAuth resources
+	/**
+	 * Allows a Consumer application to obtain an OAuth Request Token to request user authorization.
+	 * This method fulfills Secion 6.1 of the OAuth 1.0 authentication flow.
+	 *
+	 * @return array            An array containg the token and the secret
+	 * @param  string[optional] $callbackURL The callback URL.
+	 */
+	public function oAuthRequestToken($callbackURL = null)
+	{
+		// init var
+		$parameters = null;
+
+		// set callback
+		if ($callbackURL != null) {
+			$parameters['oauth_callback'] = (string) $callbackURL;
+		}
+
+		// make the call
+		$response = $this->doOAuthCall('request_token', $parameters);
+
+		// validate
+		if (!isset($response['oauth_token'], $response['oauth_token_secret'])) {
+			throw new Exception(implode(', ', array_keys($response)));
+		}
+
+		// set some properties
+		if (isset($response['oauth_token'])) {
+			$this->setOAuthToken($response['oauth_token']);
+		}
+		if (isset($response['oauth_token_secret'])) {
+			$this->setOAuthTokenSecret($response['oauth_token_secret']);
+		}
+
+		// return
+		return $response;
+	}
+
+	/**
+	 * Allows a Consumer application to exchange the OAuth Request Token for an OAuth Access Token.
+	 * This method fulfills Secion 6.3 of the OAuth 1.0 authentication flow.
+	 *
+	 * @return array
+	 * @param  string $token    The token to use.
+	 * @param  string $verifier The verifier.
+	 */
+	public function oAuthAccessToken($token, $verifier)
+	{
+		// init var
+		$parameters = array();
+		$parameters['oauth_token'] = (string) $token;
+		$parameters['oauth_verifier'] = (string) $verifier;
+
+		// make the call
+		$response = $this->doOAuthCall('access_token', $parameters);
+
+		// set some properties
+		if (isset($response['oauth_token'])) {
+			$this->setOAuthToken($response['oauth_token']);
+		}
+		if (isset($response['oauth_token_secret'])) {
+			$this->setOAuthTokenSecret($response['oauth_token_secret']);
+		}
+
+		// return
+		return $response;
+	}
+
+	/**
+	 * Will redirect to the page to authorize the applicatione
+	 *
+	 * @return void
+	 * @param  string $token The token.
+	 */
+	public function oAuthAuthorize($token)
+	{
+		header('Location: ' . self::SECURE_API_URL .
+			   '/oauth/authorize?oauth_token=' . $token);
+	}
+
+	/**
+	 * Allows a Consumer application to use an OAuth request_token to request user authorization. This method is a replacement fulfills Secion 6.2 of the OAuth 1.0 authentication flow for applications using the Sign in with Twitter authentication flow. The method will use the currently logged in user as the account to for access authorization unless the force_login parameter is set to true
+	 * REMARK: This method seems not to work	@later
+	 *
+	 * @return void
+	 * @param  bool[optional] $force Force the authentication.
+	 */
+	public function oAuthAuthenticate($force = false)
+	{
+		throw new Exception('Not implemented');
+
+		// build parameters
+		$parameters = null;
+		if((bool) $force) $parameters['force_login'] = 'true';
+
+		// make the call
+		return $this->doCall('/oauth/authenticate.oauth', $parameters);
+	}
 
 // Help resources
 	/**
