@@ -300,6 +300,21 @@ class TwitterTest extends PHPUnit_Framework_TestCase
         $this->isUser($response);
     }
 
+	/**
+	 * Tests Twitter->helpConfiguration()
+	 */
+	public function testHelpConfiguration()
+	{
+		$response = $this->twitter->helpConfiguration();
+		$this->assertArrayHasKey('characters_reserved_per_media', $response);
+		$this->assertArrayHasKey('short_url_length_https', $response);
+		$this->assertArrayHasKey('photo_sizes', $response);
+		$this->assertArrayHasKey('non_username_paths', $response);
+		$this->assertArrayHasKey('max_media_per_upload', $response);
+		$this->assertArrayHasKey('photo_size_limit', $response);
+		$this->assertArrayHasKey('short_url_length', $response);
+	}
+
     /**
      * Tests Twitter->helpLanguages()
      */

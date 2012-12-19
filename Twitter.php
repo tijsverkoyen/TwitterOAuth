@@ -3156,19 +3156,19 @@ class Twitter
     }
 
 // Help resources
-    /**
-     * Returns the current configuration used by Twitter including twitter.com slugs which are not usernames, maximum photo resolutions, and t.co URL lengths.
-     * It is recommended applications request this endpoint when they are loaded, but no more than once a day.
-     *
-     * @return array
-     */
-    public function helpConfiguration()
-    {
-        // make the call
-        return $this->doCall(
-            'help/configuration.json'
-        );
-    }
+	/**
+	 * Returns the current configuration used by Twitter including twitter.com slugs which are not usernames, maximum photo resolutions, and t.co URL lengths.
+	 * It is recommended applications request this endpoint when they are loaded, but no more than once a day.
+	 *
+	 * @return array
+	 */
+	public function helpConfiguration()
+	{
+		// make the call
+		return $this->doCall(
+			'help/configuration.json'
+		);
+	}
 
     /**
      * Returns the list of languages supported by Twitter along with their ISO 639-1 code. The ISO 639-1 code is the two letter value to use if you include lang with any of your requests.
