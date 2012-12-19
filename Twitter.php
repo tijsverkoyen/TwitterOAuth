@@ -65,7 +65,7 @@ class Twitter
      *
      * @var	int
      */
-    private $timeOut = 60;
+    private $timeOut = 10;
 
     /**
      * The user agent
