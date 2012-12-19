@@ -101,11 +101,11 @@ try {
 //	@todo $response = $twitter->savedSearchesCreate();
 //	@todo $response = $twitter->savedSearchesDestroy();
 
-//	@todo $response = $twitter->geoId();
-//	@todo $response = $twitter->geoReverseGeoCode();
-//	@todo $response = $twitter->geoSearch();
-//	@todo $response = $twitter->geoSimilarPlaces();
-//	@todo $response = $twitter->geoPlace();
+//	$response = $twitter->geoId('df51dec6f4ee2b2c');
+//	$response = $twitter->geoReverseGeoCode(37.7821120598956, -122.400612831116);
+//	$response = $twitter->geoSearch(37.7821120598956, -122.400612831116);
+//	$response = $twitter->geoSimilarPlaces(37.7821120598956, -122.400612831116, 'Twitter HQ');
+//	$response = $twitter->geoPlace('Twitter HQ', '247f43d441defc03', '36179c9bf78835898ebf521c1defd4be', 37.7821120598956, -122.400612831116, array('street_address' => '795 Folsom St'));
 
 //	$response = $twitter->trendsPlace(1);
 //	$response = $twitter->trendsAvailable();

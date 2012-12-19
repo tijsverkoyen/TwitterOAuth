@@ -2716,29 +2716,47 @@ class Twitter
     }
 
 // Geo resources
+	/**
+	 * Returns all the information about a known place.
+	 *
+	 * @return array
+	 * @param  string           $id      A place in the world. These IDs can be retrieved from geo/reverse_geocode.
+	 */
+	public function geoId($id)
+	{
+		// build parameters
+		$parameters = null;
+
+		// make the call
+		return (array) $this->doCall(
+			'geo/id/' . (string) $id . '.json', $parameters
+		);
+	}
+
     /**
      * Search for places that can be attached to a statuses/update. Given a latitude and a longitude pair, an IP address, or a name, this request will return a list of all the valid places that can be used as the place_id when updating a status.
-     * Conceptually, a query can be made from the user's location, retrieve a list of places, have the user validate the location he or she is at, and then send the ID of this location with a call to statuses/update.
-     * This is the recommended method to use find places that can be attached to statuses/update. Unlike geo/reverse_geocode which provides raw data access, this endpoint can potentially re-order places with regards to the user who is authenticated. This approach is also preferred for interactive place matching with the user.
+	 * Conceptually, a query can be made from the user's location, retrieve a list of places, have the user validate the location he or she is at, and then send the ID of this location with a call to POST statuses/update.
+	 * This is the recommended method to use find places that can be attached to statuses/update. Unlike GET geo/reverse_geocode which provides raw data access, this endpoint can potentially re-order places with regards to the user who is authenticated. This approach is also preferred for interactive place matching with the user.
      *
      * @return array
      * @param  float[optional]  $lat             The latitude to search around. This parameter will be ignored unless it is inside the range -90.0 to +90.0 (North is positive) inclusive. It will also be ignored if there isn't a corresponding long parameter.
      * @param  float[optional]  $long            The longitude to search around. The valid ranges for longitude is -180.0 to +180.0 (East is positive) inclusive. This parameter will be ignored if outside that range, if it is not a number, if geo_enabled is disabled, or if there not a corresponding lat parameter.
-     * @param  string[optional] $query           Free-form text to match against while executing a geo-based query, best suited for finding nearby locations by name.
+     * @param  string[optional] $query           Free-form text to match against while executing a geo-based query, best suited for finding nearby locations by name. Remember to URL encode the query.
      * @param  string[optional] $ip              An IP address. Used when attempting to fix geolocation based off of the user's IP address.
-     * @param  string[optional] $accuracy        A hint on the "region" in which to search. If a number, then this is a radius in meters, but it can also take a string that is suffixed with ft to specify feet. If this is not passed in, then it is assumed to be 0m. If coming from a device, in practice, this value is whatever accuracy the device has measuring its location (whether it be coming from a GPS, WiFi triangulation, etc.).
-     * @param  string[optional] $granularity     The minimal granularity of data to return. If this is not passed in, then neighborhood is assumed. city can also be passed.
+     * @param  string[optional] $granularity     This is the minimal granularity of place types to return and must be one of: poi, neighborhood, city, admin or country. If no granularity is provided for the request neighborhood is assumed. Setting this to city, for example, will find places which have a type of city, admin or country.
+	 * @param  string[optional] $accuracy        A hint on the "region" in which to search. If a number, then this is a radius in meters, but it can also take a string that is suffixed with ft to specify feet. If this is not passed in, then it is assumed to be 0m. If coming from a device, in practice, this value is whatever accuracy the device has measuring its location (whether it be coming from a GPS, WiFi triangulation, etc.).
      * @param  int[optional]    $maxResults      A hint as to the number of results to return. This does not guarantee that the number of results returned will equal max_results, but instead informs how many "nearby" results to return. Ideally, only pass in the number of places you intend to display to the user here.
-     * @param  string[optional] $containedWithin This is the place_id which you would like to restrict the search results to. Setting this value means only places within the given place_id will be found.
-     * @param  array[optional]  $attributes      This parameter searches for places which have this given. This should be an key-value-pair-array.
+     * @param  string[optional] $containedWithin This is the place_id which you would like to restrict the search results to. Setting this value means only places within the given place_id will be found. Specify a place_id. For example, to scope all results to places within "San Francisco, CA USA", you would specify a place_id of "5a110d312052166f"
+     * @param  array[optional]  $attributes      This parameter searches for places which have this given street address. There are other well-known, and application specific attributes available. Custom attributes are also permitted. This should be an key-value-pair-array.
      */
     public function geoSearch(
-        $lat = null, $long = null, $query = null, $ip = null, $accuracy = null,
-        $granularity = null, $maxResults = null, $containedWithin = null,
-        array $attributes = null
+        $lat = null, $long = null, $query = null, $ip = null,
+		$granularity = null, $accuracy = null, $maxResults = null,
+		$containedWithin = null, array $attributes = null
     )
     {
         // build parameters
+		$parameters = array();
         if ($lat != null) {
             $parameters['lat'] = (float) $lat;
         }
@@ -2775,15 +2793,15 @@ class Twitter
 
     /**
      * Locates places near the given coordinates which are similar in name.
-     * Conceptually you would use this method to get a list of known places to choose from first. Then, if the desired place doesn't exist, make a request to post/geo/place to create a new one.
-     * The token contained in the response is the token needed to be able to create a new place.
+	 * Conceptually you would use this method to get a list of known places to choose from first. Then, if the desired place doesn't exist, make a request to POST geo/place to create a new one.
+	 * The token contained in the response is the token needed to be able to create a new place.
      *
      * @return array
-     * @param  float            $lat             The location's latitude that this tweet refers to.
-     * @param  float            $long            The location's longitude that this tweet refers to.
+     * @param  float            $lat             The latitude to search around. This parameter will be ignored unless it is inside the range -90.0 to +90.0 (North is positive) inclusive. It will also be ignored if there isn't a corresponding long parameter.
+     * @param  float            $long            The longitude to search around. The valid ranges for longitude is -180.0 to +180.0 (East is positive) inclusive. This parameter will be ignored if outside that range, if it is not a number, if geo_enabled is disabled, or if there not a corresponding lat parameter.
      * @param  string           $name            The name a place is known as.
-     * @param  string[optional] $containedWithin This is the place_id which you would like to restrict the search results to. Setting this value means only places within the given place_id will be found.
-     * @param  array[optional]  $attributes      This parameter searches for places which have this given. This should be an key-value-pair-array.
+     * @param  string[optional] $containedWithin This is the place_id which you would like to restrict the search results to. Setting this value means only places within the given place_id will be found. Specify a place_id. For example, to scope all results to places within "San Francisco, CA USA", you would specify a place_id of "5a110d312052166f"
+     * @param  array[optional]  $attributes      This parameter searches for places which have this given street address. There are other well-known, and application specific attributes available. Custom attributes are also permitted.
      */
     public function geoSimilarPlaces(
         $lat, $long, $name, $containedWithin = null, array $attributes = null
@@ -2807,16 +2825,14 @@ class Twitter
     }
 
     /**
-     * Search for places (cities and neighborhoods) that can be attached to a statuses/update. Given a latitude and a longitude, return a list of all the valid places that can be used as a place_id when updating a status.
-     * Conceptually, a query can be made from the user's location, retrieve a list of places, have the user validate the location he or she is at, and then send the ID of this location up with a call to statuses/update.
-     * There are multiple granularities of places that can be returned -- "neighborhoods", "cities", etc. At this time, only United States data is available through this method.
-     * This API call is meant to be an informative call and will deliver generalized results about geography.
+     * Given a latitude and a longitude, searches for up to 20 places that can be used as a place_id when updating a status.
+	 * This request is an informative call and will deliver generalized results about geography.
      *
      * @return array
-     * @param  float            $lat         The location's latitude that this tweet refers to.
-     * @param  float            $long        The location's longitude that this tweet refers to.
+     * @param  float            $lat         The latitude to search around. This parameter will be ignored unless it is inside the range -90.0 to +90.0 (North is positive) inclusive. It will also be ignored if there isn't a corresponding long parameter.
+     * @param  float            $long        The longitude to search around. The valid ranges for longitude is -180.0 to +180.0 (East is positive) inclusive. This parameter will be ignored if outside that range, if it is not a number, if geo_enabled is disabled, or if there not a corresponding lat parameter.
      * @param  string[optional] $accuracy    A hint on the "region" in which to search. If a number, then this is a radius in meters, but it can also take a string that is suffixed with ft to specify feet. If this is not passed in, then it is assumed to be 0m. If coming from a device, in practice, this value is whatever accuracy the device has measuring its location (whether it be coming from a GPS, WiFi triangulation, etc.).
-     * @param  string[optional] $granularity The minimal granularity of data to return. If this is not passed in, then neighborhood is assumed. city can also be passed.
+     * @param  string[optional] $granularity This is the minimal granularity of place types to return and must be one of: poi, neighborhood, city, admin or country. If no granularity is provided for the request neighborhood is assumed. Setting this to city, for example, will find places which have a type of city, admin or country.
      * @param  int[optional]    $maxResults  A hint as to the number of results to return. This does not guarantee that the number of results returned will equal max_results, but instead informs how many "nearby" results to return. Ideally, only pass in the number of places you intend to display to the user here.
      */
     public function geoReverseGeoCode(
@@ -2841,36 +2857,17 @@ class Twitter
     }
 
     /**
-     * Find out more details of a place that was returned from the geo/reverse_geocode method.
-     *
-     * @return array
-     * @param  string           $id      The id of the place.
-     * @param  string[optional] $placeId A place in the world. These IDs can be retrieved from geo/reverse_geocode.
-     */
-    public function geoId($id, $placeId = null)
-    {
-        // build parameters
-        $parameters = null;
-        if($placeId != null) $parameters['place_id'] = (string) $placeId;
-
-        // make the call
-        return (array) $this->doCall(
-            'geo/id/' . (string) $id . '.json', $parameters
-        );
-    }
-
-    /**
      * Creates a new place at the given latitude and longitude.
      *
      * @return array
      * @param  string          $name            The name a place is known as.
-     * @param  string          $containedWithin This is the place_id which you would like to restrict the search results to. Setting this value means only places within the given place_id will be found.
+     * @param  string          $containedWithin The place_id within which the new place can be found. Try and be as close as possible with the containing place. For example, for a room in a building, set the contained_within as the building place_id.
      * @param  string          $token           The token found in the response from geo/similar_places.
      * @param  float           $lat             The latitude the place is located at. This parameter will be ignored unless it is inside the range -90.0 to +90.0 (North is positive) inclusive. It will also be ignored if there isn't a corresponding long parameter.
      * @param  float           $long            The longitude the place is located at. The valid ranges for longitude is -180.0 to +180.0 (East is positive) inclusive. This parameter will be ignored if outside that range, if it is not a number, if geo_enabled is disabled, or if there not a corresponding lat parameter.
-     * @param  array[optional] $attributes      This parameter searches for places which have this given. This should be an key-value-pair-array.
+     * @param  array[optional] $attributes      This parameter searches for places which have this given street address. There are other well-known, and application specific attributes available. Custom attributes are also permitted. This should be an key-value-pair-array.
      */
-    public function geoPlaceCreate(
+    public function geoPlace(
         $name, $containedWithin, $token, $lat, $long, array $attributes = null
     )
     {
@@ -2888,7 +2885,7 @@ class Twitter
 
         // make the call
         return (array) $this->doCall(
-            'geo/place.json', $parameters, true, 'POST'
+            'geo/create.json', $parameters, true, 'POST'
         );
     }
 

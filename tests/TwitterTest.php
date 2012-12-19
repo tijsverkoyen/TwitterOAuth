@@ -292,6 +292,128 @@ class TwitterTest extends PHPUnit_Framework_TestCase
     }
 
 	/**
+	 * Tests Twitter->geoId()
+	 */
+	public function testGeoId()
+	{
+		$response = $this->twitter->geoId('df51dec6f4ee2b2c');
+
+		$this->assertArrayHasKey('name', $response);
+		$this->assertArrayHasKey('country_code', $response);
+		$this->assertArrayHasKey('place_type', $response);
+		$this->assertArrayHasKey('geometry', $response);
+		$this->assertArrayHasKey('polylines', $response);
+		$this->assertArrayHasKey('bounding_box', $response);
+		$this->assertArrayHasKey('url', $response);
+		$this->assertArrayHasKey('contained_within', $response);
+		$this->assertArrayHasKey('attributes', $response);
+		$this->assertArrayHasKey('id', $response);
+		$this->assertArrayHasKey('country', $response);
+		$this->assertArrayHasKey('full_name', $response);
+	}
+
+	/**
+	 * Tests Twitter->geoReverseGeoCode()
+	 */
+	public function testGeoReverseGeoCode()
+	{
+		$response = $this->twitter->geoReverseGeoCode(37.7821120598956, -122.400612831116);
+
+		$this->assertArrayHasKey('result', $response);
+		$this->assertArrayHasKey('places', $response['result']);
+		foreach($response['result']['places'] as $row)
+		{
+			$this->assertArrayHasKey('name', $row);
+			$this->assertArrayHasKey('contained_within', $row);
+			$this->assertArrayHasKey('place_type', $row);
+			$this->assertArrayHasKey('country_code', $row);
+			$this->assertArrayHasKey('url', $row);
+			$this->assertArrayHasKey('bounding_box', $row);
+			$this->assertArrayHasKey('attributes', $row);
+			$this->assertArrayHasKey('id', $row);
+			$this->assertArrayHasKey('full_name', $row);
+			$this->assertArrayHasKey('country', $row);
+		}
+		$this->assertArrayHasKey('type', $response['query']);
+		$this->assertArrayHasKey('params', $response['query']);
+		$this->assertArrayHasKey('coordinates', $response['query']['params']);
+		$this->assertArrayHasKey('accuracy', $response['query']['params']);
+		$this->assertArrayHasKey('granularity', $response['query']['params']);
+		$this->assertArrayHasKey('url', $response['query']);
+	}
+
+	/**
+	 * Tests Twitter->geoSearch()
+	 */
+	public function testGeoSearch()
+	{
+		$response = $this->twitter->geoSearch(37.7821120598956, -122.400612831116);
+
+		$this->assertArrayHasKey('result', $response);
+		$this->assertArrayHasKey('places', $response['result']);
+		foreach($response['result']['places'] as $row)
+		{
+			$this->assertArrayHasKey('name', $row);
+			$this->assertArrayHasKey('contained_within', $row);
+			$this->assertArrayHasKey('place_type', $row);
+			$this->assertArrayHasKey('country_code', $row);
+			$this->assertArrayHasKey('url', $row);
+			$this->assertArrayHasKey('bounding_box', $row);
+			$this->assertArrayHasKey('attributes', $row);
+			$this->assertArrayHasKey('id', $row);
+			$this->assertArrayHasKey('full_name', $row);
+			$this->assertArrayHasKey('country', $row);
+		}
+		$this->assertArrayHasKey('query', $response);
+		$this->assertArrayHasKey('type', $response['query']);
+		$this->assertArrayHasKey('params', $response['query']);
+		$this->assertArrayHasKey('coordinates', $response['query']['params']);
+		$this->assertArrayHasKey('autocomplete', $response['query']['params']);
+		$this->assertArrayHasKey('accuracy', $response['query']['params']);
+		$this->assertArrayHasKey('granularity', $response['query']['params']);
+		$this->assertArrayHasKey('query', $response['query']['params']);
+		$this->assertArrayHasKey('url', $response['query']);
+	}
+
+	/**
+	 * Tests Twitter->geoSimilarPlaces()
+	 */
+	public function testGeoSimilarPlaces()
+	{
+		$response = $this->twitter->geoSimilarPlaces(37.7821120598956, -122.400612831116, 'Twitter HQ');
+
+		$this->assertArrayHasKey('result', $response);
+		$this->assertArrayHasKey('places', $response['result']);
+		foreach($response['result']['places'] as $row)
+		{
+			$this->assertArrayHasKey('name', $row);
+			$this->assertArrayHasKey('contained_within', $row);
+			$this->assertArrayHasKey('place_type', $row);
+			$this->assertArrayHasKey('country_code', $row);
+			$this->assertArrayHasKey('url', $row);
+			$this->assertArrayHasKey('bounding_box', $row);
+			$this->assertArrayHasKey('attributes', $row);
+			$this->assertArrayHasKey('id', $row);
+			$this->assertArrayHasKey('full_name', $row);
+			$this->assertArrayHasKey('country', $row);
+		}
+		$this->assertArrayHasKey('token', $response['result']);
+		$this->assertArrayHasKey('query', $response);
+		$this->assertArrayHasKey('type', $response['query']);
+		$this->assertArrayHasKey('params', $response['query']);
+		$this->assertArrayHasKey('coordinates', $response['query']['params']);
+		$this->assertArrayHasKey('autocomplete', $response['query']['params']);
+		$this->assertArrayHasKey('accuracy', $response['query']['params']);
+		$this->assertArrayHasKey('name', $response['query']['params']);
+		$this->assertArrayHasKey('contained_within', $response['query']['params']);
+		$this->assertArrayHasKey('granularity', $response['query']['params']);
+		$this->assertArrayHasKey('query', $response['query']['params']);
+		$this->assertArrayHasKey('strict', $response['query']['params']);
+		$this->assertArrayHasKey('url', $response['query']);
+	}
+
+
+	/**
 	 * Tests Twitter->trendsPlace()
 	 */
 	public function testTrendsPlace()
