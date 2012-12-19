@@ -107,9 +107,9 @@ try {
 //	@todo $response = $twitter->geoSimilarPlaces();
 //	@todo $response = $twitter->geoPlace();
 
-//	@todo $response = $twitter->trendsPlace();
-//	@todo $response = $twitter->trendsAvailable();
-//	@todo $response = $twitter->trendsClosest();
+//	$response = $twitter->trendsPlace(1);
+//	$response = $twitter->trendsAvailable();
+//	$response = $twitter->trendsClosest(37.781157, -122.400612831116);
 
 //	$response = $twitter->reportSpam('FujitaKatsuhisa');
 

@@ -2892,10 +2892,68 @@ class Twitter
         );
     }
 
+// Trends resources
+	/**
+	 * Returns the top 10 trending topics for a specific WOEID, if trending information is available for it.
+	 * The response is an array of "trend" objects that encode the name of the trending topic, the query parameter that can be used to search for the topic on Twitter Search, and the Twitter Search URL.
+	 * This information is cached for 5 minutes. Requesting more frequently than that will not return any more data, and will count against your rate limit usage.
+	 *
+	 * @param string $id					The Yahoo! Where On Earth ID of the location to return trending information for. Global information is available by using 1 as the WOEID.
+	 * @param string[optional] $exclude		Setting this equal to hashtags will remove all hashtags from the trends list.
+	 * @return array
+	 */
+	public function trendsPlace($id, $exclude = null)
+	{
+		// build parameters
+		$parameters['id'] = (string) $id;
+		if($exclude != null)
+		{
+			$parameters['exclude'] = (string) $exclude;
+		}
+		return (array) $this->doCall(
+			'trends/place.json',
+			$parameters
+		);
+	}
 
+	/**
+	 * Returns the locations that Twitter has trending topic information for.
+	 * The response is an array of "locations" that encode the location's WOEID (a Yahoo! Where On Earth ID) and some other human-readable information such as a canonical name and country the location belongs in.
+	 * The WOEID that is returned in the location object is to be used when querying for a specific trend.
+	 *
+	 * @return array
+	 * @param  float[optional] $lat  If passed in conjunction with long, then the available trend locations will be sorted by distance to the lat  and long passed in. The sort is nearest to furthest.
+	 * @param  float[optional] $long If passed in conjunction with lat, then the available trend locations will be sorted by distance to the lat  and long passed in. The sort is nearest to furthest.
+	 */
+	public function trendsAvailable($lat = null, $long = null)
+	{
+		// build parameters
+		$parameters = null;
+		if($lat != null) $parameters['lat_for_trends'] = (float) $lat;
+		if($long != null) $parameters['long_for_trends'] = (float) $long;
 
+		// make the call
+		return (array) $this->doCall('trends/available.json', $parameters);
+	}
 
+	/**
+	 * Returns the locations that Twitter has trending topic information for, closest to a specified location.
+	 * The response is an array of "locations" that encode the location's WOEID and some other human-readable information such as a canonical name and country the location belongs in.
+	 *
+	 * @return array
+	 * @param  float[optional] $lat  If provided with a long parameter the available trend locations will be sorted by distance, nearest to furthest, to the co-ordinate pair. The valid ranges for longitude is -180.0 to +180.0 (West is negative, East is positive) inclusive.
+	 * @param  float[optional] $long If provided with a lat parameter the available trend locations will be sorted by distance, nearest to furthest, to the co-ordinate pair. The valid ranges for longitude is -180.0 to +180.0 (West is negative, East is positive) inclusive.
+	 */
+	public function trendsClosest($lat = null, $long = null)
+	{
+		// build parameters
+		$parameters = null;
+		if($lat != null) $parameters['lat'] = (float) $lat;
+		if($long != null) $parameters['long'] = (float) $long;
 
+		// make the call
+		return (array) $this->doCall('trends/closest.json', $parameters);
+	}
 
 // Spam Reporting resources
 	/**

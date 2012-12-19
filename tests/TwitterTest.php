@@ -291,6 +291,68 @@ class TwitterTest extends PHPUnit_Framework_TestCase
         $this->twitter->directMessagesDestroy($response['id']);
     }
 
+	/**
+	 * Tests Twitter->trendsPlace()
+	 */
+	public function testTrendsPlace()
+	{
+		$response = $this->twitter->trendsPlace(1);
+		foreach($response as $row)
+		{
+			$this->assertArrayHasKey('as_of', $row);
+			$this->assertArrayHasKey('created_at', $row);
+			$this->assertArrayHasKey('trends', $row);
+			foreach($row['trends'] as $subRow)
+			{
+				$this->assertArrayHasKey('name', $subRow);
+				$this->assertArrayHasKey('promoted_content', $subRow);
+				$this->assertArrayHasKey('events', $subRow);
+				$this->assertArrayHasKey('url', $subRow);
+				$this->assertArrayHasKey('query', $subRow);
+			}
+		}
+	}
+
+	/**
+	 * Tests Twitter->trendsAvailable()
+	 */
+	public function testTrendsAvailable()
+	{
+		$response = $this->twitter->trendsAvailable();
+		foreach($response as $row)
+		{
+			$this->assertArrayHasKey('name', $row);
+			$this->assertArrayHasKey('placeType', $row);
+			$this->assertArrayHasKey('code', $row['placeType']);
+			$this->assertArrayHasKey('name', $row['placeType']);
+			$this->assertArrayHasKey('url', $row);
+			$this->assertArrayHasKey('parentid', $row);
+			$this->assertArrayHasKey('country', $row);
+			$this->assertArrayHasKey('woeid', $row);
+			$this->assertArrayHasKey('countryCode', $row);
+		}
+	}
+
+	/**
+	 * Tests Twitter->trendsClosest()
+	 */
+	public function testTrendsClosest()
+	{
+		$response = $this->twitter->trendsClosest(37.781157, -122.400612831116);
+		foreach($response as $row)
+		{
+			$this->assertArrayHasKey('name', $row);
+			$this->assertArrayHasKey('placeType', $row);
+			$this->assertArrayHasKey('code', $row['placeType']);
+			$this->assertArrayHasKey('name', $row['placeType']);
+			$this->assertArrayHasKey('url', $row);
+			$this->assertArrayHasKey('parentid', $row);
+			$this->assertArrayHasKey('country', $row);
+			$this->assertArrayHasKey('woeid', $row);
+			$this->assertArrayHasKey('countryCode', $row);
+		}
+	}
+
     /**
      * Tests Twitter->reportSpam()
      */
