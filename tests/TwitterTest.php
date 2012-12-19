@@ -80,6 +80,41 @@ class TwitterTest extends PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('verified', $item);
     }
 
+	/**
+	 * Test if an array is a trend
+	 * @param array $item
+	 */
+	private function isTrend(array $item)
+	{
+		$this->assertArrayHasKey('name', $item);
+		$this->assertArrayHasKey('placeType', $item);
+		$this->assertArrayHasKey('code', $item['placeType']);
+		$this->assertArrayHasKey('name', $item['placeType']);
+		$this->assertArrayHasKey('url', $item);
+		$this->assertArrayHasKey('parentid', $item);
+		$this->assertArrayHasKey('country', $item);
+		$this->assertArrayHasKey('woeid', $item);
+		$this->assertArrayHasKey('countryCode', $item);
+	}
+
+	/**
+	 * Test if an arrat is a place
+	 * @param array $item
+	 */
+	private function isPlace(array $item)
+	{
+		$this->assertArrayHasKey('name', $item);
+		$this->assertArrayHasKey('contained_within', $item);
+		$this->assertArrayHasKey('place_type', $item);
+		$this->assertArrayHasKey('country_code', $item);
+		$this->assertArrayHasKey('url', $item);
+		$this->assertArrayHasKey('bounding_box', $item);
+		$this->assertArrayHasKey('attributes', $item);
+		$this->assertArrayHasKey('id', $item);
+		$this->assertArrayHasKey('full_name', $item);
+		$this->assertArrayHasKey('country', $item);
+	}
+
     /**
      * Tests Twitter->getTimeOut()
      */
@@ -353,16 +388,7 @@ class TwitterTest extends PHPUnit_Framework_TestCase
 		$this->assertArrayHasKey('places', $response['result']);
 		foreach($response['result']['places'] as $row)
 		{
-			$this->assertArrayHasKey('name', $row);
-			$this->assertArrayHasKey('contained_within', $row);
-			$this->assertArrayHasKey('place_type', $row);
-			$this->assertArrayHasKey('country_code', $row);
-			$this->assertArrayHasKey('url', $row);
-			$this->assertArrayHasKey('bounding_box', $row);
-			$this->assertArrayHasKey('attributes', $row);
-			$this->assertArrayHasKey('id', $row);
-			$this->assertArrayHasKey('full_name', $row);
-			$this->assertArrayHasKey('country', $row);
+			$this->isPlace($row);
 		}
 		$this->assertArrayHasKey('query', $response);
 		$this->assertArrayHasKey('type', $response['query']);
@@ -386,16 +412,7 @@ class TwitterTest extends PHPUnit_Framework_TestCase
 		$this->assertArrayHasKey('places', $response['result']);
 		foreach($response['result']['places'] as $row)
 		{
-			$this->assertArrayHasKey('name', $row);
-			$this->assertArrayHasKey('contained_within', $row);
-			$this->assertArrayHasKey('place_type', $row);
-			$this->assertArrayHasKey('country_code', $row);
-			$this->assertArrayHasKey('url', $row);
-			$this->assertArrayHasKey('bounding_box', $row);
-			$this->assertArrayHasKey('attributes', $row);
-			$this->assertArrayHasKey('id', $row);
-			$this->assertArrayHasKey('full_name', $row);
-			$this->assertArrayHasKey('country', $row);
+			$this->isPlace($row);
 		}
 		$this->assertArrayHasKey('token', $response['result']);
 		$this->assertArrayHasKey('query', $response);
@@ -443,15 +460,7 @@ class TwitterTest extends PHPUnit_Framework_TestCase
 		$response = $this->twitter->trendsAvailable();
 		foreach($response as $row)
 		{
-			$this->assertArrayHasKey('name', $row);
-			$this->assertArrayHasKey('placeType', $row);
-			$this->assertArrayHasKey('code', $row['placeType']);
-			$this->assertArrayHasKey('name', $row['placeType']);
-			$this->assertArrayHasKey('url', $row);
-			$this->assertArrayHasKey('parentid', $row);
-			$this->assertArrayHasKey('country', $row);
-			$this->assertArrayHasKey('woeid', $row);
-			$this->assertArrayHasKey('countryCode', $row);
+			$this->isTrend($row);
 		}
 	}
 
@@ -463,15 +472,7 @@ class TwitterTest extends PHPUnit_Framework_TestCase
 		$response = $this->twitter->trendsClosest(37.781157, -122.400612831116);
 		foreach($response as $row)
 		{
-			$this->assertArrayHasKey('name', $row);
-			$this->assertArrayHasKey('placeType', $row);
-			$this->assertArrayHasKey('code', $row['placeType']);
-			$this->assertArrayHasKey('name', $row['placeType']);
-			$this->assertArrayHasKey('url', $row);
-			$this->assertArrayHasKey('parentid', $row);
-			$this->assertArrayHasKey('country', $row);
-			$this->assertArrayHasKey('woeid', $row);
-			$this->assertArrayHasKey('countryCode', $row);
+			$this->isTrend($row);
 		}
 	}
 
