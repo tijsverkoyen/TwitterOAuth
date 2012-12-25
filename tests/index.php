@@ -54,14 +54,14 @@ try {
 //	@todo $response = $twitter->followersList();
 
 //	@todo $response = $twitter->accountSettings();
-//	@todo $response = $twitter->accountVerifyCredentials();
+//  $response = $twitter->accountVerifyCredentials();
 //	@todo $response = $twitter->accountSettingsUpdate();
-//	@todo $response = $twitter->accountUpdateDeliveryDevice();
-//	@todo $response = $twitter->accountUpdateProfile();
+//	$response = $twitter->accountUpdateDeliveryDevice('none');
+//	$response = $twitter->accountUpdateProfile(null, 'http://github.com/tijsverkoyen/TwitterOAuth');
 //	@todo $response = $twitter->accountUpdateProfileBackgroundImage();
 //	@todo $response = $twitter->accountUpdateProfileColors();
 //	@todo $response = $twitter->accountUpdateProfileImage();
-//	@todo $response = $twitter->blocksLists();
+//	@todo $response = $twitter->blocksList();
 //	@todo $response = $twitter->blocksIds();
 //	@todo $response = $twitter->blocksCreate();
 //	@todo $response = $twitter->blocksDestroy();

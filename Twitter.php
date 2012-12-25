@@ -1441,9 +1441,12 @@ class Twitter
         return (array) $this->doCall('followers/ids.json', $parameters, true);
     }
 
+    /**
+     * Not implemented yet
+     */
     public function friendshipsLookup()
     {
-
+        throw new Exception('Not implemented');
     }
 
     /**
@@ -1615,22 +1618,29 @@ class Twitter
     }
 
 // User resources
+    /**
+     * Not implemented yet
+     */
     public function accountSettings()
     {
-
+        throw new Exception('Not implemented');
     }
 
     /**
      * Returns an HTTP 200 OK response code and a representation of the requesting user if authentication was successful; returns a 401 status code and an error message if not. Use this method to test if supplied user credentials are valid.
      *
+     * @param  bool[optional] $includeEntities The entities node will not be included when set to false.
+     * @param  bool[optional] $skipStatus      When set to true, statuses will not be included in the returned user objects.
      * @return array
-     * @param  bool[optional] $includeEntities When set to true each tweet will include a node called "entities,". This node offers a variety of metadata about the tweet in a discreet structure, including: user_mentions, urls, and hashtags.
      */
-    public function accountVerifyCredentials($includeEntities = false)
+    public function accountVerifyCredentials(
+        $includeEntities = false, $skipStatus = false
+    )
     {
         // build parameters
         $parameters = null;
         if($includeEntities) $parameters['include_entities'] = 'true';
+        if($skipStatus) $parameters['skip_status'] = 'true';
 
         // make the call
         return (array) $this->doCall(
@@ -1647,13 +1657,13 @@ class Twitter
     }
 
     /**
-     * Sets which device Twitter delivers updates to for the authenticating user. Sending none as the device parameter will disable IM or SMS updates.
+     * Sets which device Twitter delivers updates to for the authenticating user. Sending none as the device parameter will disable SMS updates.
      *
      * @return array
-     * @param  string         $device          Delivery device type to send updates to.
-     * @param  bool[optional] $includeEntities When set to true each tweet will include a node called "entities,". This node offers a variety of metadata about the tweet in a discreet structure, including: user_mentions, urls, and hashtags.
+     * @param  string         $device          Must be one of: sms, none.
+     * @param  bool[optional] $includeEntities When set to true, each tweet will include a node called "entities,". This node offers a variety of metadata about the tweet in a discreet structure, including: user_mentions, urls, and hashtags. While entities are opt-in on timelines at present, they will be made a default component of output in the future. See Tweet Entities for more detail on entities.
      */
-    public function accountUpdateDeliveryDevices(
+    public function accountUpdateDeliveryDevice(
         $device, $includeEntities = false
     )
     {
@@ -1675,9 +1685,10 @@ class Twitter
      * @param  string[optional] $url             URL associated with the profile. Will be prepended with "http://" if not present. Maximum of 100 characters.
      * @param  string[optional] $location        The city or country describing where the user of the account is located. The contents are not normalized or geocoded in any way. Maximum of 30 characters.
      * @param  string[optional] $description     A description of the user owning the account. Maximum of 160 characters.
-     * @param  bool[optional]   $includeEntities When set to true each tweet will include a node called "entities,". This node offers a variety of metadata about the tweet in a discreet structure, including: user_mentions, urls, and hashtags.
+     * @param  bool[optional]   $includeEntities The entities node will not be included when set to false.
+     * @param  bool[optional]   $skipStatus      When set to true, statuses will not be included in the returned user objects.
      */
-    public function accountUpdateProfile($name = null, $url = null, $location = null, $description = null, $includeEntities = false)
+    public function accountUpdateProfile($name = null, $url = null, $location = null, $description = null, $includeEntities = false, $skipStatus = null)
     {
         // build parameters
         $parameters = null;
@@ -1695,6 +1706,9 @@ class Twitter
         }
         if ($includeEntities) {
             $parameters['include_entities'] = 'true';
+        }
+        if ($skipStatus) {
+            $parameters['skip_status'] = 'true';
         }
 
         // make the call
@@ -1742,7 +1756,11 @@ class Twitter
      * @param  string[optional] $profileSidebarBorderColor Profile sidebar's border color.
      * @param  bool[optional]   $includeEntities           When set to true each tweet will include a node called "entities,". This node offers a variety of metadata about the tweet in a discreet structure, including: user_mentions, urls, and hashtags.
      */
-    public function accountUpdateProfileColors($profileBackgroundColor = null, $profileTextColor = null, $profileLinkColor = null, $profileSidebarFillColor = null, $profileSidebarBorderColor = null, $includeEntities = false)
+    public function accountUpdateProfileColors(
+        $profileBackgroundColor = null, $profileTextColor = null,
+        $profileLinkColor = null, $profileSidebarFillColor = null,
+        $profileSidebarBorderColor = null, $includeEntities = false
+    )
     {
         // validate
         if ($profileBackgroundColor == '' && $profileTextColor == '' &&

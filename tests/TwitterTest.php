@@ -410,6 +410,33 @@ class TwitterTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * Tests Twitter->accountVerifyCredentials
+     */
+    public function testAccountVerifyCredentials()
+    {
+        $response = $this->twitter->accountVerifyCredentials();
+        $this->isUser($response);
+    }
+
+    /**
+     * Tests Twitter->accountUpdateDeliveryDevice
+     */
+    public function testAccountUpdateDeliveryDevice()
+    {
+        $this->markTestSkipped('No example data available at https://dev.twitter.com/docs/api/1.1/post/account/update_delivery_device');
+        $response = $this->twitter->accountUpdateDeliveryDevice('none');
+    }
+
+    /**
+     * Tests Twitter->accountUpdateProfile
+     */
+    public function testAccountUpdateProfile()
+    {
+        $response = $this->twitter->accountUpdateProfile(null, 'http://github.com/tijsverkoyen/TwitterOAuth');
+        $this->isUser($response);
+    }
+
+    /**
      * Tests Twitter->usersSuggestionsSlug
      */
     public function testUsersSuggestionsSlug()
