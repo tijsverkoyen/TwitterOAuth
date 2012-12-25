@@ -69,9 +69,9 @@ try {
 //	@todo $response = $twitter->usersContributees();
 //	@todo $response = $twitter->usersContributors();
 
-//	@todo $response = $twitter->usersSuggestionsSlug();
-//	@todo $response = $twitter->usersSuggestions();
-//	@todo $response = $twitter->usersSuggestionsMembers();
+//  $response = $twitter->usersSuggestionsSlug('twitter');
+//  $response = $twitter->usersSuggestions();
+//  $response = $twitter->usersSuggestionsSlugMembers('music');
 
 //  $response = $twitter->favoritesList(null, 'twitter');
 //  $response = $twitter->favoritesDestroy('243138128959913986');

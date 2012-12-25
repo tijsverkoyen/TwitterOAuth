@@ -2645,6 +2645,57 @@ class Twitter
 
         // make the call
         return (array) $this->doCall('blocks/blocking.json', $parameters, true);
+// Suggested users resources
+    /**
+     * Access the users in a given category of the Twitter suggested user list.
+     * It is recommended that applications cache this data for no more than one hour.
+     *
+     * @param  string           $slug The short name of list or a category.
+     * @param  string[optional] $lang Restricts the suggested categories to the requested language. The language must be specified by the appropriate two letter ISO 639-1 representation. Currently supported languages are provided by the helpLanguages API request. Unsupported language codes will receive English (en) results.
+     * @return array
+     */
+    public function usersSuggestionsSlug($slug, $lang = null)
+    {
+        $parameters = null;
+        if($lang != null) $parameters['lang'] = (string) $lang;
+
+        return (array) $this->doCall(
+            'users/suggestions/' . (string) $slug . '.json',
+            $parameters, true
+        );
+    }
+
+    /**
+     * Access to Twitter's suggested user list. This returns the list of suggested user categories. The category can be used in usersSuggestionsSlug to get the users in that category.
+     *
+     * @param  string[optional] $lang Restricts the suggested categories to the requested language. The language must be specified by the appropriate two letter ISO 639-1 representation. Currently supported languages are provided by the helpLanguages API request. Unsupported language codes will receive English (en) results.
+     * @return array
+     */
+    public function usersSuggestions($lang = null)
+    {
+        $parameters = null;
+        if($lang != null) $parameters['lang'] = (string) $lang;
+
+        return (array) $this->doCall(
+            'users/suggestions.json',
+            $parameters, true
+        );
+    }
+
+    /**
+     * Access the users in a given category of the Twitter suggested user list and return their most recent status if they are not a protected user.
+     *
+     * @param  string $slug The short name of list or a category
+     * @return array
+     */
+    public function usersSuggestionsSlugMembers($slug)
+    {
+        return (array) $this->doCall(
+            'users/suggestions/' . (string) $slug . '/members.json',
+            null, true
+        );
+    }
+
 // Favorites resources
     /**
      * Returns the 20 most recent Tweets favorited by the authenticating or specified user.

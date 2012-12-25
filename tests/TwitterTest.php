@@ -327,6 +327,45 @@ class TwitterTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * Tests Twitter->usersSuggestionsSlug
+     */
+    public function testUsersSuggestionsSlug()
+    {
+        $response = $this->twitter->usersSuggestionsSlug('Twitter');
+        $this->assertArrayHasKey('size', $response);
+        $this->assertArrayHasKey('name', $response);
+        $this->assertArrayHasKey('slug', $response);
+        $this->assertArrayHasKey('users', $response);
+        foreach ($response['users'] as $row) {
+            $this->isUser($row);
+        }
+    }
+
+    /**
+     * Tests Twitter->usersSuggestions
+     */
+    public function testUsersSuggestions()
+    {
+        $response = $this->twitter->usersSuggestions();
+        foreach ($response as $row) {
+            $this->assertArrayHasKey('size', $row);
+            $this->assertArrayHasKey('name', $row);
+            $this->assertArrayHasKey('slug', $row);
+        }
+    }
+
+    /**
+     * Tests Twitter->usersSuggestionsSlugMembers
+     */
+    public function testUsersSuggestionsSlugMembers()
+    {
+        $response = $this->twitter->usersSuggestionsSlugMembers('music');
+        foreach ($response as $row) {
+            $this->isUser($row);
+        }
+    }
+
+    /**
      * Tests Twitter->favoritesList
      */
     public function testFavoritesList()
