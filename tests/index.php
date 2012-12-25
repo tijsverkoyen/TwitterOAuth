@@ -98,7 +98,7 @@ try {
 
 //	$response = $twitter->savedSearchesList();
 //	$response = $twitter->savedSearchesShow('3205644');
-    $response = $twitter->savedSearchesCreate('sandwiches');
+//  $response = $twitter->savedSearchesCreate(time());
 //	$response = $twitter->savedSearchesDestroy('3205644');
 
 //	$response = $twitter->geoId('df51dec6f4ee2b2c');

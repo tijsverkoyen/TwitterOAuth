@@ -2664,17 +2664,17 @@ class Twitter
      *
      * @return array
      */
-    public function savedSearches()
+    public function savedSearchesList()
     {
         // make the call
-        return (array) $this->doCall('saved_searches.json', null, true);
+        return (array) $this->doCall('saved_searches/list.json', null, true);
     }
 
     /**
-     * Retrieve the data for a saved search owned by the authenticating user specified by the given id.
+     * Retrieve the information for the saved search represented by the given id. The authenticating user must be the owner of saved search ID being requested.
      *
      * @return array
-     * @param  string $id The ID of the desired saved search.
+     * @param  string $id The ID of the saved search.
      */
     public function savedSearchesShow($id)
     {
@@ -2685,7 +2685,7 @@ class Twitter
     }
 
     /**
-     * Creates a saved search for the authenticated user.
+     * Create a new saved search for the authenticated user. A user may only have 25 saved searches.
      *
      * @return array
      * @param  string $query The query of the search the user would like to save.

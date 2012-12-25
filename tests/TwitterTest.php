@@ -331,7 +331,7 @@ class TwitterTest extends PHPUnit_Framework_TestCase
      */
     public function testSavedSearchesList()
     {
-        $temp = $this->twitter->savedSearchesCreate('sandwiches');
+        $temp = $this->twitter->savedSearchesCreate(time());
         $response = $this->twitter->savedSearchesList();
         $this->twitter->savedSearchesDestroy($temp['id']);
 
@@ -348,7 +348,7 @@ class TwitterTest extends PHPUnit_Framework_TestCase
      */
     public function testSavedSearchesShow()
     {
-        $response = $this->twitter->savedSearchesCreate('sandwiches');
+        $response = $this->twitter->savedSearchesCreate(time());
         $response = $this->twitter->savedSearchesShow($response['id']);
         $this->twitter->savedSearchesDestroy($response['id']);
 
@@ -363,7 +363,7 @@ class TwitterTest extends PHPUnit_Framework_TestCase
      */
     public function testSavedSearchesCreate()
     {
-        $response = $this->twitter->savedSearchesCreate('sandwiches');
+        $response = $this->twitter->savedSearchesCreate(time());
         $this->twitter->savedSearchesDestroy($response['id']);
 
         $this->assertArrayHasKey('created_at', $response);
@@ -377,7 +377,7 @@ class TwitterTest extends PHPUnit_Framework_TestCase
      */
     public function testSavedSearchesDestroy()
     {
-        $response = $this->twitter->savedSearchesCreate('sandwiches');
+        $response = $this->twitter->savedSearchesCreate(time());
         $response = $this->twitter->savedSearchesDestroy($response['id']);
 
         $this->assertArrayHasKey('created_at', $response);
