@@ -73,9 +73,9 @@ try {
 //	@todo $response = $twitter->usersSuggestions();
 //	@todo $response = $twitter->usersSuggestionsMembers();
 
-//	@todo $response = $twitter->favoritesList();
-//	@todo $response = $twitter->favoritesDestroy();
-//	$response = $twitter->favoritesCreate('243138128959913986');
+//  $response = $twitter->favoritesList(null, 'twitter');
+//  $response = $twitter->favoritesDestroy('243138128959913986');
+//  $response = $twitter->favoritesCreate('243138128959913986');
 
 //	@todo $response = $twitter->listsList();
 //	@todo $response = $twitter->listsStatuses();

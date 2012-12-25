@@ -327,6 +327,37 @@ class TwitterTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * Tests Twitter->favoritesList
+     */
+    public function testFavoritesList()
+    {
+        $response = $this->twitter->favoritesList(null, 'twitter');
+        foreach ($response as $row) {
+            $this->isTweet($row);
+        }
+    }
+
+    /**
+     * Tests Twitter->favoritesDestroy
+     */
+    public function testFavoritesDestroy()
+    {
+        $response = $this->twitter->favoritesCreate('243138128959913986');
+        $response = $this->twitter->favoritesDestroy('243138128959913986');
+        $this->isTweet($response);
+    }
+
+    /**
+     * Tests Twitter->favoritesCreate
+     */
+    public function testFavoritesCreate()
+    {
+        $response = $this->twitter->favoritesCreate('243138128959913986');
+        $this->twitter->favoritesDestroy('243138128959913986');
+        $this->isTweet($response);
+    }
+
+    /**
      * Tests Twitter->savedSearchesList()
      */
     public function testSavedSearchesList()

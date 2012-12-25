@@ -2645,6 +2645,51 @@ class Twitter
 
         // make the call
         return (array) $this->doCall('blocks/blocking.json', $parameters, true);
+// Favorites resources
+    /**
+     * Returns the 20 most recent Tweets favorited by the authenticating or specified user.
+     *
+     * @param  string[otpional] $userId          The ID of the user for whom to return results for.
+     * @param  string[otpional] $screenName      The screen name of the user for whom to return results for.
+     * @param  int[optional]    $count           Specifies the number of records to retrieve. Must be less than or equal to 200. Defaults to 20.
+     * @param  string[otpional] $sinceId         Returns results with an ID greater than (that is, more recent than) the specified ID. There are limits to the number of Tweets which can be accessed through the API. If the limit of Tweets has occured since the since_id, the since_id will be forced to the oldest ID available.
+     * @param  string[otpional] $maxId           Returns results with an ID less than (that is, older than) or equal to the specified ID.
+     * @param  bool[optional]   $includeEntities The entities node will be omitted when set to false.
+     * @return array
+     */
+    public function favoritesList($userId = null, $screenName = null, $count = 20, $sinceId = null, $maxId = null, $includeEntities = false)
+    {
+        // build parameters
+        $parameters = null;
+        if($userId != null) $parameters['user_id'] = (string) $userId;
+        if($screenName != null) $parameters['screen_name'] = (string) $screenName;
+        if($count != null) $parameters['count'] = (int) $count;
+        if($sinceId != null) $parameters['since_id'] = (string) $sinceId;
+        if($maxId != null) $parameters['max_id'] = (string) $maxId;
+        if($includeEntities) $parameters['include_entities'] = 'true';
+
+        // make the call
+        return (array) $this->doCall('favorites/list.json', $parameters, true);
+    }
+
+    /**
+     * Un-favorites the status specified in the ID parameter as the authenticating user. Returns the un-favorited status in the requested format when successful.
+     * This process invoked by this method is asynchronous. The immediately returned status may not indicate the resultant favorited status of the tweet. A 200 OK response from this method will indicate whether the intended action was successful or not.
+     *
+     * @return array
+     * @param  string         $id              The numerical ID of the desired status.
+     * @param  bool[optional] $includeEntities The entities node will be omitted when set to false.
+     */
+    public function favoritesDestroy($id, $includeEntities = false)
+    {
+        // build parameters
+        $parameters['id'] = (string) $id;
+        if($includeEntities) $parameters['include_entities'] = 'true';
+
+        // make the call
+        return (array) $this->doCall(
+            'favorites/destroy.json', $parameters, true, 'POST'
+        );
     }
 
     /**
