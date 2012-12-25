@@ -2702,10 +2702,10 @@ class Twitter
     }
 
     /**
-     * Destroys a saved search for the authenticated user. The search specified by id must be owned by the authenticating user.
+     * Destroys a saved search for the authenticating user. The authenticating user must be the owner of saved search id being destroyed.
      *
      * @return array
-     * @param  string $id The ID of the desired saved search.
+     * @param  string $id The ID of the saved search.
      */
     public function savedSearchesDestroy($id)
     {
@@ -2716,47 +2716,79 @@ class Twitter
     }
 
 // Geo resources
-	/**
-	 * Returns all the information about a known place.
-	 *
-	 * @return array
-	 * @param  string           $id      A place in the world. These IDs can be retrieved from geo/reverse_geocode.
-	 */
-	public function geoId($id)
-	{
-		// build parameters
-		$parameters = null;
+    /**
+     * Returns all the information about a known place.
+     *
+     * @param  string $id A place in the world. These IDs can be retrieved from geo/reverse_geocode.
+     * @return array
+     */
+    public function geoId($id)
+    {
+        // build parameters
+        $parameters = null;
 
-		// make the call
-		return (array) $this->doCall(
-			'geo/id/' . (string) $id . '.json', $parameters
-		);
-	}
+        // make the call
+        return (array) $this->doCall(
+            'geo/id/' . (string) $id . '.json', $parameters
+        );
+    }
+
+    /**
+     * Given a latitude and a longitude, searches for up to 20 places that can be used as a place_id when updating a status.
+     * This request is an informative call and will deliver generalized results about geography.
+     *
+     * @param  float            $lat         The latitude to search around. This parameter will be ignored unless it is inside the range -90.0 to +90.0 (North is positive) inclusive. It will also be ignored if there isn't a corresponding long parameter.
+     * @param  float            $long        The longitude to search around. The valid ranges for longitude is -180.0 to +180.0 (East is positive) inclusive. This parameter will be ignored if outside that range, if it is not a number, if geo_enabled is disabled, or if there not a corresponding lat parameter.
+     * @param  string[optional] $accuracy    A hint on the "region" in which to search. If a number, then this is a radius in meters, but it can also take a string that is suffixed with ft to specify feet. If this is not passed in, then it is assumed to be 0m. If coming from a device, in practice, this value is whatever accuracy the device has measuring its location (whether it be coming from a GPS, WiFi triangulation, etc.).
+     * @param  string[optional] $granularity This is the minimal granularity of place types to return and must be one of: poi, neighborhood, city, admin or country. If no granularity is provided for the request neighborhood is assumed. Setting this to city, for example, will find places which have a type of city, admin or country.
+     * @param  int[optional]    $maxResults  A hint as to the number of results to return. This does not guarantee that the number of results returned will equal max_results, but instead informs how many "nearby" results to return. Ideally, only pass in the number of places you intend to display to the user here.
+     * @return array
+     */
+    public function geoReverseGeoCode(
+        $lat, $long, $accuracy = null, $granularity = null, $maxResults = null
+    )
+    {
+        // build parameters
+        $parameters['lat'] = (float) $lat;
+        $parameters['long'] = (float) $long;
+        if ($accuracy != null) {
+            $parameters['accuracy'] = (string) $accuracy;
+        }
+        if ($granularity != null) {
+            $parameters['granularity'] = (string) $granularity;
+        }
+        if ($maxResults != null) {
+            $parameters['max_results'] = (int) $maxResults;
+        }
+
+        // make the call
+        return (array) $this->doCall('geo/reverse_geocode.json', $parameters);
+    }
 
     /**
      * Search for places that can be attached to a statuses/update. Given a latitude and a longitude pair, an IP address, or a name, this request will return a list of all the valid places that can be used as the place_id when updating a status.
-	 * Conceptually, a query can be made from the user's location, retrieve a list of places, have the user validate the location he or she is at, and then send the ID of this location with a call to POST statuses/update.
-	 * This is the recommended method to use find places that can be attached to statuses/update. Unlike GET geo/reverse_geocode which provides raw data access, this endpoint can potentially re-order places with regards to the user who is authenticated. This approach is also preferred for interactive place matching with the user.
+     * Conceptually, a query can be made from the user's location, retrieve a list of places, have the user validate the location he or she is at, and then send the ID of this location with a call to POST statuses/update.
+     * This is the recommended method to use find places that can be attached to statuses/update. Unlike GET geo/reverse_geocode which provides raw data access, this endpoint can potentially re-order places with regards to the user who is authenticated. This approach is also preferred for interactive place matching with the user.
      *
-     * @return array
      * @param  float[optional]  $lat             The latitude to search around. This parameter will be ignored unless it is inside the range -90.0 to +90.0 (North is positive) inclusive. It will also be ignored if there isn't a corresponding long parameter.
      * @param  float[optional]  $long            The longitude to search around. The valid ranges for longitude is -180.0 to +180.0 (East is positive) inclusive. This parameter will be ignored if outside that range, if it is not a number, if geo_enabled is disabled, or if there not a corresponding lat parameter.
      * @param  string[optional] $query           Free-form text to match against while executing a geo-based query, best suited for finding nearby locations by name. Remember to URL encode the query.
      * @param  string[optional] $ip              An IP address. Used when attempting to fix geolocation based off of the user's IP address.
      * @param  string[optional] $granularity     This is the minimal granularity of place types to return and must be one of: poi, neighborhood, city, admin or country. If no granularity is provided for the request neighborhood is assumed. Setting this to city, for example, will find places which have a type of city, admin or country.
-	 * @param  string[optional] $accuracy        A hint on the "region" in which to search. If a number, then this is a radius in meters, but it can also take a string that is suffixed with ft to specify feet. If this is not passed in, then it is assumed to be 0m. If coming from a device, in practice, this value is whatever accuracy the device has measuring its location (whether it be coming from a GPS, WiFi triangulation, etc.).
+     * @param  string[optional] $accuracy        A hint on the "region" in which to search. If a number, then this is a radius in meters, but it can also take a string that is suffixed with ft to specify feet. If this is not passed in, then it is assumed to be 0m. If coming from a device, in practice, this value is whatever accuracy the device has measuring its location (whether it be coming from a GPS, WiFi triangulation, etc.).
      * @param  int[optional]    $maxResults      A hint as to the number of results to return. This does not guarantee that the number of results returned will equal max_results, but instead informs how many "nearby" results to return. Ideally, only pass in the number of places you intend to display to the user here.
      * @param  string[optional] $containedWithin This is the place_id which you would like to restrict the search results to. Setting this value means only places within the given place_id will be found. Specify a place_id. For example, to scope all results to places within "San Francisco, CA USA", you would specify a place_id of "5a110d312052166f"
      * @param  array[optional]  $attributes      This parameter searches for places which have this given street address. There are other well-known, and application specific attributes available. Custom attributes are also permitted. This should be an key-value-pair-array.
+     * @return array
      */
     public function geoSearch(
         $lat = null, $long = null, $query = null, $ip = null,
-		$granularity = null, $accuracy = null, $maxResults = null,
-		$containedWithin = null, array $attributes = null
+        $granularity = null, $accuracy = null, $maxResults = null,
+        $containedWithin = null, array $attributes = null
     )
     {
         // build parameters
-		$parameters = array();
+        $parameters = array();
         if ($lat != null) {
             $parameters['lat'] = (float) $lat;
         }
@@ -2793,15 +2825,15 @@ class Twitter
 
     /**
      * Locates places near the given coordinates which are similar in name.
-	 * Conceptually you would use this method to get a list of known places to choose from first. Then, if the desired place doesn't exist, make a request to POST geo/place to create a new one.
-	 * The token contained in the response is the token needed to be able to create a new place.
+     * Conceptually you would use this method to get a list of known places to choose from first. Then, if the desired place doesn't exist, make a request to POST geo/place to create a new one.
+     * The token contained in the response is the token needed to be able to create a new place.
      *
-     * @return array
      * @param  float            $lat             The latitude to search around. This parameter will be ignored unless it is inside the range -90.0 to +90.0 (North is positive) inclusive. It will also be ignored if there isn't a corresponding long parameter.
      * @param  float            $long            The longitude to search around. The valid ranges for longitude is -180.0 to +180.0 (East is positive) inclusive. This parameter will be ignored if outside that range, if it is not a number, if geo_enabled is disabled, or if there not a corresponding lat parameter.
      * @param  string           $name            The name a place is known as.
      * @param  string[optional] $containedWithin This is the place_id which you would like to restrict the search results to. Setting this value means only places within the given place_id will be found. Specify a place_id. For example, to scope all results to places within "San Francisco, CA USA", you would specify a place_id of "5a110d312052166f"
      * @param  array[optional]  $attributes      This parameter searches for places which have this given street address. There are other well-known, and application specific attributes available. Custom attributes are also permitted.
+     * @return array
      */
     public function geoSimilarPlaces(
         $lat, $long, $name, $containedWithin = null, array $attributes = null
@@ -2825,47 +2857,15 @@ class Twitter
     }
 
     /**
-     * Given a latitude and a longitude, searches for up to 20 places that can be used as a place_id when updating a status.
-	 * This request is an informative call and will deliver generalized results about geography.
-     *
-     * @return array
-     * @param  float            $lat         The latitude to search around. This parameter will be ignored unless it is inside the range -90.0 to +90.0 (North is positive) inclusive. It will also be ignored if there isn't a corresponding long parameter.
-     * @param  float            $long        The longitude to search around. The valid ranges for longitude is -180.0 to +180.0 (East is positive) inclusive. This parameter will be ignored if outside that range, if it is not a number, if geo_enabled is disabled, or if there not a corresponding lat parameter.
-     * @param  string[optional] $accuracy    A hint on the "region" in which to search. If a number, then this is a radius in meters, but it can also take a string that is suffixed with ft to specify feet. If this is not passed in, then it is assumed to be 0m. If coming from a device, in practice, this value is whatever accuracy the device has measuring its location (whether it be coming from a GPS, WiFi triangulation, etc.).
-     * @param  string[optional] $granularity This is the minimal granularity of place types to return and must be one of: poi, neighborhood, city, admin or country. If no granularity is provided for the request neighborhood is assumed. Setting this to city, for example, will find places which have a type of city, admin or country.
-     * @param  int[optional]    $maxResults  A hint as to the number of results to return. This does not guarantee that the number of results returned will equal max_results, but instead informs how many "nearby" results to return. Ideally, only pass in the number of places you intend to display to the user here.
-     */
-    public function geoReverseGeoCode(
-        $lat, $long, $accuracy = null, $granularity = null, $maxResults = null
-    )
-    {
-        // build parameters
-        $parameters['lat'] = (float) $lat;
-        $parameters['long'] = (float) $long;
-        if ($accuracy != null) {
-            $parameters['accuracy'] = (string) $accuracy;
-        }
-        if ($granularity != null) {
-            $parameters['granularity'] = (string) $granularity;
-        }
-        if ($maxResults != null) {
-            $parameters['max_results'] = (int) $maxResults;
-        }
-
-        // make the call
-        return (array) $this->doCall('geo/reverse_geocode.json', $parameters);
-    }
-
-    /**
      * Creates a new place at the given latitude and longitude.
      *
-     * @return array
      * @param  string          $name            The name a place is known as.
      * @param  string          $containedWithin The place_id within which the new place can be found. Try and be as close as possible with the containing place. For example, for a room in a building, set the contained_within as the building place_id.
      * @param  string          $token           The token found in the response from geo/similar_places.
      * @param  float           $lat             The latitude the place is located at. This parameter will be ignored unless it is inside the range -90.0 to +90.0 (North is positive) inclusive. It will also be ignored if there isn't a corresponding long parameter.
      * @param  float           $long            The longitude the place is located at. The valid ranges for longitude is -180.0 to +180.0 (East is positive) inclusive. This parameter will be ignored if outside that range, if it is not a number, if geo_enabled is disabled, or if there not a corresponding lat parameter.
      * @param  array[optional] $attributes      This parameter searches for places which have this given street address. There are other well-known, and application specific attributes available. Custom attributes are also permitted. This should be an key-value-pair-array.
+     * @return array
      */
     public function geoPlace(
         $name, $containedWithin, $token, $lat, $long, array $attributes = null
@@ -2890,211 +2890,209 @@ class Twitter
     }
 
 // Trends resources
-	/**
-	 * Returns the top 10 trending topics for a specific WOEID, if trending information is available for it.
-	 * The response is an array of "trend" objects that encode the name of the trending topic, the query parameter that can be used to search for the topic on Twitter Search, and the Twitter Search URL.
-	 * This information is cached for 5 minutes. Requesting more frequently than that will not return any more data, and will count against your rate limit usage.
-	 *
-	 * @param string $id					The Yahoo! Where On Earth ID of the location to return trending information for. Global information is available by using 1 as the WOEID.
-	 * @param string[optional] $exclude		Setting this equal to hashtags will remove all hashtags from the trends list.
-	 * @return array
-	 */
-	public function trendsPlace($id, $exclude = null)
-	{
-		// build parameters
-		$parameters['id'] = (string) $id;
-		if($exclude != null)
-		{
-			$parameters['exclude'] = (string) $exclude;
-		}
-		return (array) $this->doCall(
-			'trends/place.json',
-			$parameters
-		);
-	}
+    /**
+     * Returns the top 10 trending topics for a specific WOEID, if trending information is available for it.
+     * The response is an array of "trend" objects that encode the name of the trending topic, the query parameter that can be used to search for the topic on Twitter Search, and the Twitter Search URL.
+     * This information is cached for 5 minutes. Requesting more frequently than that will not return any more data, and will count against your rate limit usage.
+     *
+     * @param  string           $id      The Yahoo! Where On Earth ID of the location to return trending information for. Global information is available by using 1 as the WOEID.
+     * @param  string[optional] $exclude Setting this equal to hashtags will remove all hashtags from the trends list.
+     * @return array
+     */
+    public function trendsPlace($id, $exclude = null)
+    {
+        // build parameters
+        $parameters['id'] = (string) $id;
+        if ($exclude != null) {
+            $parameters['exclude'] = (string) $exclude;
+        }
 
-	/**
-	 * Returns the locations that Twitter has trending topic information for.
-	 * The response is an array of "locations" that encode the location's WOEID (a Yahoo! Where On Earth ID) and some other human-readable information such as a canonical name and country the location belongs in.
-	 * The WOEID that is returned in the location object is to be used when querying for a specific trend.
-	 *
-	 * @return array
-	 * @param  float[optional] $lat  If passed in conjunction with long, then the available trend locations will be sorted by distance to the lat  and long passed in. The sort is nearest to furthest.
-	 * @param  float[optional] $long If passed in conjunction with lat, then the available trend locations will be sorted by distance to the lat  and long passed in. The sort is nearest to furthest.
-	 */
-	public function trendsAvailable($lat = null, $long = null)
-	{
-		// build parameters
-		$parameters = null;
-		if($lat != null) $parameters['lat_for_trends'] = (float) $lat;
-		if($long != null) $parameters['long_for_trends'] = (float) $long;
+        return (array) $this->doCall(
+            'trends/place.json',
+            $parameters
+        );
+    }
 
-		// make the call
-		return (array) $this->doCall('trends/available.json', $parameters);
-	}
+    /**
+     * Returns the locations that Twitter has trending topic information for.
+     * The response is an array of "locations" that encode the location's WOEID (a Yahoo! Where On Earth ID) and some other human-readable information such as a canonical name and country the location belongs in.
+     * The WOEID that is returned in the location object is to be used when querying for a specific trend.
+     *
+     * @param  float[optional] $lat  If passed in conjunction with long, then the available trend locations will be sorted by distance to the lat  and long passed in. The sort is nearest to furthest.
+     * @param  float[optional] $long If passed in conjunction with lat, then the available trend locations will be sorted by distance to the lat  and long passed in. The sort is nearest to furthest.
+     * @return array
+     */
+    public function trendsAvailable($lat = null, $long = null)
+    {
+        // build parameters
+        $parameters = null;
+        if($lat != null) $parameters['lat_for_trends'] = (float) $lat;
+        if($long != null) $parameters['long_for_trends'] = (float) $long;
 
-	/**
-	 * Returns the locations that Twitter has trending topic information for, closest to a specified location.
-	 * The response is an array of "locations" that encode the location's WOEID and some other human-readable information such as a canonical name and country the location belongs in.
-	 *
-	 * @return array
-	 * @param  float[optional] $lat  If provided with a long parameter the available trend locations will be sorted by distance, nearest to furthest, to the co-ordinate pair. The valid ranges for longitude is -180.0 to +180.0 (West is negative, East is positive) inclusive.
-	 * @param  float[optional] $long If provided with a lat parameter the available trend locations will be sorted by distance, nearest to furthest, to the co-ordinate pair. The valid ranges for longitude is -180.0 to +180.0 (West is negative, East is positive) inclusive.
-	 */
-	public function trendsClosest($lat = null, $long = null)
-	{
-		// build parameters
-		$parameters = null;
-		if($lat != null) $parameters['lat'] = (float) $lat;
-		if($long != null) $parameters['long'] = (float) $long;
+        // make the call
+        return (array) $this->doCall('trends/available.json', $parameters);
+    }
 
-		// make the call
-		return (array) $this->doCall('trends/closest.json', $parameters);
-	}
+    /**
+     * Returns the locations that Twitter has trending topic information for, closest to a specified location.
+     * The response is an array of "locations" that encode the location's WOEID and some other human-readable information such as a canonical name and country the location belongs in.
+     *
+     * @param  float[optional] $lat  If provided with a long parameter the available trend locations will be sorted by distance, nearest to furthest, to the co-ordinate pair. The valid ranges for longitude is -180.0 to +180.0 (West is negative, East is positive) inclusive.
+     * @param  float[optional] $long If provided with a lat parameter the available trend locations will be sorted by distance, nearest to furthest, to the co-ordinate pair. The valid ranges for longitude is -180.0 to +180.0 (West is negative, East is positive) inclusive.
+     * @return array
+     */
+    public function trendsClosest($lat = null, $long = null)
+    {
+        // build parameters
+        $parameters = null;
+        if($lat != null) $parameters['lat'] = (float) $lat;
+        if($long != null) $parameters['long'] = (float) $long;
+
+        // make the call
+        return (array) $this->doCall('trends/closest.json', $parameters);
+    }
 
 // Spam Reporting resources
-	/**
-	 * The user specified in the id is blocked by the authenticated user and reported as a spammer.
-	 *
-	 * @param  string[optional] $screenName The ID or screen_name of the user you want to report as a spammer. Helpful for disambiguating when a valid screen name is also a user ID.
-	 * @param  string[optional] $userId     The ID of the user you want to report as a spammer. Helpful for disambiguating when a valid user ID is also a valid screen name.
-	 * @return array
-	 */
-	public function reportSpam($screenName = null, $userId = null)
-	{
-		// validate
-		if ($userId == '' && $screenName == '') {
-			throw new Exception('One of these parameters must be provided.');
-		}
+    /**
+     * The user specified in the id is blocked by the authenticated user and reported as a spammer.
+     *
+     * @param  string[optional] $screenName The ID or screen_name of the user you want to report as a spammer. Helpful for disambiguating when a valid screen name is also a user ID.
+     * @param  string[optional] $userId     The ID of the user you want to report as a spammer. Helpful for disambiguating when a valid user ID is also a valid screen name.
+     * @return array
+     */
+    public function reportSpam($screenName = null, $userId = null)
+    {
+        // validate
+        if ($userId == '' && $screenName == '') {
+            throw new Exception('One of these parameters must be provided.');
+        }
 
-		// build parameters
-		if ($userId != null) {
-			$parameters['user_id'] = (string) $userId;
-		}
-		if ($screenName != null) {
-			$parameters['screen_name'] = (string) $screenName;
-		}
+        // build parameters
+        if ($userId != null) {
+            $parameters['user_id'] = (string) $userId;
+        }
+        if ($screenName != null) {
+            $parameters['screen_name'] = (string) $screenName;
+        }
 
-		// make the call
-		return (array) $this->doCall(
-			'users/report_spam.json',
-			$parameters, true, 'POST'
-		);
-	}
+        // make the call
+        return (array) $this->doCall(
+            'users/report_spam.json',
+            $parameters, true, 'POST'
+        );
+    }
 
-	// OAuth resources
-	/**
-	 * Allows a Consumer application to obtain an OAuth Request Token to request user authorization.
-	 * This method fulfills Secion 6.1 of the OAuth 1.0 authentication flow.
-	 *
-	 * @return array            An array containg the token and the secret
-	 * @param  string[optional] $callbackURL The callback URL.
-	 */
-	public function oAuthRequestToken($callbackURL = null)
-	{
-		// init var
-		$parameters = null;
+// OAuth resources
+    /**
+     * Allows a Consumer application to use an OAuth request_token to request user authorization. This method is a replacement fulfills Secion 6.2 of the OAuth 1.0 authentication flow for applications using the Sign in with Twitter authentication flow. The method will use the currently logged in user as the account to for access authorization unless the force_login parameter is set to true
+     * REMARK: This method seems not to work	@later
+     *
+     * @param bool[optional] $force Force the authentication.
+     */
+    public function oAuthAuthenticate($force = false)
+    {
+        throw new Exception('Not implemented');
 
-		// set callback
-		if ($callbackURL != null) {
-			$parameters['oauth_callback'] = (string) $callbackURL;
-		}
+        // build parameters
+        $parameters = null;
+        if((bool) $force) $parameters['force_login'] = 'true';
 
-		// make the call
-		$response = $this->doOAuthCall('request_token', $parameters);
+        // make the call
+        return $this->doCall('/oauth/authenticate.oauth', $parameters);
+    }
 
-		// validate
-		if (!isset($response['oauth_token'], $response['oauth_token_secret'])) {
-			throw new Exception(implode(', ', array_keys($response)));
-		}
+    /**
+     * Will redirect to the page to authorize the applicatione
+     *
+     * @param string $token The token.
+     */
+    public function oAuthAuthorize($token)
+    {
+        header('Location: ' . self::SECURE_API_URL .
+               '/oauth/authorize?oauth_token=' . $token);
+    }
 
-		// set some properties
-		if (isset($response['oauth_token'])) {
-			$this->setOAuthToken($response['oauth_token']);
-		}
-		if (isset($response['oauth_token_secret'])) {
-			$this->setOAuthTokenSecret($response['oauth_token_secret']);
-		}
+    /**
+     * Allows a Consumer application to exchange the OAuth Request Token for an OAuth Access Token.
+     * This method fulfills Secion 6.3 of the OAuth 1.0 authentication flow.
+     *
+     * @param  string $token    The token to use.
+     * @param  string $verifier The verifier.
+     * @return array
+     */
+    public function oAuthAccessToken($token, $verifier)
+    {
+        // init var
+        $parameters = array();
+        $parameters['oauth_token'] = (string) $token;
+        $parameters['oauth_verifier'] = (string) $verifier;
 
-		// return
-		return $response;
-	}
+        // make the call
+        $response = $this->doOAuthCall('access_token', $parameters);
 
-	/**
-	 * Allows a Consumer application to exchange the OAuth Request Token for an OAuth Access Token.
-	 * This method fulfills Secion 6.3 of the OAuth 1.0 authentication flow.
-	 *
-	 * @return array
-	 * @param  string $token    The token to use.
-	 * @param  string $verifier The verifier.
-	 */
-	public function oAuthAccessToken($token, $verifier)
-	{
-		// init var
-		$parameters = array();
-		$parameters['oauth_token'] = (string) $token;
-		$parameters['oauth_verifier'] = (string) $verifier;
+        // set some properties
+        if (isset($response['oauth_token'])) {
+            $this->setOAuthToken($response['oauth_token']);
+        }
+        if (isset($response['oauth_token_secret'])) {
+            $this->setOAuthTokenSecret($response['oauth_token_secret']);
+        }
 
-		// make the call
-		$response = $this->doOAuthCall('access_token', $parameters);
+        // return
+        return $response;
+    }
 
-		// set some properties
-		if (isset($response['oauth_token'])) {
-			$this->setOAuthToken($response['oauth_token']);
-		}
-		if (isset($response['oauth_token_secret'])) {
-			$this->setOAuthTokenSecret($response['oauth_token_secret']);
-		}
+    /**
+     * Allows a Consumer application to obtain an OAuth Request Token to request user authorization.
+     * This method fulfills Secion 6.1 of the OAuth 1.0 authentication flow.
+     *
+     * @param  string[optional] $callbackURL The callback URL.
+     * @return array            An array containg the token and the secret
+     */
+    public function oAuthRequestToken($callbackURL = null)
+    {
+        // init var
+        $parameters = null;
 
-		// return
-		return $response;
-	}
+        // set callback
+        if ($callbackURL != null) {
+            $parameters['oauth_callback'] = (string) $callbackURL;
+        }
 
-	/**
-	 * Will redirect to the page to authorize the applicatione
-	 *
-	 * @return void
-	 * @param  string $token The token.
-	 */
-	public function oAuthAuthorize($token)
-	{
-		header('Location: ' . self::SECURE_API_URL .
-			   '/oauth/authorize?oauth_token=' . $token);
-	}
+        // make the call
+        $response = $this->doOAuthCall('request_token', $parameters);
 
-	/**
-	 * Allows a Consumer application to use an OAuth request_token to request user authorization. This method is a replacement fulfills Secion 6.2 of the OAuth 1.0 authentication flow for applications using the Sign in with Twitter authentication flow. The method will use the currently logged in user as the account to for access authorization unless the force_login parameter is set to true
-	 * REMARK: This method seems not to work	@later
-	 *
-	 * @return void
-	 * @param  bool[optional] $force Force the authentication.
-	 */
-	public function oAuthAuthenticate($force = false)
-	{
-		throw new Exception('Not implemented');
+        // validate
+        if (!isset($response['oauth_token'], $response['oauth_token_secret'])) {
+            throw new Exception(implode(', ', array_keys($response)));
+        }
 
-		// build parameters
-		$parameters = null;
-		if((bool) $force) $parameters['force_login'] = 'true';
+        // set some properties
+        if (isset($response['oauth_token'])) {
+            $this->setOAuthToken($response['oauth_token']);
+        }
+        if (isset($response['oauth_token_secret'])) {
+            $this->setOAuthTokenSecret($response['oauth_token_secret']);
+        }
 
-		// make the call
-		return $this->doCall('/oauth/authenticate.oauth', $parameters);
-	}
+        // return
+        return $response;
+    }
 
 // Help resources
-	/**
-	 * Returns the current configuration used by Twitter including twitter.com slugs which are not usernames, maximum photo resolutions, and t.co URL lengths.
-	 * It is recommended applications request this endpoint when they are loaded, but no more than once a day.
-	 *
-	 * @return array
-	 */
-	public function helpConfiguration()
-	{
-		// make the call
-		return $this->doCall(
-			'help/configuration.json'
-		);
-	}
+    /**
+     * Returns the current configuration used by Twitter including twitter.com slugs which are not usernames, maximum photo resolutions, and t.co URL lengths.
+     * It is recommended applications request this endpoint when they are loaded, but no more than once a day.
+     *
+     * @return array
+     */
+    public function helpConfiguration()
+    {
+        // make the call
+        return $this->doCall(
+            'help/configuration.json'
+        );
+    }
 
     /**
      * Returns the list of languages supported by Twitter along with their ISO 639-1 code. The ISO 639-1 code is the two letter value to use if you include lang with any of your requests.

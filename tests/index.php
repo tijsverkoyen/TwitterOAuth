@@ -20,10 +20,10 @@ $twitter->setOAuthToken(OAUTH_TOKEN);
 $twitter->setOAuthTokenSecret(OAUTH_TOKEN_SECRET);
 
 try {
-//    $response = $twitter->statusesMentionsTimeline();
-//    $response = $twitter->statusesUserTimeline();
-//    $response = $twitter->statusesHomeTimeline();
-//    $response = $twitter->statusesRetweetsOfMe();
+//  $response = $twitter->statusesMentionsTimeline();
+//  $response = $twitter->statusesUserTimeline();
+//  $response = $twitter->statusesHomeTimeline();
+//  $response = $twitter->statusesRetweetsOfMe();
 
 //	$response = $twitter->statusesRetweets('21947795900469248');
 //	$response = $twitter->statusesShow('210462857140252672');
@@ -75,7 +75,7 @@ try {
 
 //	@todo $response = $twitter->favoritesList();
 //	@todo $response = $twitter->favoritesDestroy();
-//	@todo $response = $twitter->favoritesCreate();
+//	$response = $twitter->favoritesCreate('243138128959913986');
 
 //	@todo $response = $twitter->listsList();
 //	@todo $response = $twitter->listsStatuses();
@@ -96,10 +96,10 @@ try {
 //	@todo $response = $twitter->listsSubscriptions();
 //	@todo $response = $twitter->listsMembersDestroyAll();
 
-//	@todo $response = $twitter->savedSearchesList();
-//	@todo $response = $twitter->savedSearchesShow();
-//	@todo $response = $twitter->savedSearchesCreate();
-//	@todo $response = $twitter->savedSearchesDestroy();
+//	$response = $twitter->savedSearchesList();
+//	$response = $twitter->savedSearchesShow('3205644');
+    $response = $twitter->savedSearchesCreate('sandwiches');
+//	$response = $twitter->savedSearchesDestroy('3205644');
 
 //	$response = $twitter->geoId('df51dec6f4ee2b2c');
 //	$response = $twitter->geoReverseGeoCode(37.7821120598956, -122.400612831116);
