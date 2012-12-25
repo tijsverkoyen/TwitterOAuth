@@ -761,6 +761,11 @@ class Twitter
         $contributorDetails = null, $includeRts = null
     )
     {
+        // validate
+        if ($userId == '' && $screenName == '') {
+            throw new Exception('Specify an userId or a screenName.');
+        }
+
         // build parameters
         $parameters = null;
         if ($userId != null) {
@@ -1322,18 +1327,20 @@ class Twitter
         );
     }
 
-// User resources
+// Friends & Followers resources
     /**
-     * Returns extended information of a given user, specified by ID or screen name as per the required id parameter.
-     * The author's most recent status will be returned inline.
+     * Returns a cursored collection of user IDs for every user the specified user is following (otherwise known as their "friends").
+     * At this time, results are ordered with the most recent following first — however, this ordering is subject to unannounced change and eventual consistency issues. Results are given in groups of 5,000 user IDs and multiple "pages" of results can be navigated through using the next_cursor value in subsequent requests. See Using cursors to navigate collections for more information.
+     * This method is especially powerful when used in conjunction with GET users/lookup, a method that allows you to convert user IDs into full user objects in bulk.
      *
+     * @param  string[optional] $userId       The ID of the user for whom to return results for.
+     * @param  string[optional] $screenName   The screen name of the user for whom to return results for.
+     * @param  string[optional] $cursor       Causes the list of connections to be broken into pages of no more than 5000 IDs at a time. The number of IDs returned is not guaranteed to be 5000 as suspended users are filtered out after connections are queried. If no cursor is provided, a value of -1 will be assumed, which is the first "page." The response from the API will include a previous_cursor and next_cursor to allow paging back and forth
+     * @param  bool[optional]   $stringifyIds Many programming environments will not consume our Tweet ids due to their size. Provide this option to have ids returned as strings instead.
      * @return array
-     * @param  string[optional] $userId          Specfies the ID of the user for whom to return results for. Helpful for disambiguating when a valid user ID is also a valid screen name.
-     * @param  string[optional] $screenName      Specfies the screen name of the user for whom to return results for. Helpful for disambiguating when a valid screen name is also a user ID.
-     * @param  bool[optional]   $includeEntities When set to true each tweet will include a node called "entities,". This node offers a variety of metadata about the tweet in a discreet structure, including: user_mentions, urls, and hashtags.
      */
-    public function usersShow(
-        $userId = null, $screenName = null, $includeEntities = false
+    public function friendsIds(
+        $userId = null, $screenName = null, $cursor = null, $stringifyIds = true
     )
     {
         // validate
@@ -1349,294 +1356,208 @@ class Twitter
         if ($screenName != null) {
             $parameters['screen_name'] = (string) $screenName;
         }
-        if ($includeEntities) {
-            $parameters['include_entities'] = 'true';
+        if ($cursor != null) {
+            $parameters['cursor'] = (string) $cursor;
         }
+        $parameters['stringify_ids'] = ((bool) $stringifyIds) ? 'true' : 'false';
 
         // make the call
-        return (array) $this->doCall('users/show.json', $parameters);
+        return (array) $this->doCall('friends/ids.json', $parameters, true);
     }
 
     /**
-     * Return up to 100 users worth of extended information, specified by either ID, screen name, or combination of the two.
-     * The author's most recent status (if the authenticating user has permission) will be returned inline.
+     * Returns a cursored collection of user IDs for every user following the specified user.
+     * At this time, results are ordered with the most recent following first — however, this ordering is subject to unannounced change and eventual consistency issues. Results are given in groups of 5,000 user IDs and multiple "pages" of results can be navigated through using the next_cursor value in subsequent requests. See Using cursors to navigate collections for more information.
+     * This method is especially powerful when used in conjunction with GET users/lookup, a method that allows you to convert user IDs into full user objects in bulk.
      *
+     * @param  string[optional] $userId       The ID of the user for whom to return results for.
+     * @param  string[optional] $screenName   The screen name of the user for whom to return results for.
+     * @param  string[optional] $cursor       Causes the list of connections to be broken into pages of no more than 5000 IDs at a time. The number of IDs returned is not guaranteed to be 5000 as suspended users are filtered out after connections are queried. If no cursor is provided, a value of -1 will be assumed, which is the first "page." The response from the API will include a previous_cursor and next_cursor to allow paging back and forth
+     * @param  bool[optional]   $stringifyIds Many programming environments will not consume our Tweet ids due to their size. Provide this option to have ids returned as strings instead.
      * @return array
-     * @param  mixed[optional] $userIds         An array of user IDs, up to 100 in total.
-     * @param  mixed[optional] $screenNames     An array of screen names, up to 100 in total.
-     * @param  bool[optional]  $includeEntities When set to true each tweet will include a node called "entities,". This node offers a variety of metadata about the tweet in a discreet structure, including: user_mentions, urls, and hashtags.
      */
-    public function usersLookup(
-        $userIds = null, $screenNames = null, $includeEntities = false
+    public function followersIds(
+        $userId = null, $screenName = null, $cursor = null, $stringifyIds = true
     )
     {
-        // redefine
-        $userIds = (array) $userIds;
-        $screenNames = (array) $screenNames;
-
         // validate
-        if (empty($userIds) && empty($screenNames)) {
+        if ($userId == '' && $screenName == '') {
+            throw new Exception('Specify an userId or a screenName.');
+        }
+
+        // build parameters
+        if ($userId != null) {
+            $parameters['user_id'] = (string) $userId;
+        }
+        if ($screenName != null) {
+            $parameters['screen_name'] = (string) $screenName;
+        }
+        if ($cursor != null) {
+            $parameters['cursor'] = (string) $cursor;
+        }
+        $parameters['stringify_ids'] = ((bool) $stringifyIds) ? 'true' : 'false';
+
+        // make the call
+        return (array) $this->doCall('followers/ids.json', $parameters, true);
+    }
+
+    public function friendshipsLookup()
+    {
+
+    }
+
+    /**
+     * Returns a collection of numeric IDs for every user who has a pending request to follow the authenticating user.
+     *
+     * @param string[optional] $cursor Causes the list of connections to be broken into pages of no more than 5000 IDs at a time. The number of IDs returned is not guaranteed to be 5000 as suspended users are filtered out after connections are queried. If no cursor is provided, a value of -1 will be assumed, which is the first "page."
+      * @param  bool[optional] 	$stringifyIds	Many programming environments will not consume our Tweet ids due to their size. Provide this option to have ids returned as strings instead.
+     * @return array
+     */
+    public function friendshipsIncoming($cursor = null, $stringifyIds = true)
+    {
+        // build parameters
+        $parameters = null;
+        if($cursor != null) $parameters['cursor'] = (string) $cursor;
+        $parameters['stringify_ids'] = ((bool) $stringifyIds) ? 'true' : 'false';
+
+        // make the call
+        return (array) $this->doCall(
+            'friendships/incoming.json', $parameters, true
+        );
+    }
+
+    /**
+     * Returns a collection of numeric IDs for every protected user for whom the authenticating user has a pending follow request.
+     *
+     * @param  string[optional] $cursor       Causes the list of connections to be broken into pages of no more than 5000 IDs at a time. The number of IDs returned is not guaranteed to be 5000 as suspended users are filtered out after connections are queried. If no cursor is provided, a value of -1 will be assumed, which is the first "page."
+     * @param  bool[optional]   $stringifyIds Many programming environments will not consume our Tweet ids due to their size. Provide this option to have ids returned as strings instead.
+     * @return array
+     */
+    public function friendshipsOutgoing($cursor = null, $stringifyIds = true)
+    {
+        // build parameters
+        $parameters = null;
+        if($cursor != null) $parameters['cursor'] = (string) $cursor;
+        $parameters['stringify_ids'] = ((bool) $stringifyIds) ? 'true' : 'false';
+
+        // make the call
+        return (array) $this->doCall(
+            'friendships/outgoing.json', $parameters, true
+        );
+    }
+
+    /**
+     * Allows the authenticating users to follow the user specified in the ID parameter.
+     * Returns the befriended user in the requested format when successful. Returns a string describing the failure condition when unsuccessful. If you are already friends with the user a HTTP 403 may be returned, though for performance reasons you may get a 200 OK message even if the friendship already exists.
+     * Actions taken in this method are asynchronous and changes will be eventually consistent.
+     *
+     * @param  string[optional] $userId     The ID of the user for whom to befriend.
+     * @param  string[optional] $screenName The screen name of the user for whom to befriend.
+     * @param  bool[optional]   $follow     Enable notifications for the target user.
+     * @return array
+     */
+    public function friendshipsCreate(
+        $userId = null, $screenName = null, $follow = false
+    )
+    {
+        // validate
+        if ($userId == '' && $screenName == '') {
             throw new Exception('Specify an userId or a screenName.');
         }
 
         // build parameters
         $parameters = null;
-        if (!empty($userIds)) {
-            $parameters['user_id'] = implode(',', $userIds);
-        }
-        if (!empty($screenNames)) {
-            $parameters['screen_name'] = implode(',', $screenNames);
-        }
-        if ($includeEntities) {
-            $parameters['include_entities'] = 'true';
-        }
-
-        // make the call
-        return (array) $this->doCall('users/lookup.json', $parameters, true);
-
-    }
-
-    /**
-     * Run a search for users similar to the Find People button on Twitter.com; the same results returned by people search on Twitter.com will be returned by using this API.
-     * Usage note: It is only possible to retrieve the first 1000 matches from this API.
-     *
-     * @return array
-     * @param  string         $q               The search query term.
-     * @param  int[optional]  $perPage         Specifies the number of results to retrieve.
-     * @param  int[optional]  $page            Specifies the page of results to retrieve.
-     * @param  bool[optional] $includeEntities When set to true each tweet will include a node called "entities,". This node offers a variety of metadata about the tweet in a discreet structure, including: user_mentions, urls, and hashtags.
-     */
-    public function usersSearch(
-        $q, $perPage = null, $page = null, $includeEntities = false
-    )
-    {
-        // build parameters
-        $parameters['q'] = (string) $q;
-        if($perPage != null) $parameters['per_page'] = (int) $perPage;
-        if($page != null) $parameters['page'] = (int) $page;
-        if($includeEntities) $parameters['include_entities'] = 'true';
-
-        // make the call
-        return (array) $this->doCall('users/search.json', $parameters, true);
-    }
-
-    /**
-     * Access to Twitter's suggested user list. This returns the list of suggested user categories. The category can be used in the users/suggestions/category  endpoint to get the users in that category.
-     *
-     * @return array
-     */
-    public function usersSuggestions()
-    {
-        return (array) $this->doCall('users/suggestions.json');
-    }
-
-    /**
-     * Access the users in a given category of the Twitter suggested user list.
-     * It is recommended that end clients cache this data for no more than one hour.
-     *
-     * @return array
-     * @param  string $slug The short name of list or a category.
-     */
-    public function usersSuggestionsSlug($slug)
-    {
-        return (array) $this->doCall(
-            'users/suggestions/' . (string) $slug . '.json'
-        );
-    }
-
-    /**
-     * Access the profile image in various sizes for the user with the indicated screen_name. If no size is provided the normal image is returned.
-     * This method return an URL to the actual image resource.
-     * This method should only be used by application developers to lookup or check the profile image URL for a user.
-     * This method must not be used as the image source URL presented to users of your application.
-     *
-     * @return string
-     * @param  string           $screenName The screen name of the user for whom to return results for. Helpful for disambiguating when a valid screen name is also a user ID.
-     * @param  string[optional] $size       Specifies the size of image to fetch. Not specifying a size will give the default, normal size of 48px by 48px. Valid options include: bigger (73x73px), normal (48x48px), mini (24x24px).
-     */
-    public function usersProfileImage($screenName, $size = 'normal')
-    {
-        // possible modes
-        $allowedSizes = array('normal', 'bigger', 'mini');
-
-        // validate
-        if ($size != null && !in_array($size, $allowedSizes)) {
-            throw new Exception('Invalid size (' . $size . '), possible values are: ' . implode($allowedSizes) . '.');
-        }
-
-        // build parameters
-        $parameters['size'] = (string) $size;
-
-        $headers = $this->doCall(
-            'users/profile_image/' . (string) $screenName . '.json',
-            $parameters, false, 'GET', null, false, true
-        );
-
-        // return the URL
-        if(isset($headers['url'])) return $headers['url'];
-
-        // fallback
-        return false;
-    }
-
-    /**
-     * Returns a user's friends, each with current status inline. They are ordered by the order in which the user followed them, most recently followed first, 100 at a time.
-     * (Please note that the result set isn't guaranteed to be 100 every time as suspended users will be filtered out.)
-     *
-     * Use the cursor option to access older friends.
-     * With no user specified, request defaults to the authenticated user's friends.
-     * It's also possible to request another user's friends list via the id, screen_name or user_id parameter.
-     *
-     * @return array
-     * @param  string[optional] $userId          Specfies the ID of the user for whom to return results for. Helpful for disambiguating when a valid user ID is also a valid screen name.
-     * @param  string[optional] $screenName      Specfies the screen name of the user for whom to return results for. Helpful for disambiguating when a valid screen name is also a user ID.
-     * @param  int[optional]    $cursor          Breaks the results into pages. This is recommended for users who are following many users. Provide a value of -1  to begin paging. Provide values as returned to in the response body's next_cursor  and previous_cursor attributes to page back and forth in the list.
-     * @param  bool[optional]   $includeEntities When set to true each tweet will include a node called "entities,". This node offers a variety of metadata about the tweet in a discreet structure, including: user_mentions, urls, and hashtags.
-     */
-    public function statusesFriends(
-        $userId = null, $screenName = null, $cursor = null,
-        $includeEntities = false
-    )
-    {
-        // build parameters
-        $parameters = array();
         if ($userId != null) {
             $parameters['user_id'] = (string) $userId;
         }
         if ($screenName != null) {
             $parameters['screen_name'] = (string) $screenName;
         }
-        if ($cursor != null) {
-            $parameters['cursor'] = $cursor;
-        }
-        if ($includeEntities) {
-            $parameters['include_entities'] = 'true';
-        }
+        $parameters['follow'] = ($follow) ? 'true' : 'false';
 
         // make the call
-        return (array) $this->doCall('statuses/friends.json', $parameters, true);
+        return (array) $this->doCall(
+            'friendships/create.json', $parameters, true, 'POST'
+        );
     }
 
     /**
-     * Returns the authenticating user's followers, each with current status inline. They are ordered by the order in which they followed the user, 100 at a time. (Please note that the result set isn't guaranteed to be 100 every time as suspended users will be filtered out.)
-     * Use the cursor parameter to access earlier followers.
+     * Allows the authenticating user to unfollow the user specified in the ID parameter.
+     * Returns the unfollowed user in the requested format when successful. Returns a string describing the failure condition when unsuccessful.
+     * Actions taken in this method are asynchronous and changes will be eventually consistent.
      *
+     * @param  string[optional] $userId     The ID of the user for whom to unfollow.
+     * @param  string[optional] $screenName The screen name of the user for whom to unfollow.
      * @return array
-     * @param  string[optional] $userId          Specfies the ID of the user for whom to return results for. Helpful for disambiguating when a valid user ID is also a valid screen name.
-     * @param  string[optional] $screenName      Specfies the screen name of the user for whom to return results for. Helpful for disambiguating when a valid screen name is also a user ID.
-     * @param  int[optional]    $cursor          Breaks the results into pages. This is recommended for users who are following many users. Provide a value of -1  to begin paging. Provide values as returned to in the response body's next_cursor  and previous_cursor attributes to page back and forth in the list.
-     * @param  bool[optional]   $includeEntities When set to true each tweet will include a node called "entities,". This node offers a variety of metadata about the tweet in a discreet structure, including: user_mentions, urls, and hashtags.
      */
-    public function statusesFollowers(
-        $userId = null, $screenName = null, $cursor = null,
-        $includeEntities = false
-    )
+    public function friendshipsDestroy($userId = null, $screenName = null)
     {
+        // validate
+        if ($userId == '' && $screenName == '') {
+            throw new Exception('Specify an userId or a screenName.');
+        }
+
         // build parameters
-        $parameters = array();
         if ($userId != null) {
             $parameters['user_id'] = (string) $userId;
         }
         if ($screenName != null) {
             $parameters['screen_name'] = (string) $screenName;
         }
-        if ($cursor != null) {
-            $parameters['cursor'] = $cursor;
-        }
-        if ($includeEntities) {
-            $parameters['include_entities'] = 'true';
-        }
 
         // make the call
         return (array) $this->doCall(
-            'statuses/followers.json', $parameters, true
+            'friendships/destroy.json', $parameters, true, 'POST'
         );
     }
 
-// List resources
     /**
-     * Creates a new list for the authenticated user. Accounts are limited to 20 lists.
+     * Returns detailed information about the relationship between two arbitrary users.
      *
+     * @param  string[optional] $sourceId         The user_id of the subject user.
+     * @param  string[optional] $sourceScreenName The screen_name of the subject user.
+     * @param  string[optional] $targetId         The screen_name of the subject user.
+     * @param  string[optional] $targetScreenName The screen_name of the target user.
      * @return array
-     * @param  string           $user        The user.
-     * @param  string           $name        The name of the list you are creating.
-     * @param  string[optional] $mode        Whether your list is public or private. Values can be public or private. Lists are public by default if no mode is specified.
-     * @param  string[optional] $description The description of the list you are creating.
      */
-    public function userListsCreate(
-        $user, $name, $mode = null, $description = null
-    )
+    public function friendshipsShow(
+        $sourceId = null, $sourceScreenName = null, $targetId = null,
+        $targetScreenName = null)
     {
-        // possible modes
-        $allowedModes = array('public', 'private');
-
         // validate
-        if ($mode != null && !in_array($mode, $allowedModes)) {
-            throw new Exception('Invalid mode (), possible values are: ' .
-                                       implode($allowedModes) . '.');
+        if ($sourceId == '' && $sourceScreenName == '') {
+            throw new Exception('Specify an sourceId or a sourceScreenName.');
+        }
+        if ($targetId == '' && $targetScreenName == '') {
+            throw new Exception('Specify an targetId or a targetScreenName.');
         }
 
         // build parameters
-        $parameters['name'] = (string) $name;
-        if ($mode != null) {
-            $parameters['mode'] = (string) $mode;
+        if ($sourceId != null) {
+            $parameters['source_id'] = (string) $sourceId;
         }
-        if ($description != null) {
-            $parameters['description'] = (string) $description;
+        if ($sourceScreenName != null) {
+            $parameters['source_screen_name'] = (string) $sourceScreenName;
+        }
+        if ($targetId != null) {
+            $parameters['target_id'] = (string) $targetId;
+        }
+        if ($targetScreenName != null) {
+            $parameters['target_screen_name'] = (string) $targetScreenName;
         }
 
         // make the call
-        return (array) $this->doCall(
-            (string) $user . '/lists.json', $parameters, true, 'POST'
-        );
+        return (array) $this->doCall('friendships/show.json', $parameters);
     }
 
-    /**
-     * List the lists of the specified user. Private lists will be included if the authenticated users is the same as the user who's lists are being returned.
-     *
-     * @return array
-     * @param  string           $user   The user.
-     * @param  string[optional] $cursor Breaks the results into pages. This is recommended for users who are following many users. Provide a value of -1  to begin paging. Provide values as returned to in the response body's next_cursor  and previous_cursor attributes to page back and forth in the list.
-     */
-    public function userLists($user, $cursor = null)
     {
-        $parameters = null;
-        if($cursor != null) $parameters['cursor'] = (string) $cursor;
 
-        // make the call
-        return (array) $this->doCall(
-            (string) $user . '/lists.json', $parameters, true
-        );
     }
 
-    /**
-     * Show the specified list. Private lists will only be shown if the authenticated user owns the specified list.
-     *
-     * @return array
-     * @param  string $user The user.
-     * @param  string $id   The id of the list.
-     */
-    public function userListsId($user, $id)
     {
-        // make the call
-        return (array) $this->doCall(
-            (string) $user . '/lists/' . (string) $id . '.json', null, true
-        );
+
     }
 
-    /**
-     * Updates the specified list.
-     *
-     * @return array
-     * @param  string           $user        The user.
-     * @param  string           $id          The id of the list.
-     * @param  string[optional] $name        The name of the list you are creating.
-     * @param  string[optional] $mode        Whether your list is public or private. Values can be public or private. Lists are public by default if no mode is specified.
-     * @param  string[optional] $description The description of the list you are creating.
-     */
-    public function userListsIdUpdate(
-        $user, $id, $name = null, $mode = null, $description = null
-    )
     {
         // possible modes
         $allowedModes = array('public', 'private');
@@ -2710,6 +2631,11 @@ class Twitter
      */
     public function favoritesList($userId = null, $screenName = null, $count = 20, $sinceId = null, $maxId = null, $includeEntities = false)
     {
+        // validate
+        if ($userId == '' && $screenName == '') {
+            throw new Exception('Specify an userId or a screenName.');
+        }
+
         // build parameters
         $parameters = null;
         if($userId != null) $parameters['user_id'] = (string) $userId;

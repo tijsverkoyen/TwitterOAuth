@@ -327,6 +327,89 @@ class TwitterTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * Tests Twitter->friendsIds
+     */
+    public function testFriendsIds()
+    {
+        $response = $this->twitter->friendsIds(null, 'tijsverkoyen');
+        $this->assertArrayHasKey('ids', $response);
+        $this->assertArrayHasKey('next_cursor', $response);
+        $this->assertArrayHasKey('previous_cursor', $response);
+    }
+
+    /**
+     * Tests Twitter->followersIds
+     */
+    public function testFollowersIds()
+    {
+        $response = $this->twitter->followersIds(null, 'tijsverkoyen');
+        $this->assertArrayHasKey('ids', $response);
+        $this->assertArrayHasKey('next_cursor', $response);
+        $this->assertArrayHasKey('previous_cursor', $response);
+    }
+
+    /**
+     * Tests Twitter->friendshipsIncoming
+     */
+    public function testFriendshipsIncoming()
+    {
+        $response = $this->twitter->friendshipsIncoming();
+        $this->assertArrayHasKey('ids', $response);
+        $this->assertArrayHasKey('next_cursor', $response);
+        $this->assertArrayHasKey('previous_cursor', $response);
+    }
+
+    /**
+     * Tests Twitter->friendshipsOutgoing
+     */
+    public function testFriendshipsOutgoing()
+    {
+        $response = $this->twitter->friendshipsOutgoing();
+        $this->assertArrayHasKey('ids', $response);
+        $this->assertArrayHasKey('next_cursor', $response);
+        $this->assertArrayHasKey('previous_cursor', $response);
+    }
+
+    /**
+     * Tests Twitter->friendshipsCreate
+     */
+    public function testFriendshipsCreate()
+    {
+        $response = $this->twitter->friendshipsCreate(null, 'tijsverkoyen');
+        $this->isUser($response);
+        $this->twitter->friendshipsDestroy(null, 'tijsverkoyen');
+    }
+
+    /**
+     * Tests Twitter->friendshipsDestroy
+     */
+    public function testFriendshipsDestroy()
+    {
+        $response = $this->twitter->friendshipsCreate(null, 'tijsverkoyen');
+        $response = $this->twitter->friendshipsDestroy(null, 'tijsverkoyen');
+        $this->isUser($response);
+    }
+
+    /**
+     * Tests Twitter->friendshipsShow
+     */
+    public function testFriendshipsShow()
+    {
+        $response = $this->twitter->friendshipsShow(null, 'Bert', null, 'Ernie');
+        $this->assertArrayHasKey('relationship', $response);
+        $this->assertArrayHasKey('target', $response['relationship']);
+        $this->assertArrayHasKey('followed_by', $response['relationship']['target']);
+        $this->assertArrayHasKey('following', $response['relationship']['target']);
+        $this->assertArrayHasKey('screen_name', $response['relationship']['target']);
+        $this->assertArrayHasKey('id', $response['relationship']['target']);
+        $this->assertArrayHasKey('source', $response['relationship']);
+        $this->assertArrayHasKey('followed_by', $response['relationship']['source']);
+        $this->assertArrayHasKey('following', $response['relationship']['source']);
+        $this->assertArrayHasKey('screen_name', $response['relationship']['source']);
+        $this->assertArrayHasKey('id', $response['relationship']['source']);
+    }
+
+    /**
      * Tests Twitter->usersSuggestionsSlug
      */
     public function testUsersSuggestionsSlug()

@@ -41,15 +41,17 @@ try {
 //	$response = $twitter->directMessagesDestroy('264854339762393088');
 //	$response = $twitter->directMessagesNew(null, 'tijs_dev', 'Running the tests.. 私のさえずりを設定する '. time());
 
-//	@todo $response = $twitter->friendsIds();
-//	@todo $response = $twitter->followersIds();
+//  $response = $twitter->friendsIds(null, 'tijsverkoyen');
+//  $response = $twitter->followersIds(null, 'tijsverkoyen');
 //	@todo $response = $twitter->friendshipsLookup();
-//	@todo $response = $twitter->friendshipsIncoming();
-//	@todo $response = $twitter->friendshpsOutgoing();
-//	@todo $response = $twitter->friendshipsCreate();
-//	@todo $response = $twitter->friendshipsDestroy();
+//	$response = $twitter->friendshipsIncoming();
+//	$response = $twitter->friendshipsOutgoing();
+//	$response = $twitter->friendshipsCreate(null, 'tijsverkoyen');
+//	$response = $twitter->friendshipsDestroy(null, 'tijsverkoyen');
 //	@todo $response = $twitter->friendshipsUpdate();
-//	@todo $response = $twitter->friendshipsShow();
+//  $response = $twitter->friendshipsShow(null, 'bert', null, 'ernie');
+//	@todo $response = $twitter->friendsList();
+//	@todo $response = $twitter->followersList();
 
 //	@todo $response = $twitter->accountSettings();
 //	@todo $response = $twitter->accountVerifyCredentials();
