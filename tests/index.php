@@ -61,8 +61,8 @@ try {
 //  @todo $response = $twitter->accountUpdateProfileBackgroundImage();
 //  @todo $response = $twitter->accountUpdateProfileColors();
 //  @todo $response = $twitter->accountUpdateProfileImage();
-//  @todo $response = $twitter->blocksList();
-//  @todo $response = $twitter->blocksIds();
+//  $response = $twitter->blocksList();
+//  $response = $twitter->blocksIds();
 //  $response = $twitter->blocksCreate(null, 'netlash');
 //  $response = $twitter->blocksDestroy(null, 'netlash');
 //  $response = $twitter->usersLookup(null, array('tijsverkoyen', 'sumocoders'));

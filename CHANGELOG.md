@@ -3,6 +3,7 @@
 * Fixed blocksCreate, blocksDestroy, usersLookup, usersShow, usersSearch to reflect version 1.1 of the API.
 * Implemented usersContributees, usersContributors.
 * Implemented friendshipsLookup, friendshipsUpdate, friendsList, followersList.
+* Implemented blocksIds, blocksList.
 
 # Changelog since 2.2.1
 

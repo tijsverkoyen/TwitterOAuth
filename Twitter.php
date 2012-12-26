@@ -1380,7 +1380,7 @@ class Twitter
      * @return array
      */
     public function friendsIds(
-        $userId = null, $screenName = null, $cursor = null, $stringifyIds = true
+        $userId = null, $screenName = null, $cursor = null, $stringifyIds = null
     )
     {
         // validate
@@ -1399,7 +1399,9 @@ class Twitter
         if ($cursor != null) {
             $parameters['cursor'] = (string) $cursor;
         }
-        $parameters['stringify_ids'] = ((bool) $stringifyIds) ? 'true' : 'false';
+        if ($stringifyIds !== null) {
+            $parameters['stringify_ids'] = ((bool) $stringifyIds) ? 'true' : 'false';
+        }
 
         // make the call
         return (array) $this->doCall('friends/ids.json', $parameters, true);
@@ -1963,18 +1965,55 @@ class Twitter
 
     /**
      * Not implemented yet
+     * @param  int[optional]  $cursor          Causes the results to be broken into pages of no more than 20 records at a time. If no cursor is provided, a value of -1 will be assumed, which is the first "page."
+     * @param  bool[optional] $includeEntities The user object entities node will be disincluded when set to false.
+     * @param  bool[optional] $skipStatus      When set to either true, t or 1 statuses will not be included in the returned user objects.
+     * @return array
      */
-    public function blocksList()
+    public function blocksList(
+        $cursor = null, $includeEntities = null, $skipStatus = null
+    )
     {
-        throw new Exception('Not implemented');
+        // build parameters
+        $parameters = null;
+        if ($cursor !== null) {
+            $parameters['cursor'] = (int) $cursor;
+        }
+        if ($includeEntities !== null) {
+            $parameters['include_user_entities'] = ($includeEntities) ? 'true' : 'false';
+        }
+        if ($skipStatus !== null) {
+            $parameters['skip_status'] = ($skipStatus) ? 'true' : 'false';
+        }
+
+        // make the call
+        return (array) $this->doCall(
+            'blocks/list.json', $parameters, true
+        );
     }
 
     /**
-     * Not implemented yet
+     * Returns an array of numeric user ids the authenticating user is blocking.
+     *
+     * @param  string[optional] $cursor       Causes the list of IDs to be broken into pages of no more than 5000 IDs at a time. The number of IDs returned is not guaranteed to be 5000 as suspended users are filtered out after connections are queried. If no cursor is provided, a value of -1 will be assumed, which is the first "page."
+     * @param  bool[optional]   $stringifyIds Many programming environments will not consume our ids due to their size. Provide this option to have ids returned as strings instead.
+     * @return array
      */
-    public function blocksIds()
+    public function blocksIds($cursor = null, $stringifyIds = null)
     {
-        throw new Exception('Not implemented');
+        // build parameters
+        $parameters = null;
+        if ($cursor != null) {
+            $parameters['cursor'] = (string) $cursor;
+        }
+        if ($stringifyIds !== null) {
+            $parameters['stringify_ids'] = ((bool) $stringifyIds) ? 'true' : 'false';
+        }
+
+        // make the call
+        return (array) $this->doCall(
+            'blocks/ids.json', $parameters, true
+        );
     }
 
     /**

@@ -448,9 +448,6 @@ class TwitterTest extends PHPUnit_Framework_TestCase
     {
         $response = $this->twitter->friendsList(null, 'tijsverkoyen');
         $this->assertArrayHasKey('users', $response);
-        foreach ($response as $row) {
-            $this->isUser($row);
-        }
         $this->assertArrayHasKey('next_cursor', $response);
         $this->assertArrayHasKey('previous_cursor', $response);
 
@@ -463,9 +460,6 @@ class TwitterTest extends PHPUnit_Framework_TestCase
     {
         $response = $this->twitter->followersList(null, 'tijsverkoyen');
         $this->assertArrayHasKey('users', $response);
-        foreach ($response as $row) {
-            $this->isUser($row);
-        }
         $this->assertArrayHasKey('next_cursor', $response);
         $this->assertArrayHasKey('previous_cursor', $response);
 
@@ -496,6 +490,28 @@ class TwitterTest extends PHPUnit_Framework_TestCase
     {
         $response = $this->twitter->accountUpdateProfile(null, 'http://github.com/tijsverkoyen/TwitterOAuth');
         $this->isUser($response);
+    }
+
+    /**
+     * Tests Twitter->blocksList
+     */
+    public function testBlocksList()
+    {
+        $response = $this->twitter->blocksList();
+        $this->assertArrayHasKey('users', $response);
+        $this->assertArrayHasKey('next_cursor', $response);
+        $this->assertArrayHasKey('previous_cursor', $response);
+    }
+
+    /**
+     * Tests Twitter->blocksIds
+     */
+    public function testBlocksIds()
+    {
+        $response = $this->twitter->blocksIds();
+        $this->assertArrayHasKey('ids', $response);
+        $this->assertArrayHasKey('next_cursor', $response);
+        $this->assertArrayHasKey('previous_cursor', $response);
     }
 
     /**
