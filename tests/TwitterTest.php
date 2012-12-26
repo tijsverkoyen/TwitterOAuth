@@ -466,12 +466,58 @@ class TwitterTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * Tests Twitter->accountSettings
+     */
+    public function testAccountSettings()
+    {
+        $response = $this->twitter->accountSettings();
+        $this->assertArrayHasKey('protected', $response);
+        $this->assertArrayHasKey('screen_name', $response);
+        $this->assertArrayHasKey('discoverable_by_email', $response);
+        $this->assertArrayHasKey('time_zone', $response);
+        $this->assertArrayHasKey('tzinfo_name', $response['time_zone']);
+        $this->assertArrayHasKey('name', $response['time_zone']);
+        $this->assertArrayHasKey('utc_offset', $response['time_zone']);
+        $this->assertArrayHasKey('use_cookie_personalization', $response);
+        $this->assertArrayHasKey('sleep_time', $response);
+        $this->assertArrayHasKey('enabled', $response['sleep_time']);
+        $this->assertArrayHasKey('start_time', $response['sleep_time']);
+        $this->assertArrayHasKey('end_time', $response['sleep_time']);
+        $this->assertArrayHasKey('geo_enabled', $response);
+        $this->assertArrayHasKey('always_use_https', $response);
+        $this->assertArrayHasKey('language', $response);
+    }
+
+    /**
      * Tests Twitter->accountVerifyCredentials
      */
     public function testAccountVerifyCredentials()
     {
         $response = $this->twitter->accountVerifyCredentials();
         $this->isUser($response);
+    }
+
+    /**
+     * Tests Twitter->accountSettingsUpdate
+     */
+    public function testAccountSettingsUpdate()
+    {
+        $response = $this->twitter->accountSettingsUpdate(null, null, null, null, null, 'en');
+        $this->assertArrayHasKey('protected', $response);
+        $this->assertArrayHasKey('screen_name', $response);
+        $this->assertArrayHasKey('discoverable_by_email', $response);
+        $this->assertArrayHasKey('time_zone', $response);
+        $this->assertArrayHasKey('tzinfo_name', $response['time_zone']);
+        $this->assertArrayHasKey('name', $response['time_zone']);
+        $this->assertArrayHasKey('utc_offset', $response['time_zone']);
+        $this->assertArrayHasKey('use_cookie_personalization', $response);
+        $this->assertArrayHasKey('sleep_time', $response);
+        $this->assertArrayHasKey('enabled', $response['sleep_time']);
+        $this->assertArrayHasKey('start_time', $response['sleep_time']);
+        $this->assertArrayHasKey('end_time', $response['sleep_time']);
+        $this->assertArrayHasKey('geo_enabled', $response);
+        $this->assertArrayHasKey('always_use_https', $response);
+        $this->assertArrayHasKey('language', $response);
     }
 
     /**
@@ -584,6 +630,30 @@ class TwitterTest extends PHPUnit_Framework_TestCase
         $response = $this->twitter->usersContributors(null, 'twitterapi');
         foreach ($response as $row) {
             $this->isUser($row);
+        }
+    }
+
+    /**
+     * Tests Twitter->accountRemoveProfileBanner
+     */
+    public function testAccountRemoveProfileBanner()
+    {
+        // @todo upload
+        $response = $this->twitter->accountRemoveProfileBanner();
+        $this->assertTrue($response);
+    }
+
+    /**
+     * Tests Twitter->usersProfileBanner
+     */
+    public function testUsersProfileBanner()
+    {
+        $response = $this->twitter->usersProfileBanner(null, 'tijs_dev');
+        $this->assertArrayHasKey('sizes', $response);
+        foreach ($response['sizes'] as $row) {
+            $this->assertArrayHasKey('w', $row);
+            $this->assertArrayHasKey('h', $row);
+            $this->assertArrayHasKey('url', $row);
         }
     }
 

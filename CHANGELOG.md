@@ -4,6 +4,7 @@
 * Implemented usersContributees, usersContributors.
 * Implemented friendshipsLookup, friendshipsUpdate, friendsList, followersList.
 * Implemented blocksIds, blocksList.
+* Implemented accountSettings, accountSettingsUpdate, accountRemoveProfileBanner, usersProfileBanner.
 
 # Changelog since 2.2.1
 

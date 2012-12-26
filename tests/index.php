@@ -53,9 +53,9 @@ try {
 //  $response = $twitter->friendsList(null, 'tijsverkoyen');
 //  $response = $twitter->followersList(null, 'tijsverkoyen');
 
-//  @todo $response = $twitter->accountSettings();
+//	$response = $twitter->accountSettings();
 //  $response = $twitter->accountVerifyCredentials();
-//  @todo $response = $twitter->accountSettingsUpdate();
+//  $response = $twitter->accountSettingsUpdate(null, null, null, null, 'Europe/Brussels', 'it');
 //  $response = $twitter->accountUpdateDeliveryDevice('none');
 //  $response = $twitter->accountUpdateProfile(null, 'http://github.com/tijsverkoyen/TwitterOAuth');
 //  @todo $response = $twitter->accountUpdateProfileBackgroundImage();
@@ -70,9 +70,9 @@ try {
 //  $response = $twitter->usersSearch('Twitter API');
 //  $response = $twitter->usersContributees(null, 'themattharris');
 //  $response = $twitter->usersContributors(null, 'twitterapi');
-//  @todo $response = $twitter->accountRemoveProfileBanner();
-//  @todo $response = $twitter->accountUpdateProfileBanner();
-//  @todo $response = $twitter->usersProfileBanner();
+//  $response = $twitter->accountRemoveProfileBanner();
+//  $response = $twitter->accountUpdateProfileBanner();
+//  $response = $twitter->usersProfileBanner(null, 'tijs_dev');
 
 //  $response = $twitter->usersSuggestionsSlug('twitter');
 //  $response = $twitter->usersSuggestions();

@@ -407,7 +407,6 @@ class Twitter
         } else {
             // add the parameters into the querystring
             if(!empty($parameters)) $url .= '?' . $this->buildQuery($parameters);
-
             $options[CURLOPT_POST] = false;
         }
 
@@ -1750,11 +1749,16 @@ class Twitter
 
 // User resources
     /**
-     * Not implemented yet
+     * Returns settings (including current trend, geo and sleep time information) for the authenticating user.
+     *
+     * @return array
      */
     public function accountSettings()
     {
-        throw new Exception('Not implemented');
+        // make the call
+        return (array) $this->doCall(
+            'account/settings.json', null, true
+        );
     }
 
     /**
@@ -1784,11 +1788,50 @@ class Twitter
     }
 
     /**
-     * Not implemented yet
+     * Updates the authenticating user's settings.
+     *
+     * @param  string[optional] $trendLocationWoeId The Yahoo! Where On Earth ID to use as the user's default trend location. Global information is available by using 1 as the WOEID. The woeid must be one of the locations returned by trendsAvailable.
+     * @param  bool[optional]   $sleepTimeEnabled   When set to true, will enable sleep time for the user. Sleep time is the time when push or SMS notifications should not be sent to the user.
+     * @param  string[optional] $startSleepTime     The hour that sleep time should begin if it is enabled. The value for this parameter should be provided in ISO8601 format (i.e. 00-23). The time is considered to be in the same timezone as the user's time_zone setting.
+     * @param  string[optional] $endSleepTime       The hour that sleep time should end if it is enabled. The value for this parameter should be provided in ISO8601 format (i.e. 00-23). The time is considered to be in the same timezone as the user's time_zone setting.
+     * @param  string[optional] $timeZone           The timezone dates and times should be displayed in for the user. The timezone must be one of the Rails TimeZone names.
+     * @param  string[optional] $lang               The language which Twitter should render in for this user. The language must be specified by the appropriate two letter ISO 639-1 representation. Currently supported languages are provided by helpLanguages.
+     * @return array
      */
-    public function accountSettingsUpdate()
+    public function accountSettingsUpdate(
+        $trendLocationWoeId = null, $sleepTimeEnabled = null,
+        $startSleepTime = null, $endSleepTime = null, $timeZone = null,
+        $lang = null
+    )
     {
-        throw new Exception('Not implemented');
+        // build parameters
+        if ($trendLocationWoeId !== null) {
+            $parameters['trend_location_woeid'] = (string) $trendLocationWoeId;
+        }
+        if ($sleepTimeEnabled !== null) {
+            if ((bool) $sleepTimeEnabled) {
+                $parameters['sleep_time_enabled'] = 'true';
+            } else {
+                $parameters['sleep_time_enabled'] = 'false';
+            }
+        }
+        if ($startSleepTime !== null) {
+            $parameters['start_sleep_time'] = (string) $startSleepTime;
+        }
+        if ($endSleepTime !== null) {
+            $parameters['end_sleep_time'] = (string) $endSleepTime;
+        }
+        if ($timeZone !== null) {
+            $parameters['time_zone'] = (string) $timeZone;
+        }
+        if ($lang !== null) {
+            $parameters['lang'] = (string) $lang;
+        }
+
+        // make the call
+        return (array) $this->doCall(
+            'account/settings.json', $parameters, true, 'POST'
+        );
     }
 
     /**
@@ -2268,11 +2311,18 @@ class Twitter
     }
 
     /**
-     * Not implemented yet
+     * Removes the uploaded profile banner for the authenticating user.
+     *
+     * @return bool
      */
     public function accountRemoveProfileBanner()
     {
-        throw new Exception('Not implemented');
+        $return = (array) $this->doCall(
+            'account/remove_profile_banner.json', null, true, 'POST',
+            null, false, true
+        );
+
+        return ($return['http_code'] == 200);
     }
 
     /**
@@ -2284,11 +2334,28 @@ class Twitter
     }
 
     /**
-     * Not implemented yet
+     * Returns a map of the available size variations of the specified user's profile banner. If the user has not uploaded a profile banner, a HTTP 404 will be served instead.
+     *
+     * @param  string[optional] $userId     The ID of the user for whom to return results for. Helpful for disambiguating when a valid user ID is also a valid screen name.
+     * @param  string[optional] $screenName The screen name of the user for whom to return results for. Helpful for disambiguating when a valid screen name is also a user ID.
+     * @return array
      */
-    public function usersProfileBanner()
+    public function usersProfileBanner($userId = null, $screenName = null)
     {
-        throw new Exception('Not implemented');
+        // validate
+        if ($userId == '' && $screenName == '') {
+            throw new Exception('Specify an userId or a screenName.');
+        }
+
+        // build parameters
+        $parameters = null;
+        if($userId != null) $parameters['user_id'] = (string) $userId;
+        if($screenName != null) $parameters['screen_name'] = (string) $screenName;
+
+        return (array) $this->doCall(
+            'users/profile_banner.json',
+            $parameters, true
+        );
     }
 
 // Suggested users resources
@@ -2354,7 +2421,9 @@ class Twitter
      * @param  bool[optional]   $includeEntities The entities node will be omitted when set to false.
      * @return array
      */
-    public function favoritesList($userId = null, $screenName = null, $count = 20, $sinceId = null, $maxId = null, $includeEntities = null)
+    public function favoritesList(
+        $userId = null, $screenName = null, $count = 20, $sinceId = null,
+        $maxId = null, $includeEntities = null)
     {
         // validate
         if ($userId == '' && $screenName == '') {
