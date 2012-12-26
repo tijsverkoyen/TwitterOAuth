@@ -25,51 +25,51 @@ try {
 //  $response = $twitter->statusesHomeTimeline();
 //  $response = $twitter->statusesRetweetsOfMe();
 
-//	$response = $twitter->statusesRetweets('21947795900469248');
-//	$response = $twitter->statusesShow('210462857140252672');
-//	$response = $twitter->statusesDestroy('264832934299705344');
-//	$response = $twitter->statusesUpdate('Running the tests.. 私のさえずりを設定する '. time());
-//	$response = $twitter->statusesRetweet('241259202004267009');
-//	@todo $response = $twitter->statusesUpdateWithMedia();
-//	$response = $twitter->statusesOEmbed('240192632003911681');
+//  $response = $twitter->statusesRetweets('21947795900469248');
+//  $response = $twitter->statusesShow('210462857140252672');
+//  $response = $twitter->statusesDestroy('264832934299705344');
+//  $response = $twitter->statusesUpdate('Running the tests.. 私のさえずりを設定する '. time());
+//  $response = $twitter->statusesRetweet('241259202004267009');
+//  @todo $response = $twitter->statusesUpdateWithMedia();
+//  $response = $twitter->statusesOEmbed('240192632003911681');
 
-//	$response = $twitter->searchTweets('#freebandnames');
+//  $response = $twitter->searchTweets('#freebandnames');
 
-//	$response = $twitter->directMessages();
-//	$response = $twitter->directMessagesSent();
-//  $response = $twitter->directMessagesShow('264022285470547969');
-//	$response = $twitter->directMessagesDestroy('264854339762393088');
-//	$response = $twitter->directMessagesNew(null, 'tijs_dev', 'Running the tests.. 私のさえずりを設定する '. time());
+//  $response = $twitter->directMessages();
+//  $response = $twitter->directMessagesSent();
+//  $response = $twitter->directMessagesShow('283891767105953793');
+//  $response = $twitter->directMessagesDestroy('264854339762393088');
+//  $response = $twitter->directMessagesNew(null, 'tijs_dev', 'Running the tests.. 私のさえずりを設定する '. time());
 
 //  $response = $twitter->friendsIds(null, 'tijsverkoyen');
 //  $response = $twitter->followersIds(null, 'tijsverkoyen');
-//	@todo $response = $twitter->friendshipsLookup();
-//	$response = $twitter->friendshipsIncoming();
-//	$response = $twitter->friendshipsOutgoing();
-//	$response = $twitter->friendshipsCreate(null, 'tijsverkoyen');
-//	$response = $twitter->friendshipsDestroy(null, 'tijsverkoyen');
-//	@todo $response = $twitter->friendshipsUpdate();
+//  @todo $response = $twitter->friendshipsLookup();
+//  $response = $twitter->friendshipsIncoming();
+//  $response = $twitter->friendshipsOutgoing();
+//  $response = $twitter->friendshipsCreate(null, 'tijsverkoyen');
+//  $response = $twitter->friendshipsDestroy(null, 'tijsverkoyen');
+//  @todo $response = $twitter->friendshipsUpdate();
 //  $response = $twitter->friendshipsShow(null, 'bert', null, 'ernie');
-//	@todo $response = $twitter->friendsList();
-//	@todo $response = $twitter->followersList();
+//  @todo $response = $twitter->friendsList();
+//  @todo $response = $twitter->followersList();
 
-//	@todo $response = $twitter->accountSettings();
+//  @todo $response = $twitter->accountSettings();
 //  $response = $twitter->accountVerifyCredentials();
-//	@todo $response = $twitter->accountSettingsUpdate();
-//	$response = $twitter->accountUpdateDeliveryDevice('none');
-//	$response = $twitter->accountUpdateProfile(null, 'http://github.com/tijsverkoyen/TwitterOAuth');
-//	@todo $response = $twitter->accountUpdateProfileBackgroundImage();
-//	@todo $response = $twitter->accountUpdateProfileColors();
-//	@todo $response = $twitter->accountUpdateProfileImage();
-//	@todo $response = $twitter->blocksList();
-//	@todo $response = $twitter->blocksIds();
-//	@todo $response = $twitter->blocksCreate();
-//	@todo $response = $twitter->blocksDestroy();
-//	@todo $response = $twitter->usersLookup();
-//	@todo $response = $twitter->usersShow();
-//	@todo $response = $twitter->usersSearch();
-//	@todo $response = $twitter->usersContributees();
-//	@todo $response = $twitter->usersContributors();
+//  @todo $response = $twitter->accountSettingsUpdate();
+//  $response = $twitter->accountUpdateDeliveryDevice('none');
+//  $response = $twitter->accountUpdateProfile(null, 'http://github.com/tijsverkoyen/TwitterOAuth');
+//  @todo $response = $twitter->accountUpdateProfileBackgroundImage();
+//  @todo $response = $twitter->accountUpdateProfileColors();
+//  @todo $response = $twitter->accountUpdateProfileImage();
+//  @todo $response = $twitter->blocksList();
+//  @todo $response = $twitter->blocksIds();
+//  $response = $twitter->blocksCreate(null, 'netlash');
+//  $response = $twitter->blocksDestroy(null, 'netlash');
+//  $response = $twitter->usersLookup(null, array('tijsverkoyen', 'sumocoders'));
+//  $response = $twitter->usersShow(null, 'tijsverkoyen');
+//  $response = $twitter->usersSearch('Twitter API');
+//  @todo $response = $twitter->usersContributees();
+//  @todo $response = $twitter->usersContributors();
 
 //  $response = $twitter->usersSuggestionsSlug('twitter');
 //  $response = $twitter->usersSuggestions();
@@ -79,47 +79,47 @@ try {
 //  $response = $twitter->favoritesDestroy('243138128959913986');
 //  $response = $twitter->favoritesCreate('243138128959913986');
 
-//	@todo $response = $twitter->listsList();
-//	@todo $response = $twitter->listsStatuses();
-//	@todo $response = $twitter->listsMembersDestroy();
-//	@todo $response = $twitter->listsMemberships();
-//	@todo $response = $twitter->listsSubscribers();
-//	@todo $response = $twitter->listsSubscribersCreate();
-//	@todo $response = $twitter->listsSubscribersShow();
-//	@todo $response = $twitter->listsSubscribersDestroy();
-//	@todo $response = $twitter->listsMembersCreateAll();
-//	@todo $response = $twitter->listsMembersShow();
-//	@todo $response = $twitter->listsMembers():
-//	@todo $response = $twitter->listsMembersCreate();
-//	@todo $response = $twitter->listsDestroy();
-//	@todo $response = $twitter->listsUpdate();
-//	@todo $response = $twitter->listsCreate();
-//	@todo $response = $twitter->listsShow();
-//	@todo $response = $twitter->listsSubscriptions();
-//	@todo $response = $twitter->listsMembersDestroyAll();
+//  @todo $response = $twitter->listsList();
+//  @todo $response = $twitter->listsStatuses();
+//  @todo $response = $twitter->listsMembersDestroy();
+//  @todo $response = $twitter->listsMemberships();
+//  @todo $response = $twitter->listsSubscribers();
+//  @todo $response = $twitter->listsSubscribersCreate();
+//  @todo $response = $twitter->listsSubscribersShow();
+//  @todo $response = $twitter->listsSubscribersDestroy();
+//  @todo $response = $twitter->listsMembersCreateAll();
+//  @todo $response = $twitter->listsMembersShow();
+//  @todo $response = $twitter->listsMembers():
+//  @todo $response = $twitter->listsMembersCreate();
+//  @todo $response = $twitter->listsDestroy();
+//  @todo $response = $twitter->listsUpdate();
+//  @todo $response = $twitter->listsCreate();
+//  @todo $response = $twitter->listsShow();
+//  @todo $response = $twitter->listsSubscriptions();
+//  @todo $response = $twitter->listsMembersDestroyAll();
 
-//	$response = $twitter->savedSearchesList();
-//	$response = $twitter->savedSearchesShow('3205644');
+//  $response = $twitter->savedSearchesList();
+//  $response = $twitter->savedSearchesShow('3205644');
 //  $response = $twitter->savedSearchesCreate(time());
-//	$response = $twitter->savedSearchesDestroy('3205644');
+//  $response = $twitter->savedSearchesDestroy('3205644');
 
-//	$response = $twitter->geoId('df51dec6f4ee2b2c');
-//	$response = $twitter->geoReverseGeoCode(37.7821120598956, -122.400612831116);
-//	$response = $twitter->geoSearch(37.7821120598956, -122.400612831116);
-//	$response = $twitter->geoSimilarPlaces(37.7821120598956, -122.400612831116, 'Twitter HQ');
-//	$response = $twitter->geoPlace('Twitter HQ', '247f43d441defc03', '36179c9bf78835898ebf521c1defd4be', 37.7821120598956, -122.400612831116, array('street_address' => '795 Folsom St'));
+//  $response = $twitter->geoId('df51dec6f4ee2b2c');
+//  $response = $twitter->geoReverseGeoCode(37.7821120598956, -122.400612831116);
+//  $response = $twitter->geoSearch(37.7821120598956, -122.400612831116);
+//  $response = $twitter->geoSimilarPlaces(37.7821120598956, -122.400612831116, 'Twitter HQ');
+//  $response = $twitter->geoPlace('Twitter HQ', '247f43d441defc03', '36179c9bf78835898ebf521c1defd4be', 37.7821120598956, -122.400612831116, array('street_address' => '795 Folsom St'));
 
-//	$response = $twitter->trendsPlace(1);
-//	$response = $twitter->trendsAvailable();
-//	$response = $twitter->trendsClosest(37.781157, -122.400612831116);
+//  $response = $twitter->trendsPlace(1);
+//  $response = $twitter->trendsAvailable();
+//  $response = $twitter->trendsClosest(37.781157, -122.400612831116);
 
-//	$response = $twitter->reportSpam('FujitaKatsuhisa');
+//  $response = $twitter->reportSpam('FujitaKatsuhisa');
 
-//	$response = $twitter->helpConfiguration();
-//	$response = $twitter->helpLanguages();
-//	$response = $twitter->helpPrivacy();
-//	$response = $twitter->helpTos();
-//	$response = $twitter->applicationRateLimitStatus();
+//  $response = $twitter->helpConfiguration();
+//  $response = $twitter->helpLanguages();
+//  $response = $twitter->helpPrivacy();
+//  $response = $twitter->helpTos();
+//  $response = $twitter->applicationRateLimitStatus();
 } catch (Exception $e) {
     var_dump($e);
 }

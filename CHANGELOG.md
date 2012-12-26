@@ -1,3 +1,7 @@
+# Changelog since 2.3.0
+
+* Fixed blocksCreate, blocksDestroy, usersLookup, usersShow, usersSearch to reflect version 1.1 of the API.
+
 # Changelog since 2.2.1
 
 * Fixed issue with wrong classname for Exceptions

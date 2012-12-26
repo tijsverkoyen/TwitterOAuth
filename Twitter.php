@@ -727,7 +727,7 @@ class Twitter
         if ($contributorDetails != null) {
             $parameters['contributor_details'] = ($contributorDetails) ? 'true' : 'false';
         }
-        if ($includeEntities != null) {
+        if ($includeEntities !== null) {
             $parameters['include_entities'] = ($includeEntities) ? 'true' : 'false';
         }
 
@@ -842,7 +842,7 @@ class Twitter
         if ($contributorDetails != null) {
             $parameters['contributor_details'] = ($contributorDetails) ? 'true' : 'false';
         }
-        if ($includeEntities != null) {
+        if ($includeEntities !== null) {
             $parameters['include_entities'] = ($includeEntities) ? 'true' : 'false';
         }
 
@@ -883,7 +883,7 @@ class Twitter
         if ($trimUser != null) {
             $parameters['trim_user'] = ($trimUser) ? 'true' : 'false';
         }
-        if ($includeEntities != null) {
+        if ($includeEntities !== null) {
             $parameters['include_entities'] = ($includeEntities) ? 'true' : 'false';
         }
         if ($includeUserEntities != null) {
@@ -945,7 +945,7 @@ class Twitter
         if ($includeMyRetweet != null) {
             $parameters['include_my_retweet'] = ($includeMyRetweet) ? 'true' : 'false';
         }
-        if ($includeEntities != null) {
+        if ($includeEntities !== null) {
             $parameters['include_entities'] = ($includeEntities) ? 'true' : 'false';
         }
 
@@ -1239,10 +1239,10 @@ class Twitter
         if ($page != null) {
             $parameters['page'] = (int) $page;
         }
-        if ($includeEntities != null) {
+        if ($includeEntities !== null) {
             $parameters['include_entities'] = ($includeEntities) ? 'true' : 'false';
         }
-        if ($skipStatus != null) {
+        if ($skipStatus !== null) {
             $parameters['skip_status'] = ($skipStatus) ? 'true' : 'false';
         }
 
@@ -1283,7 +1283,7 @@ class Twitter
         if ($page != null) {
             $parameters['page'] = (int) $page;
         }
-        if ($includeEntities != null) {
+        if ($includeEntities !== null) {
             $parameters['include_entities'] = ($includeEntities) ? 'true' : 'false';
         }
 
@@ -1323,7 +1323,7 @@ class Twitter
     {
         // build parameters
         $parameters['id'] = (string) $id;
-        if ($includeEntities != null) {
+        if ($includeEntities !== null) {
             $parameters['include_entities'] = ($includeEntities) ? 'true' : 'false';
         }
 
@@ -1634,13 +1634,17 @@ class Twitter
      * @return array
      */
     public function accountVerifyCredentials(
-        $includeEntities = false, $skipStatus = false
+        $includeEntities = null, $skipStatus = null
     )
     {
         // build parameters
         $parameters = null;
-        if($includeEntities) $parameters['include_entities'] = 'true';
-        if($skipStatus) $parameters['skip_status'] = 'true';
+        if ($includeEntities !== null) {
+            $parameters['include_entities'] = ($includeEntities) ? 'true' : 'false';
+        }
+        if ($skipStatus !== null) {
+            $parameters['skip_status'] = ($skipStatus) ? 'true' : 'false';
+        }
 
         // make the call
         return (array) $this->doCall(
@@ -1664,12 +1668,14 @@ class Twitter
      * @param  bool[optional] $includeEntities When set to true, each tweet will include a node called "entities,". This node offers a variety of metadata about the tweet in a discreet structure, including: user_mentions, urls, and hashtags. While entities are opt-in on timelines at present, they will be made a default component of output in the future. See Tweet Entities for more detail on entities.
      */
     public function accountUpdateDeliveryDevice(
-        $device, $includeEntities = false
+        $device, $includeEntities = null
     )
     {
         // build parameters
         $parameters['device'] = (string) $device;
-        if($includeEntities) $parameters['include_entities'] = 'true';
+        if ($includeEntities !== null) {
+            $parameters['include_entities'] = ($includeEntities) ? 'true' : 'false';
+        }
 
         // make the call
         return (array) $this->doCall(
@@ -1688,7 +1694,7 @@ class Twitter
      * @param  bool[optional]   $includeEntities The entities node will not be included when set to false.
      * @param  bool[optional]   $skipStatus      When set to true, statuses will not be included in the returned user objects.
      */
-    public function accountUpdateProfile($name = null, $url = null, $location = null, $description = null, $includeEntities = false, $skipStatus = null)
+    public function accountUpdateProfile($name = null, $url = null, $location = null, $description = null, $includeEntities = null, $skipStatus = null)
     {
         // build parameters
         $parameters = null;
@@ -1704,11 +1710,11 @@ class Twitter
         if ($description != null) {
             $parameters['description'] = (string) $description;
         }
-        if ($includeEntities) {
-            $parameters['include_entities'] = 'true';
+        if ($includeEntities !== null) {
+            $parameters['include_entities'] = ($includeEntities) ? 'true' : 'false';
         }
-        if ($skipStatus) {
-            $parameters['skip_status'] = 'true';
+        if ($skipStatus !== null) {
+            $parameters['skip_status'] = ($skipStatus) ? 'true' : 'false';
         }
 
         // make the call
@@ -1725,7 +1731,7 @@ class Twitter
      * @param  bool[optional] $tile            Whether or not to tile the background image. If set to true the background image will be displayed tiled. The image will not be tiled otherwise.
      * @param  bool[optional] $includeEntities When set to true each tweet will include a node called "entities,". This node offers a variety of metadata about the tweet in a discreet structure, including: user_mentions, urls, and hashtags.
      */
-    public function accountUpdateProfileBackgroundImage($image, $tile = false, $includeEntities = false)
+    public function accountUpdateProfileBackgroundImage($image, $tile = false, $includeEntities = null)
     {
         // validate
         if (!file_exists($image)) {
@@ -1735,7 +1741,9 @@ class Twitter
         // build parameters
         $parameters = null;
         if($tile) $parameters['tile'] = 'true';
-        if($includeEntities) $parameters['include_entities'] = 'true';
+        if ($includeEntities !== null) {
+            $parameters['include_entities'] = ($includeEntities) ? 'true' : 'false';
+        }
 
         // make the call
         return (array) $this->doCall(
@@ -1759,7 +1767,7 @@ class Twitter
     public function accountUpdateProfileColors(
         $profileBackgroundColor = null, $profileTextColor = null,
         $profileLinkColor = null, $profileSidebarFillColor = null,
-        $profileSidebarBorderColor = null, $includeEntities = false
+        $profileSidebarBorderColor = null, $includeEntities = null
     )
     {
         // validate
@@ -1787,8 +1795,8 @@ class Twitter
         if ($profileSidebarBorderColor != null) {
             $parameters['profile_sidebar_border_color'] = (string) $profileSidebarBorderColor;
         }
-        if ($includeEntities) {
-            $parameters['include_entities'] = 'true';
+        if ($includeEntities !== null) {
+            $parameters['include_entities'] = ($includeEntities) ? 'true' : 'false';
         }
 
         // make the call
@@ -1804,7 +1812,7 @@ class Twitter
      * @param  string         $image           The path to the avatar image for the profile. Must be a valid GIF, JPG, or PNG image of less than 700 kilobytes in size. Images with width larger than 500 pixels will be scaled down.
      * @param  bool[optional] $includeEntities When set to true each tweet will include a node called "entities,". This node offers a variety of metadata about the tweet in a discreet structure, including: user_mentions, urls, and hashtags.
      */
-    public function accountUpdateProfileImage($image, $includeEntities = false)
+    public function accountUpdateProfileImage($image, $includeEntities = null)
     {
         // validate
         if (!file_exists($image)) {
@@ -1813,7 +1821,9 @@ class Twitter
 
         // build parameters
         $parameters = null;
-        if($includeEntities) $parameters['include_entities'] = 'true';
+        if ($includeEntities !== null) {
+            $parameters['include_entities'] = ($includeEntities) ? 'true' : 'false';
+        }
 
         // make the call
         return (array) $this->doCall(
@@ -1839,15 +1849,17 @@ class Twitter
     }
 
     /**
-     * Blocks the user specified in the ID parameter as the authenticating user. Destroys a friendship to the blocked user if it exists. Returns the blocked user in the requested format when successful.
+     * Blocks the specified user from following the authenticating user. In addition the blocked user will not show in the authenticating users mentions or timeline (unless retweeted by another user). If a follow or friend relationship exists it is destroyed.
      *
+     * @param  string[optional] $userId          The ID of the potentially blocked user. Helpful for disambiguating when a valid user ID is also a valid screen name.
+     * @param  string[optional] $screenName      The screen name of the potentially blocked user. Helpful for disambiguating when a valid screen name is also a user ID.
+     * @param  bool[optional]   $includeEntities The entities node will not be included when set to false.
+     * @param  bool[optional]   $skipStatus      When set to either true, t or 1 statuses will not be included in the returned user objects.
      * @return array
-     * @param  string[optional] $userId          Specfies the screen name of the user for whom to return results for. Helpful for disambiguating when a valid screen name is also a user ID.
-     * @param  string[optional] $screenName      Specfies the ID of the user for whom to return results for. Helpful for disambiguating when a valid user ID is also a valid screen name.
-     * @param  bool[optional]   $includeEntities When set to true each tweet will include a node called "entities,". This node offers a variety of metadata about the tweet in a discreet structure, including: user_mentions, urls, and hashtags.
      */
     public function blocksCreate(
-        $userId = null, $screenName = null, $includeEntities = false
+        $userId = null, $screenName = null,
+         $includeEntities = null, $skipStatus = null
     )
     {
         // validate
@@ -1862,8 +1874,11 @@ class Twitter
         if ($screenName != null) {
             $parameters['screen_name'] = (string) $screenName;
         }
-        if ($includeEntities) {
-            $parameters['include_entities'] = 'true';
+        if ($includeEntities !== null) {
+            $parameters['include_entities'] = ($includeEntities) ? 'true' : 'false';
+        }
+        if ($skipStatus !== null) {
+            $parameters['skip_status'] = ($skipStatus) ? 'true' : 'false';
         }
 
         // make the call
@@ -1873,15 +1888,17 @@ class Twitter
     }
 
     /**
-     * Un-blocks the user specified in the ID parameter for the authenticating user. Returns the un-blocked user in the requested format when successful.
+     * Un-blocks the user specified in the ID parameter for the authenticating user. Returns the un-blocked user in the requested format when successful. If relationships existed before the block was instated, they will not be restored.
      *
+     * @param  string[optional] $userId          The ID of the potentially blocked user. Helpful for disambiguating when a valid user ID is also a valid screen name.
+     * @param  string[optional] $screenName      The screen name of the potentially blocked user. Helpful for disambiguating when a valid screen name is also a user ID.
+     * @param  bool[optional]   $includeEntities The entities node will not be included when set to false.
+     * @param  bool[optional]   $skipStatus      When set to either true, t or 1 statuses will not be included in the returned user objects.
      * @return array
-     * @param  string[optional] $userId          Specfies the screen name of the user for whom to return results for. Helpful for disambiguating when a valid screen name is also a user ID.
-     * @param  string[optional] $screenName      Specfies the ID of the user for whom to return results for. Helpful for disambiguating when a valid user ID is also a valid screen name.
-     * @param  bool[optional]   $includeEntities When set to true each tweet will include a node called "entities,". This node offers a variety of metadata about the tweet in a discreet structure, including: user_mentions, urls, and hashtags.
      */
     public function blocksDestroy(
-        $userId = null, $screenName = null, $includeEntities = false
+        $userId = null, $screenName = null,
+        $includeEntities = null, $skipStatus = null
     )
     {
         // validate
@@ -1896,8 +1913,8 @@ class Twitter
         if ($screenName != null) {
             $parameters['screen_name'] = (string) $screenName;
         }
-        if ($includeEntities) {
-            $parameters['include_entities'] = 'true';
+        if ($includeEntities !== null) {
+            $parameters['include_entities'] = ($includeEntities) ? 'true' : 'false';
         }
 
         // make the call
@@ -1907,16 +1924,15 @@ class Twitter
     }
 
     /**
-     * Return up to 100 users worth of extended information, specified by either ID, screen name, or combination of the two.
-     * The author's most recent status (if the authenticating user has permission) will be returned inline.
+     * Returns fully-hydrated user objects for up to 100 users per request, as specified by comma-separated values passed to the user_id and/or screen_name parameters.
      *
+     * @param  mixed[optional] $userIds         An array of user IDs, up to 100 are allowed in a single request.
+     * @param  mixed[optional] $screenNames     An array of screen names, up to 100 are allowed in a single request.
+     * @param  bool[optional]  $includeEntities The entities node that may appear within embedded statuses will be disincluded when set to false.
      * @return array
-     * @param  mixed[optional] $userIds         An array of user IDs, up to 100 in total.
-     * @param  mixed[optional] $screenNames     An array of screen names, up to 100 in total.
-     * @param  bool[optional]  $includeEntities When set to true each tweet will include a node called "entities,". This node offers a variety of metadata about the tweet in a discreet structure, including: user_mentions, urls, and hashtags.
      */
     public function usersLookup(
-        $userIds = null, $screenNames = null, $includeEntities = false
+        $userIds = null, $screenNames = null, $includeEntities = null
     )
     {
         // redefine
@@ -1936,8 +1952,8 @@ class Twitter
         if (!empty($screenNames)) {
             $parameters['screen_name'] = implode(',', $screenNames);
         }
-        if ($includeEntities) {
-            $parameters['include_entities'] = 'true';
+        if ($includeEntities !== null) {
+            $parameters['include_entities'] = ($includeEntities) ? 'true' : 'false';
         }
 
         // make the call
@@ -1946,16 +1962,16 @@ class Twitter
     }
 
     /**
-     * Returns extended information of a given user, specified by ID or screen name as per the required id parameter.
-     * The author's most recent status will be returned inline.
+     * Returns a variety of information about the user specified by the required user_id or screen_name parameter.
+     * The author's most recent Tweet will be returned inline when possible.
      *
+     * @param  string[optional] $userId          The screen name of the user for whom to return results for. Either a id or screen_name is required for this method.
+     * @param  string[optional] $screenName      The ID of the user for whom to return results for. Either an id or screen_name is required for this method.
+     * @param  bool[optional]   $includeEntities The entities node will not be included when set to false.
      * @return array
-     * @param  string[optional] $userId          Specfies the ID of the user for whom to return results for. Helpful for disambiguating when a valid user ID is also a valid screen name.
-     * @param  string[optional] $screenName      Specfies the screen name of the user for whom to return results for. Helpful for disambiguating when a valid screen name is also a user ID.
-     * @param  bool[optional]   $includeEntities When set to true each tweet will include a node called "entities,". This node offers a variety of metadata about the tweet in a discreet structure, including: user_mentions, urls, and hashtags.
      */
     public function usersShow(
-        $userId = null, $screenName = null, $includeEntities = false
+        $userId = null, $screenName = null, $includeEntities = null
     )
     {
         // validate
@@ -1971,8 +1987,8 @@ class Twitter
         if ($screenName != null) {
             $parameters['screen_name'] = (string) $screenName;
         }
-        if ($includeEntities) {
-            $parameters['include_entities'] = 'true';
+        if ($includeEntities !== null) {
+            $parameters['include_entities'] = ($includeEntities) ? 'true' : '0';
         }
 
         // make the call
@@ -1983,21 +1999,23 @@ class Twitter
      * Run a search for users similar to the Find People button on Twitter.com; the same results returned by people search on Twitter.com will be returned by using this API.
      * Usage note: It is only possible to retrieve the first 1000 matches from this API.
      *
-     * @return array
-     * @param  string         $q               The search query term.
-     * @param  int[optional]  $perPage         Specifies the number of results to retrieve.
+     * @param  string         $q               The search query to run against people search.
      * @param  int[optional]  $page            Specifies the page of results to retrieve.
-     * @param  bool[optional] $includeEntities When set to true each tweet will include a node called "entities,". This node offers a variety of metadata about the tweet in a discreet structure, including: user_mentions, urls, and hashtags.
+     * @param  int[optional]  $count           The number of potential user results to retrieve per page. This value has a maximum of 20.
+     * @param  bool[optional] $includeEntities The entities node will be disincluded from embedded tweet objects when set to false.
+     * @return array
      */
     public function usersSearch(
-        $q, $perPage = null, $page = null, $includeEntities = false
+        $q, $page = null, $count = null, $includeEntities = null
     )
     {
         // build parameters
         $parameters['q'] = (string) $q;
-        if($perPage != null) $parameters['per_page'] = (int) $perPage;
         if($page != null) $parameters['page'] = (int) $page;
-        if($includeEntities) $parameters['include_entities'] = 'true';
+        if($count != null) $parameters['count'] = (int) $count;
+        if ($includeEntities !== null) {
+            $parameters['include_entities'] = ($includeEntities) ? 'true' : 'false';
+        }
 
         // make the call
         return (array) $this->doCall('users/search.json', $parameters, true);
@@ -2106,7 +2124,7 @@ class Twitter
      * @param  bool[optional]   $includeEntities The entities node will be omitted when set to false.
      * @return array
      */
-    public function favoritesList($userId = null, $screenName = null, $count = 20, $sinceId = null, $maxId = null, $includeEntities = false)
+    public function favoritesList($userId = null, $screenName = null, $count = 20, $sinceId = null, $maxId = null, $includeEntities = null)
     {
         // validate
         if ($userId == '' && $screenName == '') {
@@ -2120,7 +2138,9 @@ class Twitter
         if($count != null) $parameters['count'] = (int) $count;
         if($sinceId != null) $parameters['since_id'] = (string) $sinceId;
         if($maxId != null) $parameters['max_id'] = (string) $maxId;
-        if($includeEntities) $parameters['include_entities'] = 'true';
+        if ($includeEntities !== null) {
+            $parameters['include_entities'] = ($includeEntities) ? 'true' : 'false';
+        }
 
         // make the call
         return (array) $this->doCall('favorites/list.json', $parameters, true);
@@ -2134,11 +2154,13 @@ class Twitter
      * @param  string         $id              The numerical ID of the desired status.
      * @param  bool[optional] $includeEntities The entities node will be omitted when set to false.
      */
-    public function favoritesDestroy($id, $includeEntities = false)
+    public function favoritesDestroy($id, $includeEntities = null)
     {
         // build parameters
         $parameters['id'] = (string) $id;
-        if($includeEntities) $parameters['include_entities'] = 'true';
+        if ($includeEntities !== null) {
+            $parameters['include_entities'] = ($includeEntities) ? 'true' : 'false';
+        }
 
         // make the call
         return (array) $this->doCall(
@@ -2154,11 +2176,13 @@ class Twitter
      * @param  bool[optional] $includeEntities The entities node will be omitted when set to false.
      * @return array
      */
-    public function favoritesCreate($id, $includeEntities = false)
+    public function favoritesCreate($id, $includeEntities = null)
     {
         // build parameters
         $parameters['id'] = (string) $id;
-        if($includeEntities) $parameters['include_entities'] = 'true';
+        if ($includeEntities !== null) {
+            $parameters['include_entities'] = ($includeEntities) ? 'true' : 'false';
+        }
 
         // make the call
         return (array) $this->doCall(

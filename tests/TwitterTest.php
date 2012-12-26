@@ -151,7 +151,7 @@ class TwitterTest extends PHPUnit_Framework_TestCase
      */
     public function testStatusesUserTimeline()
     {
-        $response = $this->twitter->statusesUserTimeline(null, null, null, 2);
+        $response = $this->twitter->statusesUserTimeline(null, 'tijsverkoyen', null, 2);
 
         $this->assertEquals(count($response), 2);
         foreach ($response as $row) {
@@ -302,7 +302,7 @@ class TwitterTest extends PHPUnit_Framework_TestCase
      */
     public function testDirectMessagesShow()
     {
-        $response = $this->twitter->directMessagesShow('264022285470547969');
+        $response = $this->twitter->directMessagesShow('283891767105953793');
         $this->isDirectMessage($response);
     }
 
@@ -434,6 +434,57 @@ class TwitterTest extends PHPUnit_Framework_TestCase
     {
         $response = $this->twitter->accountUpdateProfile(null, 'http://github.com/tijsverkoyen/TwitterOAuth');
         $this->isUser($response);
+    }
+
+    /**
+     * Tests Twitter->blocksCreate
+     */
+    public function testBlocksCreate()
+    {
+        $response = $this->twitter->blocksCreate(null, 'netlash');
+        $this->isUser($response);
+        $this->twitter->blocksDestroy(null, 'netlash');
+    }
+
+    /**
+     * Tests Twitter->blocksCreate
+     */
+    public function testBlocksDestroy()
+    {
+        $response = $this->twitter->blocksCreate(null, 'netlash');
+        $response = $this->twitter->blocksDestroy(null, 'netlash');
+        $this->isUser($response);
+    }
+
+    /**
+     * Tests Twitter->usersLookup
+     */
+    public function testUsersLookup()
+    {
+        $response = $this->twitter->usersLookup(null, array('tijsverkoyen', 'sumocoders'));
+        foreach ($response as $row) {
+            $this->isUser($row);
+        }
+    }
+
+    /**
+     * Tests Twitter->usersShow
+     */
+    public function testUsersShow()
+    {
+        $response = $this->twitter->usersShow(null, 'tijsverkoyen');
+        $this->isUser($response);
+    }
+
+    /**
+     * Tests Twitter->usersSearch
+     */
+    public function testUsersSearch()
+    {
+        $response = $this->twitter->usersSearch('Twitter API');
+        foreach ($response as $row) {
+            $this->isUser($row);
+        }
     }
 
     /**
