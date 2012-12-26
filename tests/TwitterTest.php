@@ -488,6 +488,28 @@ class TwitterTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * Tests Twitter->usersContributees
+     */
+    public function testUsersContributees()
+    {
+        $response = $this->twitter->usersContributees(null, 'themattharris');
+        foreach ($response as $row) {
+            $this->isUser($row);
+        }
+    }
+
+    /**
+     * Tests Twitter->usersContributors
+     */
+    public function testUsersContributors()
+    {
+        $response = $this->twitter->usersContributors(null, 'twitterapi');
+        foreach ($response as $row) {
+            $this->isUser($row);
+        }
+    }
+
+    /**
      * Tests Twitter->usersSuggestionsSlug
      */
     public function testUsersSuggestionsSlug()

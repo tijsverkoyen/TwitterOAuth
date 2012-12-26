@@ -68,8 +68,11 @@ try {
 //  $response = $twitter->usersLookup(null, array('tijsverkoyen', 'sumocoders'));
 //  $response = $twitter->usersShow(null, 'tijsverkoyen');
 //  $response = $twitter->usersSearch('Twitter API');
-//  @todo $response = $twitter->usersContributees();
-//  @todo $response = $twitter->usersContributors();
+//  $response = $twitter->usersContributees(null, 'themattharris');
+//  $response = $twitter->usersContributors(null, 'twitterapi');
+//  @todo $response = $twitter->accountRemoveProfileBanner();
+//  @todo $response = $twitter->accountUpdateProfileBanner();
+//  @todo $response = $twitter->usersProfileBanner();
 
 //  $response = $twitter->usersSuggestionsSlug('twitter');
 //  $response = $twitter->usersSuggestions();

@@ -2022,19 +2022,81 @@ class Twitter
     }
 
     /**
-     * Not implemented yet
+     * Returns a collection of users that the specified user can "contribute" to.
+     *
+     * @param  string[optional] $userId          The ID of the user for whom to return results for.
+     * @param  string[optional] $screenName      The screen name of the user for whom to return results for.
+     * @param  bool[optional]   $includeEntities The entities node will not be included when set to false.
+     * @param  bool[optional]   $skipStatus      When set to either true, t or 1 statuses will not be included in the returned user objects.
+     * @return array
      */
-    public function usersContributees()
+    public function usersContributees(
+        $userId = null, $screenName = null,
+        $includeEntities = null, $skipStatus = null
+    )
     {
-        throw new Exception('Not implemented');
+        // validate
+        if ($userId == '' && $screenName == '') {
+            throw new Exception('Specify an userId or a screenName.');
+        }
+
+        // build parameters
+        if ($userId != null) {
+            $parameters['user_id'] = (string) $userId;
+        }
+        if ($screenName != null) {
+            $parameters['screen_name'] = (string) $screenName;
+        }
+        if ($includeEntities !== null) {
+            $parameters['include_entities'] = ($includeEntities) ? 'true' : 'false';
+        }
+        if ($skipStatus !== null) {
+            $parameters['skip_status'] = ($skipStatus) ? 'true' : 'false';
+        }
+
+        // make the call
+        return (array) $this->doCall(
+            'users/contributees.json', $parameters
+        );
     }
 
     /**
-     * Not implemented yet
+     * Returns a collection of users who can contribute to the specified account.
+     *
+     * @param  string[optional] $userId          The ID of the user for whom to return results for.
+     * @param  string[optional] $screenName      The screen name of the user for whom to return results for.
+     * @param  bool[optional]   $includeEntities The entities node will not be included when set to false.
+     * @param  bool[optional]   $skipStatus      When set to either true, t or 1 statuses will not be included in the returned user objects.
+     * @return array
      */
-    public function usersContributors()
+    public function usersContributors(
+        $userId = null, $screenName = null,
+        $includeEntities = null, $skipStatus = null
+    )
     {
-        throw new Exception('Not implemented');
+        // validate
+        if ($userId == '' && $screenName == '') {
+            throw new Exception('Specify an userId or a screenName.');
+        }
+
+        // build parameters
+        if ($userId != null) {
+            $parameters['user_id'] = (string) $userId;
+        }
+        if ($screenName != null) {
+            $parameters['screen_name'] = (string) $screenName;
+        }
+        if ($includeEntities !== null) {
+            $parameters['include_entities'] = ($includeEntities) ? 'true' : 'false';
+        }
+        if ($skipStatus !== null) {
+            $parameters['skip_status'] = ($skipStatus) ? 'true' : 'false';
+        }
+
+        // make the call
+        return (array) $this->doCall(
+            'users/contributors.json', $parameters
+        );
     }
 
     /**
