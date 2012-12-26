@@ -43,15 +43,15 @@ try {
 
 //  $response = $twitter->friendsIds(null, 'tijsverkoyen');
 //  $response = $twitter->followersIds(null, 'tijsverkoyen');
-//  @todo $response = $twitter->friendshipsLookup();
+//  $response = $twitter->friendshipsLookup(null, 'tijsverkoyen');
 //  $response = $twitter->friendshipsIncoming();
 //  $response = $twitter->friendshipsOutgoing();
 //  $response = $twitter->friendshipsCreate(null, 'tijsverkoyen');
 //  $response = $twitter->friendshipsDestroy(null, 'tijsverkoyen');
-//  @todo $response = $twitter->friendshipsUpdate();
+//  $response = $twitter->friendshipsUpdate(null, 'tijsverkoyen', false, true);
 //  $response = $twitter->friendshipsShow(null, 'bert', null, 'ernie');
-//  @todo $response = $twitter->friendsList();
-//  @todo $response = $twitter->followersList();
+//  $response = $twitter->friendsList(null, 'tijsverkoyen');
+//  $response = $twitter->followersList(null, 'tijsverkoyen');
 
 //  @todo $response = $twitter->accountSettings();
 //  $response = $twitter->accountVerifyCredentials();

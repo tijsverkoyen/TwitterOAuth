@@ -349,6 +349,19 @@ class TwitterTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * Tests Twitter->friendshipsLookup
+     */
+    public function testFriendshipsLookup()
+    {
+        $response = $this->twitter->friendshipsLookup(null, array('tijsverkoyen', 'sumocoders'));
+        foreach ($response as $row) {
+            $this->assertArrayHasKey('name', $row);
+            $this->assertArrayHasKey('id', $row);
+            $this->assertArrayHasKey('connections', $row);
+        }
+    }
+
+    /**
      * Tests Twitter->friendshipsIncoming
      */
     public function testFriendshipsIncoming()
@@ -391,6 +404,25 @@ class TwitterTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * Tests Twitter->friendshipsUpdate
+     */
+    public function testFriendshipsUpdate()
+    {
+        $response = $this->twitter->friendshipsUpdate(null, 'sumocoders', true, true);
+        $this->assertArrayHasKey('relationship', $response);
+        $this->assertArrayHasKey('target', $response['relationship']);
+        $this->assertArrayHasKey('followed_by', $response['relationship']['target']);
+        $this->assertArrayHasKey('following', $response['relationship']['target']);
+        $this->assertArrayHasKey('screen_name', $response['relationship']['target']);
+        $this->assertArrayHasKey('id', $response['relationship']['target']);
+        $this->assertArrayHasKey('source', $response['relationship']);
+        $this->assertArrayHasKey('followed_by', $response['relationship']['source']);
+        $this->assertArrayHasKey('following', $response['relationship']['source']);
+        $this->assertArrayHasKey('screen_name', $response['relationship']['source']);
+        $this->assertArrayHasKey('id', $response['relationship']['source']);
+    }
+
+    /**
      * Tests Twitter->friendshipsShow
      */
     public function testFriendshipsShow()
@@ -407,6 +439,36 @@ class TwitterTest extends PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('following', $response['relationship']['source']);
         $this->assertArrayHasKey('screen_name', $response['relationship']['source']);
         $this->assertArrayHasKey('id', $response['relationship']['source']);
+    }
+
+    /**
+     * Tests Twitter->friendsList
+     */
+    public function testFriendsList()
+    {
+        $response = $this->twitter->friendsList(null, 'tijsverkoyen');
+        $this->assertArrayHasKey('users', $response);
+        foreach ($response as $row) {
+            $this->isUser($row);
+        }
+        $this->assertArrayHasKey('next_cursor', $response);
+        $this->assertArrayHasKey('previous_cursor', $response);
+
+    }
+
+    /**
+     * Tests Twitter->followersList
+     */
+    public function testFollowersList()
+    {
+        $response = $this->twitter->followersList(null, 'tijsverkoyen');
+        $this->assertArrayHasKey('users', $response);
+        foreach ($response as $row) {
+            $this->isUser($row);
+        }
+        $this->assertArrayHasKey('next_cursor', $response);
+        $this->assertArrayHasKey('previous_cursor', $response);
+
     }
 
     /**

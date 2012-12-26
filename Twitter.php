@@ -1442,11 +1442,35 @@ class Twitter
     }
 
     /**
-     * Not implemented yet
+     * Returns the relationships of the authenticating user to the comma-separated list of up to 100 screen_names or user_ids provided.
+     * Values for connections can be: following, following_requested, followed_by, none.
+     *
+     * @param  mixed[optional] $userIds     An array of user IDs, up to 100 are allowed in a single request.
+     * @param  mixed[optional] $screenNames An array of screen names, up to 100 are allowed in a single request.
+     * @return array
      */
-    public function friendshipsLookup()
+    public function friendshipsLookup($userIds = null, $screenNames = null)
     {
-        throw new Exception('Not implemented');
+        // redefine
+        $userIds = (array) $userIds;
+        $screenNames = (array) $screenNames;
+
+        // validate
+        if (empty($userIds) && empty($screenNames)) {
+            throw new Exception('Specify an userId or a screenName.');
+        }
+
+        // build parameters
+        $parameters = null;
+        if (!empty($userIds)) {
+            $parameters['user_id'] = implode(',', $userIds);
+        }
+        if (!empty($screenNames)) {
+            $parameters['screen_name'] = implode(',', $screenNames);
+        }
+
+        // make the call
+        return (array) $this->doCall('friendships/lookup.json', $parameters, true);
     }
 
     /**
@@ -1555,11 +1579,42 @@ class Twitter
     }
 
     /**
-     * Not implemented yet
+     * Allows one to enable or disable retweets and device notifications from the specified user.
+     *
+     * @param  string[optional] $userId     The ID of the user for whom to befriend.
+     * @param  string[optional] $screenName The screen name of the user for whom to befriend.
+     * @param  bool[optional]   $device     Enable/disable device notifications from the target user.
+     * @param  bool[optional]   $retweets   Enable/disable retweets from the target user.
+     * @return array
      */
-    public function friendshipsUpdate()
+    public function friendshipsUpdate(
+        $userId = null, $screenName = null, $device = null, $retweets = null
+    )
     {
-        throw new Exception('Not implemented');
+        // validate
+        if ($userId == '' && $screenName == '') {
+            throw new Exception('Specify an userId or a screenName.');
+        }
+
+        // build parameters
+        $parameters = null;
+        if ($userId != null) {
+            $parameters['user_id'] = (string) $userId;
+        }
+        if ($screenName != null) {
+            $parameters['screen_name'] = (string) $screenName;
+        }
+        if ($device !== null) {
+            $parameters['device'] = ((bool) $device) ? 'true' : 'false';
+        }
+        if ($retweets !== null) {
+            $parameters['retweets'] = ((bool) $retweets) ? 'true' : 'false';
+        }
+
+        // make the call
+        return (array) $this->doCall(
+            'friendships/update.json', $parameters, true, 'POST'
+        );
     }
 
     /**
@@ -1602,19 +1657,93 @@ class Twitter
     }
 
     /**
-     * Not implemented yet
+     * Returns a cursored collection of user objects for every user the specified user is following (otherwise known as their "friends").
+     * At this time, results are ordered with the most recent following first — however, this ordering is subject to unannounced change and eventual consistency issues. Results are given in groups of 20 users and multiple "pages" of results can be navigated through using the next_cursor value in subsequent requests. See Using cursors to navigate collections for more information.
+     *
+     * @param  string[optional] $userId          The ID of the user for whom to return results for.
+     * @param  string[optional] $screenName      The screen name of the user for whom to return results for.
+     * @param  int[optional]    $cursor          Causes the results to be broken into pages of no more than 20 records at a time. If no cursor is provided, a value of -1 will be assumed, which is the first "page."
+     * @param  bool[optional]   $includeEntities The user object entities node will be disincluded when set to false.
+     * @param  bool[optional]   $skipStatus      When set to either true, t or 1 statuses will not be included in the returned user objects.
+     * @return array
      */
-    public function friendsList()
+    public function friendsList(
+        $userId = null, $screenName = null, $cursor = null,
+        $includeEntities = null, $skipStatus = null
+    )
     {
-        throw new Exception('Not implemented');
+        // validate
+        if ($userId == '' && $screenName == '') {
+            throw new Exception('Specify an userId or a screenName.');
+        }
+
+        // build parameters
+        $parameters = null;
+        if ($userId != null) {
+            $parameters['user_id'] = (string) $userId;
+        }
+        if ($screenName != null) {
+            $parameters['screen_name'] = (string) $screenName;
+        }
+        if ($cursor !== null) {
+            $parameters['cursor'] = (int) $cursor;
+        }
+        if ($includeEntities !== null) {
+            $parameters['include_user_entities'] = ($includeEntities) ? 'true' : 'false';
+        }
+        if ($skipStatus !== null) {
+            $parameters['skip_status'] = ($skipStatus) ? 'true' : 'false';
+        }
+
+        // make the call
+        return (array) $this->doCall(
+            'friends/list.json', $parameters, true
+        );
     }
 
     /**
-     * Not implemented yet
+     * Returns a cursored collection of user objects for users following the specified user.
+     * At this time, results are ordered with the most recent following first — however, this ordering is subject to unannounced change and eventual consistency issues. Results are given in groups of 20 users and multiple "pages" of results can be navigated through using the next_cursor value in subsequent requests. See Using cursors to navigate collections for more information.
+     *
+     * @param  string[optional] $userId          The ID of the user for whom to return results for.
+     * @param  string[optional] $screenName      The screen name of the user for whom to return results for.
+     * @param  int[optional]    $cursor          Causes the results to be broken into pages of no more than 20 records at a time. If no cursor is provided, a value of -1 will be assumed, which is the first "page."
+     * @param  bool[optional]   $includeEntities The user object entities node will be disincluded when set to false.
+     * @param  bool[optional]   $skipStatus      When set to either true, t or 1 statuses will not be included in the returned user objects.
+     * @return array
      */
-    public function followersList()
+    public function followersList(
+        $userId = null, $screenName = null, $cursor = null,
+        $includeEntities = null, $skipStatus = null
+    )
     {
-        throw new Exception('Not implemented');
+        // validate
+        if ($userId == '' && $screenName == '') {
+            throw new Exception('Specify an userId or a screenName.');
+        }
+
+        // build parameters
+        $parameters = null;
+        if ($userId != null) {
+            $parameters['user_id'] = (string) $userId;
+        }
+        if ($screenName != null) {
+            $parameters['screen_name'] = (string) $screenName;
+        }
+        if ($cursor !== null) {
+            $parameters['cursor'] = (int) $cursor;
+        }
+        if ($includeEntities !== null) {
+            $parameters['include_user_entities'] = ($includeEntities) ? 'true' : 'false';
+        }
+        if ($skipStatus !== null) {
+            $parameters['skip_status'] = ($skipStatus) ? 'true' : 'false';
+        }
+
+        // make the call
+        return (array) $this->doCall(
+            'followers/list.json', $parameters, true
+        );
     }
 
 // User resources
@@ -1859,7 +1988,7 @@ class Twitter
      */
     public function blocksCreate(
         $userId = null, $screenName = null,
-         $includeEntities = null, $skipStatus = null
+        $includeEntities = null, $skipStatus = null
     )
     {
         // validate
