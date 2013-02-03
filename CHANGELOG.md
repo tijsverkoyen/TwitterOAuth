@@ -1,3 +1,7 @@
+# Changelog since 2.3.1
+
+* Fixed faulty composer.json-file.
+
 # Changelog since 2.3.0
 
 * Fixed blocksCreate, blocksDestroy, usersLookup, usersShow, usersSearch to reflect version 1.1 of the API.

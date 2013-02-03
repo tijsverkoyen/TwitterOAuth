@@ -15,8 +15,8 @@
 		"php": ">=5.2.0",
 		"ext-curl": "*"
 	},
-	"target-dir": "TijsVerkoyen/TwitterOAuth",
+	"target-dir": "TijsVerkoyen/Twitter",
 	"autoload": {
-		"psr-0": {"TijsVerkoyen\\TwitterOAuth": ""}
+		"psr-0": {"TijsVerkoyen\\Twitter": ""}
 	}
 }
