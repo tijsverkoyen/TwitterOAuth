@@ -8,7 +8,7 @@ PHP Twitter is a (wrapper)class to communicate with [Twitter](http://twitter.com
 
 ## License
 
-PHP Dropbox is [BSD](http://classes.verkoyen.eu/overview/bsd) licensed.
+PHP Twitter is [BSD](http://classes.verkoyen.eu/overview/bsd) licensed.
 
 ## Documentation
 

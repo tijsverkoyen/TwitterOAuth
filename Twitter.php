@@ -4,10 +4,10 @@ namespace TijsVerkoyen\Twitter;
 /**
  * Twitter class
  *
- * @author		Tijs Verkoyen <php-twitter@verkoyen.eu>
- * @version		2.3.1
- * @copyright	Copyright (c), Tijs Verkoyen. All rights reserved.
- * @license		BSD License
+ * @author    Tijs Verkoyen <php-twitter@verkoyen.eu>
+ * @version   2.3.1
+ * @copyright Copyright (c), Tijs Verkoyen. All rights reserved.
+ * @license   BSD License
  */
 class Twitter
 {
@@ -28,51 +28,58 @@ class Twitter
     /**
      * A cURL instance
      *
-     * @var	resource
+     * @var resource
      */
     private $curl;
 
     /**
      * The consumer key
      *
-     * @var	string
+     * @var string
      */
     private $consumerKey;
 
     /**
      * The consumer secret
      *
-     * @var	string
+     * @var string
      */
     private $consumerSecret;
 
     /**
      * The oAuth-token
      *
-     * @var	string
+     * @var string
      */
     private $oAuthToken = '';
 
     /**
      * The oAuth-token-secret
      *
-     * @var	string
+     * @var string
      */
     private $oAuthTokenSecret = '';
 
     /**
      * The timeout
      *
-     * @var	int
+     * @var int
      */
     private $timeOut = 10;
 
     /**
      * The user agent
      *
-     * @var	string
+     * @var string
      */
     private $userAgent;
+
+    /**
+     * The rate limit status for the last executed call.
+     *
+     * @var array
+     */
+    private $lastRateLimitStatus;
 
 // class methods
     /**
@@ -231,7 +238,7 @@ class Twitter
 
     /**
      * Make an call to the oAuth
-     * @todo	refactor me
+     * @todo  refactor me
      *
      * @param  string          $method     The method.
      * @param  array[optional] $parameters The parameters.
@@ -433,6 +440,9 @@ class Twitter
         $options[CURLOPT_HTTP_VERSION] = CURL_HTTP_VERSION_1_1;
         $options[CURLOPT_HTTPHEADER] = $headers;
 
+        // include the response headers in the curl output
+        $options[CURLOPT_HEADER] = true;
+
         // init
         if($this->curl == null) $this->curl = curl_init();
 
@@ -442,6 +452,30 @@ class Twitter
         // execute
         $response = curl_exec($this->curl);
         $headers = curl_getinfo($this->curl);
+
+        // split the response headers from the body
+        list($responseHeaders, $response) = explode("\r\n\r\n", $response, 2);
+
+        // set the latest rate limit status
+        $rateLimitStatus = array();
+        foreach (explode("\r\n", $responseHeaders) as $i => $line) {
+            // skip the first line, it's the HTTP response code
+            if ($i !== 0) {
+                list($key, $value) = explode(': ', $line);
+                switch ($key) {
+                    case "X-Rate-Limit-Limit":
+                        $rateLimitStatus['limit'] = $value;
+                        break;
+                    case "X-Rate-Limit-Remaining":
+                        $rateLimitStatus['remaining'] = $value;
+                        break;
+                    case "X-Rate-Limit-Reset":
+                        $rateLimitStatus['reset'] = $value;
+                        break;
+                }
+            }
+        }
+        $this->lastRateLimitStatus = $rateLimitStatus;
 
         // fetch errors
         $errorNumber = curl_errno($this->curl);
@@ -555,6 +589,16 @@ class Twitter
     private function getConsumerSecret()
     {
         return $this->consumerSecret;
+    }
+
+    /**
+     * Returns the rate limit status for the last API call
+     *
+     * @return array
+     */
+    public function getLastRateLimitStatus()
+    {
+        return $this->lastRateLimitStatus;
     }
 
     /**
@@ -1478,7 +1522,7 @@ class Twitter
      * Returns a collection of numeric IDs for every user who has a pending request to follow the authenticating user.
      *
      * @param string[optional] $cursor Causes the list of connections to be broken into pages of no more than 5000 IDs at a time. The number of IDs returned is not guaranteed to be 5000 as suspended users are filtered out after connections are queried. If no cursor is provided, a value of -1 will be assumed, which is the first "page."
-      * @param  bool[optional] 	$stringifyIds	Many programming environments will not consume our Tweet ids due to their size. Provide this option to have ids returned as strings instead.
+      * @param  bool[optional]  $stringifyIds Many programming environments will not consume our Tweet ids due to their size. Provide this option to have ids returned as strings instead.
      * @return array
      */
     public function friendshipsIncoming($cursor = null, $stringifyIds = true)
@@ -2961,7 +3005,7 @@ class Twitter
 // OAuth resources
     /**
      * Allows a Consumer application to use an OAuth request_token to request user authorization. This method is a replacement fulfills Secion 6.2 of the OAuth 1.0 authentication flow for applications using the Sign in with Twitter authentication flow. The method will use the currently logged in user as the account to for access authorization unless the force_login parameter is set to true
-     * REMARK: This method seems not to work	@later
+     * REMARK: This method seems not to work  @later
      *
      * @param bool[optional] $force Force the authentication.
      */
