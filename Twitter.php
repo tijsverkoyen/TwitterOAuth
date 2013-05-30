@@ -30,49 +30,49 @@ class Twitter
      *
      * @var	resource
      */
-    private $curl;
+    protected $curl;
 
     /**
      * The consumer key
      *
      * @var	string
      */
-    private $consumerKey;
+    protected $consumerKey;
 
     /**
      * The consumer secret
      *
      * @var	string
      */
-    private $consumerSecret;
+    protected $consumerSecret;
 
     /**
      * The oAuth-token
      *
      * @var	string
      */
-    private $oAuthToken = '';
+    protected $oAuthToken = '';
 
     /**
      * The oAuth-token-secret
      *
      * @var	string
      */
-    private $oAuthTokenSecret = '';
+    protected $oAuthTokenSecret = '';
 
     /**
      * The timeout
      *
      * @var	int
      */
-    private $timeOut = 10;
+    protected $timeOut = 10;
 
     /**
      * The user agent
      *
      * @var	string
      */
-    private $userAgent;
+    protected $userAgent;
 
 // class methods
     /**
@@ -101,7 +101,7 @@ class Twitter
      * @param  array  $parameters The parameters.
      * @return string
      */
-    private function buildQuery(array $parameters)
+    protected function buildQuery(array $parameters)
     {
         // no parameters?
         if(empty($parameters)) return '';
@@ -154,7 +154,7 @@ class Twitter
      * @param  array  $parameters The parameters.
      * @return string
      */
-    private function calculateBaseString($url, $method, array $parameters)
+    protected function calculateBaseString($url, $method, array $parameters)
     {
         // redefine
         $url = (string) $url;
@@ -201,7 +201,7 @@ class Twitter
      * @param  string $url        The URL.
      * @return string
      */
-    private function calculateHeader(array $parameters, $url)
+    protected function calculateHeader(array $parameters, $url)
     {
         // redefine
         $url = (string) $url;
@@ -237,7 +237,7 @@ class Twitter
      * @param  array[optional] $parameters The parameters.
      * @return array
      */
-    private function doOAuthCall($method, array $parameters = null)
+    protected function doOAuthCall($method, array $parameters = null)
     {
         // redefine
         $method = (string) $method;
@@ -322,7 +322,7 @@ class Twitter
      * @param  bool[optional]   $returnHeaders Should the headers be returned?
      * @return string
      */
-    private function doCall(
+    protected function doCall(
         $url, array $parameters = null, $authenticate = false, $method = 'GET',
         $filePath = null, $expectJSON = true, $returnHeaders = false
     )
@@ -542,7 +542,7 @@ class Twitter
      *
      * @return string
      */
-    private function getConsumerKey()
+    protected function getConsumerKey()
     {
         return $this->consumerKey;
     }
@@ -552,7 +552,7 @@ class Twitter
      *
      * @return string
      */
-    private function getConsumerSecret()
+    protected function getConsumerSecret()
     {
         return $this->consumerSecret;
     }
@@ -562,7 +562,7 @@ class Twitter
      *
      * @return string
      */
-    private function getOAuthToken()
+    protected function getOAuthToken()
     {
         return $this->oAuthToken;
     }
@@ -572,7 +572,7 @@ class Twitter
      *
      * @return string
      */
-    private function getOAuthTokenSecret()
+    protected function getOAuthTokenSecret()
     {
         return $this->oAuthTokenSecret;
     }
@@ -603,7 +603,7 @@ class Twitter
      *
      * @param string $key The consumer key to use.
      */
-    private function setConsumerKey($key)
+    protected function setConsumerKey($key)
     {
         $this->consumerKey = (string) $key;
     }
@@ -613,7 +613,7 @@ class Twitter
      *
      * @param string $secret The consumer secret to use.
      */
-    private function setConsumerSecret($secret)
+    protected function setConsumerSecret($secret)
     {
         $this->consumerSecret = (string) $secret;
     }
@@ -666,7 +666,7 @@ class Twitter
      * @param  string $data The data that has to be signed.
      * @return string
      */
-    private function hmacsha1($key, $data)
+    protected function hmacsha1($key, $data)
     {
         return base64_encode(hash_hmac('SHA1', $data, $key, true));
     }
@@ -677,7 +677,7 @@ class Twitter
      * @param  mixed  $value The value to encode.
      * @return string
      */
-    private static function urlencode_rfc3986($value)
+    protected static function urlencode_rfc3986($value)
     {
         if (is_array($value)) {
             return array_map(array(__CLASS__, 'urlencode_rfc3986'), $value);
