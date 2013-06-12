@@ -720,10 +720,10 @@ class Twitter
         if ($maxId != null) {
             $parameters['max_id'] = (string) $maxId;
         }
-        if ($trimUser != null) {
+        if ($trimUser !== null) {
             $parameters['trim_user'] = ($trimUser) ? 'true' : 'false';
         }
-        if ($contributorDetails != null) {
+        if ($contributorDetails !== null) {
             $parameters['contributor_details'] = ($contributorDetails) ? 'true' : 'false';
         }
         if ($includeEntities !== null) {
@@ -782,16 +782,16 @@ class Twitter
         if ($maxId != null) {
             $parameters['max_id'] = (string) $maxId;
         }
-        if ($trimUser != null) {
+        if ($trimUser !== null) {
             $parameters['trim_user'] = ($trimUser) ? 'true' : 'false';
         }
-        if ($excludeReplies != null) {
+        if ($excludeReplies !== null) {
             $parameters['exclude_replies'] = ($excludeReplies) ? 'true' : 'false';
         }
-        if ($contributorDetails != null) {
+        if ($contributorDetails !== null) {
             $parameters['contributor_details'] = ($contributorDetails) ? 'true' : 'false';
         }
-        if ($includeRts != null) {
+        if ($includeRts !== null) {
             $parameters['include_rts'] = ($includeRts) ? 'true' : 'false';
         }
 
@@ -832,13 +832,13 @@ class Twitter
         if ($maxId != null) {
             $parameters['max_id'] = (string) $maxId;
         }
-        if ($trimUser != null) {
+        if ($trimUser !== null) {
             $parameters['trim_user'] = ($trimUser) ? 'true' : 'false';
         }
-        if ($excludeReplies != null) {
+        if ($excludeReplies !== null) {
             $parameters['exclude_replies'] = ($excludeReplies) ? 'true' : 'false';
         }
-        if ($contributorDetails != null) {
+        if ($contributorDetails !== null) {
             $parameters['contributor_details'] = ($contributorDetails) ? 'true' : 'false';
         }
         if ($includeEntities !== null) {
@@ -879,7 +879,7 @@ class Twitter
         if ($maxId != null) {
             $parameters['max_id'] = (string) $maxId;
         }
-        if ($trimUser != null) {
+        if ($trimUser !== null) {
             $parameters['trim_user'] = ($trimUser) ? 'true' : 'false';
         }
         if ($includeEntities !== null) {
@@ -912,7 +912,7 @@ class Twitter
         if ($count != null) {
             $parameters['count'] = (int) $count;
         }
-        if ($trimUser != null) {
+        if ($trimUser !== null) {
             $parameters['trim_user'] = ($trimUser) ? 'true' : 'false';
         }
 
@@ -938,10 +938,10 @@ class Twitter
     {
         // build parameters
         $parameters['id'] = (string) $id;
-        if ($trimUser != null) {
+        if ($trimUser !== null) {
             $parameters['trim_user'] = ($trimUser) ? 'true' : 'false';
         }
-        if ($includeMyRetweet != null) {
+        if ($includeMyRetweet !== null) {
             $parameters['include_my_retweet'] = ($includeMyRetweet) ? 'true' : 'false';
         }
         if ($includeEntities !== null) {
@@ -966,7 +966,7 @@ class Twitter
     {
         // build parameters
         $parameters = null;
-        if($trimUser != null) $parameters['trim_user'] = ($trimUser) ? 'true' : 'false';
+        if($trimUser !== null) $parameters['trim_user'] = ($trimUser) ? 'true' : 'false';
 
         // make the call
         return (array) $this->doCall(
@@ -1006,7 +1006,7 @@ class Twitter
         if ($placeId != null) {
             $parameters['place_id'] = (string) $placeId;
         }
-        if ($displayCoordinates != null) {
+        if ($displayCoordinates !== null) {
             $parameters['display_coordinates'] = ($displayCoordinates) ? 'true' : 'false';
         }
         if ($trimUser) {
@@ -1082,13 +1082,13 @@ class Twitter
         if ($maxwidth != null) {
             $parameters['maxwidth'] = (int) $maxwidth;
         }
-        if ($hideMedia != null) {
+        if ($hideMedia !== null) {
             $parameters['hide_media'] = ($hideMedia) ? 'true' : 'false';
         }
-        if ($hideThread != null) {
+        if ($hideThread !== null) {
             $parameters['hide_thread'] = ($hideThread) ? 'true' : 'false';
         }
-        if ($omitScript != null) {
+        if ($omitScript !== null) {
             $parameters['omit_script'] = ($omitScript) ? 'true' : 'false';
         }
         if ($align != null) {
