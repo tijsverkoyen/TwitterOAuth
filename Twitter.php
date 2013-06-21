@@ -3023,9 +3023,10 @@ class Twitter
      * This method fulfills Secion 6.1 of the OAuth 1.0 authentication flow.
      *
      * @param  string[optional] $callbackURL The callback URL.
+     * @param  bool[optional]   $reverseAuth Should the request be signed for a reverse request.
      * @return array            An array containg the token and the secret
      */
-    public function oAuthRequestToken($callbackURL = null)
+    public function oAuthRequestToken($callbackURL = null, $reverseAuth = false)
     {
         // init var
         $parameters = null;
@@ -3033,6 +3034,11 @@ class Twitter
         // set callback
         if ($callbackURL != null) {
             $parameters['oauth_callback'] = (string) $callbackURL;
+        }
+        
+        // set auth mode
+        if ($reverseAuth === true) {
+            $parameters['x_auth_mode'] = 'reverse_auth';
         }
 
         // make the call
