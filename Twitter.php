@@ -3057,6 +3057,8 @@ class Twitter
 	        if (isset($response['oauth_token_secret'])) {
 	            $this->setOAuthTokenSecret($response['oauth_token_secret']);
 	        }
+	    } else {
+		    $response = "OAuth oauth_nonce=" . $response['OAuth_oauth_nonce'];
 	    }
 
         // return
