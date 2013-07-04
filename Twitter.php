@@ -3044,18 +3044,20 @@ class Twitter
         // make the call
         $response = $this->doOAuthCall('request_token', $parameters);
 
-        // validate
-        if (!isset($response['oauth_token'], $response['oauth_token_secret'])) {
-            throw new Exception(implode(', ', array_keys($response)));
-        }
+	    if ( $reverseAuth !== true ) {
+	        // validate
+	        if (!isset($response['oauth_token'], $response['oauth_token_secret'])) {
+	            throw new Exception(implode(', ', array_keys($response)));
+	        }
 
-        // set some properties
-        if (isset($response['oauth_token'])) {
-            $this->setOAuthToken($response['oauth_token']);
-        }
-        if (isset($response['oauth_token_secret'])) {
-            $this->setOAuthTokenSecret($response['oauth_token_secret']);
-        }
+	        // set some properties
+	        if (isset($response['oauth_token'])) {
+	            $this->setOAuthToken($response['oauth_token']);
+	        }
+	        if (isset($response['oauth_token_secret'])) {
+	            $this->setOAuthTokenSecret($response['oauth_token_secret']);
+	        }
+	    }
 
         // return
         return $response;
