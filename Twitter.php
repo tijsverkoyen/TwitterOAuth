@@ -235,9 +235,10 @@ class Twitter
 	 *
 	 * @param  string          $method     The method.
 	 * @param  array[optional] $parameters The parameters.
+	 * @param  boolean[optional] $asArray Should the response be returned as an array.
 	 * @return array
 	 */
-	protected function doOAuthCall($method, array $parameters = null)
+	protected function doOAuthCall($method, array $parameters = null, $asArray = true)
 	{
 		// redefine
 		$method = (string) $method;
@@ -300,11 +301,15 @@ class Twitter
 			throw new Exception($errorMessage, $errorNumber);
 		}
 
-		// init var
-		$return = array();
+		if ( $asArray ) {
+			// init var
+			$return = array();
 
-		// parse the string
-		parse_str($response, $return);
+			// parse the string
+			parse_str($response, $return);
+		} else {
+			$return = $response;
+		}
 
 		// return
 		return $return;
@@ -3042,7 +3047,7 @@ class Twitter
 		}
 
 		// make the call
-		$response = $this->doOAuthCall('request_token', $parameters);
+		$response = $this->doOAuthCall('request_token', $parameters, !$reverseAuth);
 
 		if ( $reverseAuth !== true ) {
 			// validate
@@ -3057,8 +3062,6 @@ class Twitter
 			if (isset($response['oauth_token_secret'])) {
 				$this->setOAuthTokenSecret($response['oauth_token_secret']);
 			}
-		} else {
-			$response = "OAuth " . str_replace("OAuth_", "", array_keys($response)[0]) . "=" . array_pop($response);
 		}
 
 		// return
