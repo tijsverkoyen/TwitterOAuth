@@ -2960,21 +2960,27 @@ class Twitter
 
 // OAuth resources
     /**
-     * Allows a Consumer application to use an OAuth request_token to request user authorization. This method is a replacement fulfills Secion 6.2 of the OAuth 1.0 authentication flow for applications using the Sign in with Twitter authentication flow. The method will use the currently logged in user as the account to for access authorization unless the force_login parameter is set to true
-     * REMARK: This method seems not to work	@later
+     * Allows a Consumer application to use an OAuth request_token to request user authorization. 
+     * This method is a replacement fulfills Secion 6.2 of the OAuth 1.0 authentication flow for 
+     * applications using the Sign in with Twitter authentication flow. The method will use the 
+     * currently logged in user as the account to for access authorization unless the force_login 
+     * parameter is set to true
      *
+     * @param string $token The token.
      * @param bool[optional] $force Force the authentication.
+     * @param string[optional] $screen_name Prefill the username input box of the OAuth login.
      */
-    public function oAuthAuthenticate($force = false)
+    public function oAuthAuthenticate($token, $force = false, $screen_name = false)
     {
-        throw new Exception('Not implemented');
+        $url = self::SECURE_API_URL . '/oauth/authenticate?oauth_token=' . $token;
+        if ($force) {
+            $url .= '&force_login=true';
+        }
+        if ($screen_name) {
+            $url .= '&screen_name=' . $screen_name;
+        }
 
-        // build parameters
-        $parameters = null;
-        if((bool) $force) $parameters['force_login'] = 'true';
-
-        // make the call
-        return $this->doCall('/oauth/authenticate.oauth', $parameters);
+        header('Location: ' . $url);
     }
 
     /**
