@@ -4,7 +4,7 @@ namespace TijsVerkoyen\Twitter;
 /**
  * Twitter class
  *
- * @author		Tijs Verkoyen <php-twitter@verkoyen.eu>
+ * @author    	Tijs Verkoyen <php-twitter@verkoyen.eu>
  * @version		2.3.1
  * @copyright	Copyright (c), Tijs Verkoyen. All rights reserved.
  * @license		BSD License
@@ -73,6 +73,13 @@ class Twitter
      * @var	string
      */
     protected $userAgent;
+
+    /**
+     * The response should be cast as array or not
+     *
+     * @var bool
+     */
+    protected $returnAsArray = true;
 
 // class methods
     /**
@@ -458,7 +465,7 @@ class Twitter
         $response = preg_replace('/id":(\d+)/', 'id":"\1"', $response);
 
         // we expect JSON, so decode it
-        $json = @json_decode($response, true);
+        $json = @json_decode($response, $this->returnAsArray);
 
         // validate JSON
         if ($json === null) {
@@ -534,6 +541,8 @@ class Twitter
         }
 
         // return
+        if ($this->returnAsArray)
+            return (array) $json;
         return $json;
     }
 
@@ -606,6 +615,16 @@ class Twitter
     protected function setConsumerKey($key)
     {
         $this->consumerKey = (string) $key;
+    }
+
+    /**
+     * Set the response type
+     *
+     * @param bool $value True for array and false for object
+     */
+    protected function setReturnAsArray($value)
+    {
+        $this->returnAsArray = (bool) $value;
     }
 
     /**
@@ -731,7 +750,7 @@ class Twitter
         }
 
         // make the call
-        return (array) $this->doCall(
+        return $this->doCall(
             'statuses/mentions_timeline.json',
             $parameters, true
         );
@@ -796,7 +815,7 @@ class Twitter
         }
 
         // make the call
-        return (array) $this->doCall(
+        return $this->doCall(
             'statuses/user_timeline.json',
             $parameters
         );
@@ -846,7 +865,7 @@ class Twitter
         }
 
         // make the call
-        return (array) $this->doCall(
+        return $this->doCall(
             'statuses/home_timeline.json',
             $parameters, true
         );
@@ -890,7 +909,7 @@ class Twitter
         }
 
         // make the call
-        return (array) $this->doCall(
+        return $this->doCall(
             'statuses/retweets_of_me.json',
             $parameters, true
         );
@@ -917,7 +936,7 @@ class Twitter
         }
 
         // make the call
-        return (array) $this->doCall(
+        return $this->doCall(
             'statuses/retweets/' . (string) $id . '.json',
             $parameters
         );
@@ -949,7 +968,7 @@ class Twitter
         }
 
         // make the call
-        return (array) $this->doCall(
+        return $this->doCall(
             'statuses/show.json',
             $parameters, true
         );
@@ -969,7 +988,7 @@ class Twitter
         if($trimUser !== null) $parameters['trim_user'] = ($trimUser) ? 'true' : 'false';
 
         // make the call
-        return (array) $this->doCall(
+        return $this->doCall(
             'statuses/destroy/' . (string) $id . '.json',
             $parameters, true, 'POST'
         );
@@ -1014,7 +1033,7 @@ class Twitter
         }
 
         // make the call
-        return (array) $this->doCall(
+        return $this->doCall(
             'statuses/update.json',
             $parameters, true, 'POST'
         );
@@ -1035,7 +1054,7 @@ class Twitter
         }
 
         // make the call
-        return (array) $this->doCall(
+        return $this->doCall(
             'statuses/retweet/' . $id . '.json',
             $parameters, true, 'POST'
         );
@@ -1102,7 +1121,7 @@ class Twitter
         }
 
         // make the call
-        return (array) $this->doCall(
+        return $this->doCall(
             'statuses/oembed.json',
             $parameters
         );
@@ -1159,7 +1178,7 @@ class Twitter
             $parameters['include_entities'] = ($includeEntities) ? 'true' : 'false';
         }
 
-        return (array) $this->doCall(
+        return $this->doCall(
             'search/tweets.json',
             $parameters
         );
@@ -1246,7 +1265,7 @@ class Twitter
         }
 
         // make the call
-        return (array) $this->doCall(
+        return $this->doCall(
             'direct_messages.json',
             $parameters, true
         );
@@ -1287,7 +1306,7 @@ class Twitter
         }
 
         // make the call
-        return (array) $this->doCall(
+        return $this->doCall(
             'direct_messages/sent.json',
             $parameters, true
         );
@@ -1304,7 +1323,7 @@ class Twitter
         $parameters['id'] = (string) $id;
 
         // make the call
-        return (array) $this->doCall(
+        return $this->doCall(
             'direct_messages/show.json',
             $parameters, true
         );
@@ -1327,7 +1346,7 @@ class Twitter
         }
 
         // make the call
-        return (array) $this->doCall(
+        return $this->doCall(
             'direct_messages/destroy.json',
             $parameters, true, 'POST'
         );
@@ -1360,7 +1379,7 @@ class Twitter
         }
 
         // make the call
-        return (array) $this->doCall(
+        return $this->doCall(
             'direct_messages/new.json',
             $parameters, true, 'POST'
         );
@@ -1403,7 +1422,7 @@ class Twitter
         }
 
         // make the call
-        return (array) $this->doCall('friends/ids.json', $parameters, true);
+        return $this->doCall('friends/ids.json', $parameters, true);
     }
 
     /**
@@ -1439,7 +1458,7 @@ class Twitter
         $parameters['stringify_ids'] = ((bool) $stringifyIds) ? 'true' : 'false';
 
         // make the call
-        return (array) $this->doCall('followers/ids.json', $parameters, true);
+        return $this->doCall('followers/ids.json', $parameters, true);
     }
 
     /**
@@ -1471,7 +1490,7 @@ class Twitter
         }
 
         // make the call
-        return (array) $this->doCall('friendships/lookup.json', $parameters, true);
+        return $this->doCall('friendships/lookup.json', $parameters, true);
     }
 
     /**
@@ -1489,7 +1508,7 @@ class Twitter
         $parameters['stringify_ids'] = ((bool) $stringifyIds) ? 'true' : 'false';
 
         // make the call
-        return (array) $this->doCall(
+        return $this->doCall(
             'friendships/incoming.json', $parameters, true
         );
     }
@@ -1509,7 +1528,7 @@ class Twitter
         $parameters['stringify_ids'] = ((bool) $stringifyIds) ? 'true' : 'false';
 
         // make the call
-        return (array) $this->doCall(
+        return $this->doCall(
             'friendships/outgoing.json', $parameters, true
         );
     }
@@ -1544,7 +1563,7 @@ class Twitter
         $parameters['follow'] = ($follow) ? 'true' : 'false';
 
         // make the call
-        return (array) $this->doCall(
+        return $this->doCall(
             'friendships/create.json', $parameters, true, 'POST'
         );
     }
@@ -1574,7 +1593,7 @@ class Twitter
         }
 
         // make the call
-        return (array) $this->doCall(
+        return $this->doCall(
             'friendships/destroy.json', $parameters, true, 'POST'
         );
     }
@@ -1613,7 +1632,7 @@ class Twitter
         }
 
         // make the call
-        return (array) $this->doCall(
+        return $this->doCall(
             'friendships/update.json', $parameters, true, 'POST'
         );
     }
@@ -1654,7 +1673,7 @@ class Twitter
         }
 
         // make the call
-        return (array) $this->doCall('friendships/show.json', $parameters);
+        return $this->doCall('friendships/show.json', $parameters);
     }
 
     /**
@@ -1697,7 +1716,7 @@ class Twitter
         }
 
         // make the call
-        return (array) $this->doCall(
+        return $this->doCall(
             'friends/list.json', $parameters, true
         );
     }
@@ -1742,7 +1761,7 @@ class Twitter
         }
 
         // make the call
-        return (array) $this->doCall(
+        return $this->doCall(
             'followers/list.json', $parameters, true
         );
     }
@@ -1756,7 +1775,7 @@ class Twitter
     public function accountSettings()
     {
         // make the call
-        return (array) $this->doCall(
+        return $this->doCall(
             'account/settings.json', null, true
         );
     }
@@ -1782,7 +1801,7 @@ class Twitter
         }
 
         // make the call
-        return (array) $this->doCall(
+        return $this->doCall(
             'account/verify_credentials.json', $parameters, true
         );
     }
@@ -1829,7 +1848,7 @@ class Twitter
         }
 
         // make the call
-        return (array) $this->doCall(
+        return $this->doCall(
             'account/settings.json', $parameters, true, 'POST'
         );
     }
@@ -1852,7 +1871,7 @@ class Twitter
         }
 
         // make the call
-        return (array) $this->doCall(
+        return $this->doCall(
             'account/update_delivery_device.json', $parameters, true, 'POST'
         );
     }
@@ -1892,7 +1911,7 @@ class Twitter
         }
 
         // make the call
-        return (array) $this->doCall(
+        return $this->doCall(
             'account/update_profile.json', $parameters, true, 'POST'
         );
     }
@@ -1920,7 +1939,7 @@ class Twitter
         }
 
         // make the call
-        return (array) $this->doCall(
+        return $this->doCall(
             'account/update_profile_background_image.json',
             $parameters, true, 'POST', $image
         );
@@ -1974,7 +1993,7 @@ class Twitter
         }
 
         // make the call
-        return (array) $this->doCall(
+        return $this->doCall(
             'account/update_profile_colors.json', $parameters, true, 'POST'
         );
     }
@@ -2000,7 +2019,7 @@ class Twitter
         }
 
         // make the call
-        return (array) $this->doCall(
+        return $this->doCall(
             'account/update_profile_image.json',
             $parameters, true, 'POST', $image
         );
@@ -2030,7 +2049,7 @@ class Twitter
         }
 
         // make the call
-        return (array) $this->doCall(
+        return $this->doCall(
             'blocks/list.json', $parameters, true
         );
     }
@@ -2054,7 +2073,7 @@ class Twitter
         }
 
         // make the call
-        return (array) $this->doCall(
+        return $this->doCall(
             'blocks/ids.json', $parameters, true
         );
     }
@@ -2093,7 +2112,7 @@ class Twitter
         }
 
         // make the call
-        return (array) $this->doCall(
+        return $this->doCall(
             'blocks/create.json', $parameters, true, 'POST'
         );
     }
@@ -2129,7 +2148,7 @@ class Twitter
         }
 
         // make the call
-        return (array) $this->doCall(
+        return $this->doCall(
             'blocks/destroy.json', $parameters, true, 'POST'
         );
     }
@@ -2168,7 +2187,7 @@ class Twitter
         }
 
         // make the call
-        return (array) $this->doCall('users/lookup.json', $parameters, true);
+        return $this->doCall('users/lookup.json', $parameters, true);
 
     }
 
@@ -2203,7 +2222,7 @@ class Twitter
         }
 
         // make the call
-        return (array) $this->doCall('users/show.json', $parameters);
+        return $this->doCall('users/show.json', $parameters);
     }
 
     /**
@@ -2229,7 +2248,7 @@ class Twitter
         }
 
         // make the call
-        return (array) $this->doCall('users/search.json', $parameters, true);
+        return $this->doCall('users/search.json', $parameters, true);
     }
 
     /**
@@ -2266,7 +2285,7 @@ class Twitter
         }
 
         // make the call
-        return (array) $this->doCall(
+        return $this->doCall(
             'users/contributees.json', $parameters
         );
     }
@@ -2305,7 +2324,7 @@ class Twitter
         }
 
         // make the call
-        return (array) $this->doCall(
+        return $this->doCall(
             'users/contributors.json', $parameters
         );
     }
@@ -2352,7 +2371,7 @@ class Twitter
         if($userId != null) $parameters['user_id'] = (string) $userId;
         if($screenName != null) $parameters['screen_name'] = (string) $screenName;
 
-        return (array) $this->doCall(
+        return $this->doCall(
             'users/profile_banner.json',
             $parameters, true
         );
@@ -2372,7 +2391,7 @@ class Twitter
         $parameters = null;
         if($lang != null) $parameters['lang'] = (string) $lang;
 
-        return (array) $this->doCall(
+        return $this->doCall(
             'users/suggestions/' . (string) $slug . '.json',
             $parameters, true
         );
@@ -2389,7 +2408,7 @@ class Twitter
         $parameters = null;
         if($lang != null) $parameters['lang'] = (string) $lang;
 
-        return (array) $this->doCall(
+        return $this->doCall(
             'users/suggestions.json',
             $parameters, true
         );
@@ -2403,7 +2422,7 @@ class Twitter
      */
     public function usersSuggestionsSlugMembers($slug)
     {
-        return (array) $this->doCall(
+        return $this->doCall(
             'users/suggestions/' . (string) $slug . '/members.json',
             null, true
         );
@@ -2442,7 +2461,7 @@ class Twitter
         }
 
         // make the call
-        return (array) $this->doCall('favorites/list.json', $parameters, true);
+        return $this->doCall('favorites/list.json', $parameters, true);
     }
 
     /**
@@ -2462,7 +2481,7 @@ class Twitter
         }
 
         // make the call
-        return (array) $this->doCall(
+        return $this->doCall(
             'favorites/destroy.json', $parameters, true, 'POST'
         );
     }
@@ -2484,7 +2503,7 @@ class Twitter
         }
 
         // make the call
-        return (array) $this->doCall(
+        return $this->doCall(
             'favorites/create.json', $parameters, true, 'POST'
         );
     }
@@ -2643,7 +2662,7 @@ class Twitter
     public function savedSearchesList()
     {
         // make the call
-        return (array) $this->doCall('saved_searches/list.json', null, true);
+        return $this->doCall('saved_searches/list.json', null, true);
     }
 
     /**
@@ -2655,7 +2674,7 @@ class Twitter
     public function savedSearchesShow($id)
     {
         // make the call
-        return (array) $this->doCall(
+        return $this->doCall(
             'saved_searches/show/' . (string) $id . '.json', null, true
         );
     }
@@ -2672,7 +2691,7 @@ class Twitter
         $parameters['query'] = (string) $query;
 
         // make the call
-        return (array) $this->doCall(
+        return $this->doCall(
             'saved_searches/create.json', $parameters, true, 'POST'
         );
     }
@@ -2685,7 +2704,7 @@ class Twitter
      */
     public function savedSearchesDestroy($id)
     {
-        return (array) $this->doCall(
+        return $this->doCall(
             'saved_searches/destroy/' . (string) $id . '.json',
             null, true, 'POST'
         );
@@ -2704,7 +2723,7 @@ class Twitter
         $parameters = null;
 
         // make the call
-        return (array) $this->doCall(
+        return $this->doCall(
             'geo/id/' . (string) $id . '.json', $parameters
         );
     }
@@ -2738,7 +2757,7 @@ class Twitter
         }
 
         // make the call
-        return (array) $this->doCall('geo/reverse_geocode.json', $parameters);
+        return $this->doCall('geo/reverse_geocode.json', $parameters);
     }
 
     /**
@@ -2796,7 +2815,7 @@ class Twitter
         }
 
         // make the call
-        return (array) $this->doCall('geo/search.json', $parameters);
+        return $this->doCall('geo/search.json', $parameters);
     }
 
     /**
@@ -2829,7 +2848,7 @@ class Twitter
         }
 
         // make the call
-        return (array) $this->doCall('geo/similar_places.json', $parameters);
+        return $this->doCall('geo/similar_places.json', $parameters);
     }
 
     /**
@@ -2860,7 +2879,7 @@ class Twitter
         }
 
         // make the call
-        return (array) $this->doCall(
+        return $this->doCall(
             'geo/create.json', $parameters, true, 'POST'
         );
     }
@@ -2883,7 +2902,7 @@ class Twitter
             $parameters['exclude'] = (string) $exclude;
         }
 
-        return (array) $this->doCall(
+        return $this->doCall(
             'trends/place.json',
             $parameters
         );
@@ -2906,7 +2925,7 @@ class Twitter
         if($long != null) $parameters['long_for_trends'] = (float) $long;
 
         // make the call
-        return (array) $this->doCall('trends/available.json', $parameters);
+        return $this->doCall('trends/available.json', $parameters);
     }
 
     /**
@@ -2925,7 +2944,7 @@ class Twitter
         if($long != null) $parameters['long'] = (float) $long;
 
         // make the call
-        return (array) $this->doCall('trends/closest.json', $parameters);
+        return $this->doCall('trends/closest.json', $parameters);
     }
 
 // Spam Reporting resources
@@ -2952,7 +2971,7 @@ class Twitter
         }
 
         // make the call
-        return (array) $this->doCall(
+        return $this->doCall(
             'users/report_spam.json',
             $parameters, true, 'POST'
         );
