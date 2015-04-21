@@ -1062,11 +1062,51 @@ class Twitter
     }
 
     /**
-     * Not implemented yet
+     * Updates the authenticating user's status with media. A status update with text identical to the authenticating user's text identical to the authenticating user's current status will be ignored to prevent duplicates.
+     *
+     * @param  string           $media              Real path of your media file.
+     * @param  string           $status             The text of your status update, typically up to 140 characters. URL encode as necessary. t.co link wrapping may effect character counts. There are some special commands in this field to be aware of. For instance, preceding a message with "D " or "M " and following it with a screen name can create a direct message to that user if the relationship allows for it.
+     * @param  string[optional] $inReplyToStatusId  The ID of an existing status that the update is in reply to. Note: This parameter will be ignored unless the author of the tweet this parameter references is mentioned within the status text. Therefore, you must include @username, where username is the author of the referenced tweet, within the update.
+     * @param  float[optional]  $lat                The latitude of the location this tweet refers to. This parameter will be ignored unless it is inside the range -90.0 to +90.0 (North is positive) inclusive. It will also be ignored if there isn't a corresponding long parameter.
+     * @param  float[optional]  $long               The longitude of the location this tweet refers to. The valid ranges for longitude is -180.0 to +180.0 (East is positive) inclusive. This parameter will be ignored if outside that range, if it is not a number, if geo_enabled is disabled, or if there not a corresponding lat parameter.
+     * @param  string[optional] $placeId            A place in the world. These IDs can be retrieved from GET geo/reverse_geocode.
+     * @param  bool[optional]   $displayCoordinates Whether or not to put a pin on the exact coordinates a tweet has been sent from.
+     * @param  bool[optional]   $trimUser           When set to true, each tweet returned in a timeline will include a user object including only the status authors numerical ID. Omit this parameter to receive the complete user object.
+     * @return array
      */
-    public function statusesUpdateWithMedia()
+    public function statusesUpdateWithMedia(
+        media, $status, $inReplyToStatusId = null, $lat = null, $long = null,
+        $placeId = null, $displayCoordinates = null, $trimUser = null
+    )
     {
-        throw new Exception('Not Implemented');
+        // build parameters
+        $parameters['media'] = array('@' . (string) $media);
+        $parameters['status'] = (string) $status;
+        $parameters['status'] = utf8_encode($parameters['status']);
+        if ($inReplyToStatusId != null) {
+            $parameters['in_reply_to_status_id'] = (string) $inReplyToStatusId;
+        }
+        if ($lat != null) {
+            $parameters['lat'] = (float) $lat;
+        }
+        if ($long != null) {
+            $parameters['long'] = (float) $long;
+        }
+        if ($placeId != null) {
+            $parameters['place_id'] = (string) $placeId;
+        }
+        if ($displayCoordinates !== null) {
+            $parameters['display_coordinates'] = ($displayCoordinates) ? 'true' : 'false';
+        }
+        if ($trimUser) {
+            $parameters['trim_user'] = ($trimUser) ? 'true' : 'false';
+        }
+
+        // make the call
+        return $this->doCall(
+            'statuses/update_with_media.json',
+            $parameters, true, 'POST'
+        );
     }
 
     /**
