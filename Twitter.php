@@ -2510,149 +2510,687 @@ class Twitter
     }
 
 // Lists resources
-    /**
-     * Not implemented yet
-     */
-    public function listsList()
-    {
-        throw new Exception('Not implemented');
-    }
+public function listsList (
+	$user_id = null, $screen_name = null, $reverse = null
+)
+	{
+	// build parameters
+	$parameters = array();
 
-    /**
-     * Not implemented yet
-     */
-    public function listsStatuses()
-    {
-        throw new Exception('Not implemented');
-    }
+if ($user_id != null) {
+	$parameters['user_id'] = (string) $user_id;
+}
 
-    /**
-     * Not implemented yet
-     */
-    public function listsMembersDestroy()
-    {
-        throw new Exception('Not implemented');
-    }
+if ($screen_name != null) {
+	$parameters['screen_name'] = (string) $screen_name;
+}
 
-    /**
-     * Not implemented yet
-     */
-    public function listsMemberships()
-    {
-        throw new Exception('Not implemented');
-    }
+if ($reverse !== null) {
+	$parameters['reverse'] = ($reverse) ? 'true' : 'false';
+}
 
-    /**
-     * Not implemented yet
-     */
-    public function listsSubscribers()
-    {
-        throw new Exception('Not implemented');
-    }
 
-    /**
-     * Not implemented yet
-     */
-    public function listsSubscribersCreate()
-    {
-        throw new Exception('Not implemented');
-    }
+	// make the call
+	return $this->doCall(
+	    'lists/list.json',
+	    $parameters, true
+	);
+}
 
-    /**
-     * Not implemented yet
-     */
-    public function listsSubscribersShow()
-    {
-        throw new Exception('Not implemented');
-    }
 
-    /**
-     * Not implemented yet
-     */
-    public function listsSubscribersDestroy()
-    {
-        throw new Exception('Not implemented');
-    }
+public function listsStatuses (
+	$list_id, $slug, $owner_screen_name = null, $owner_id = null, $since_id = null, $max_id = null, $count = null, $include_entities = null, $include_rts = null
+)
+	{
 
-    /**
-     * Not implemented yet
-     */
-    public function listsMembersCreateAll()
-    {
-        throw new Exception('Not implemented');
-    }
+	 // validate
+        if ($list_id== '' || $slug== '') {
+            throw new Exception('Specify a list_id and a slug.');
+        }
 
-    /**
-     * Not implemented yet
-     */
-    public function listsMembersShow()
-    {
-        throw new Exception('Not implemented');
-    }
+	// build parameters
+	$parameters = array();
 
-    /**
-     * Not implemented yet
-     */
-    public function listsMembers()
-    {
-        throw new Exception('Not implemented');
-    }
+	$parameters['list_id'] = (string) $list_id;
+	$parameters['slug'] = (string) $slug;
 
-    /**
-     * Not implemented yet
-     */
-    public function listsMembersCreate()
-    {
-        throw new Exception('Not implemented');
-    }
+if ($owner_screen_name != null) {
+	$parameters['owner_screen_name'] = (string) $owner_screen_name;
+}
 
-    /**
-     * Not implemented yet
-     */
-    public function listsDestroy()
-    {
-        throw new Exception('Not implemented');
-    }
+if ($owner_id != null) {
+	$parameters['owner_id'] = (string) $owner_id;
+}
 
-    /**
-     * Not implemented yet
-     */
-    public function listsUpdate()
-    {
-        throw new Exception('Not implemented');
-    }
+if ($since_id != null) {
+	$parameters['since_id'] = (string) $since_id;
+}
 
-    /**
-     * Not implemented yet
-     */
-    public function listsCreate()
-    {
-        throw new Exception('Not implemented');
-    }
+if ($max_id != null) {
+	$parameters['max_id'] = (string) $max_id;
+}
 
-    /**
-     * Not implemented yet
-     */
-    public function listsShow()
-    {
-        throw new Exception('Not implemented');
-    }
+if ($count != null) {
+	$parameters['count'] = (int) $count;
+}
 
-    /**
-     * Not implemented yet
-     */
-    public function listSubscriptions()
-    {
-        throw new Exception('Not implemented');
-    }
+if ($include_entities !== null) {
+	$parameters['include_entities'] = ($include_entities) ? 'true' : 'false';
+}
 
-    /**
-     * Not implemented yet
-     */
-    public function listsMembersDestroyAll()
-    {
-        throw new Exception('Not implemented');
-    }
+if ($include_rts !== null) {
+	$parameters['include_rts'] = ($include_rts) ? 'true' : 'false';
+}
+
+
+	// make the call
+	return $this->doCall(
+	    'lists/statuses.json',
+	    $parameters, true
+	);
+}
+
+public function listsMembersDestroy (
+	$list_id = null, $slug = null, $user_id = null, $screen_name = null, $owner_screen_name = null, $owner_id = null
+)
+	{
+	// build parameters
+	$parameters = array();
+
+if ($list_id != null) {
+	$parameters['list_id'] = (string) $list_id;
+}
+
+if ($slug != null) {
+	$parameters['slug'] = (string) $slug;
+}
+
+if ($user_id != null) {
+	$parameters['user_id'] = (string) $user_id;
+}
+
+if ($screen_name != null) {
+	$parameters['screen_name'] = (string) $screen_name;
+}
+
+if ($owner_screen_name != null) {
+	$parameters['owner_screen_name'] = (string) $owner_screen_name;
+}
+
+if ($owner_id != null) {
+	$parameters['owner_id'] = (string) $owner_id;
+}
+
+
+	// make the call
+	return $this->doCall(
+	    'lists/members/destroy.json',
+	    $parameters, true, 'POST'
+	);
+}
+
+public function listsMemberships (
+	$user_id = null, $screen_name = null, $count = null, $cursor = null, $filter_to_owned_lists = null
+)
+	{
+	// build parameters
+	$parameters = array();
+
+if ($user_id != null) {
+	$parameters['user_id'] = (string) $user_id;
+}
+
+if ($screen_name != null) {
+	$parameters['screen_name'] = (string) $screen_name;
+}
+
+if ($count != null) {
+	$parameters['count'] = (int) $count;
+}
+
+if ($cursor != null) {
+	$parameters['cursor'] = (string) $cursor;
+}
+
+if ($filter_to_owned_lists !== null) {
+	$parameters['filter_to_owned_lists'] = ($filter_to_owned_lists) ? 'true' : 'false';
+}
+
+
+	// make the call
+	return $this->doCall(
+	    'lists/memberships.json',
+	    $parameters, true
+	);
+}
+
+
+
+public function listsSubscribers (
+	$list_id, $slug, $owner_screen_name = null, $owner_id = null, $count = null, $cursor = null, $include_entities = null, $skip_status = null
+)
+	{
+	 // validate
+        if ($list_id== '' || $slug== '') {
+            throw new Exception('Specify a list_id and a slug.');
+        }
+
+	// build parameters
+	$parameters = array();
+
+	$parameters['list_id'] = (string) $list_id;
+	$parameters['slug'] = (string) $slug;
+
+if ($owner_screen_name != null) {
+	$parameters['owner_screen_name'] = (string) $owner_screen_name;
+}
+
+if ($owner_id != null) {
+	$parameters['owner_id'] = (string) $owner_id;
+}
+
+if ($count != null) {
+	$parameters['count'] = (int) $count;
+}
+
+if ($cursor != null) {
+	$parameters['cursor'] = (string) $cursor;
+}
+
+if ($include_entities !== null) {
+	$parameters['include_entities'] = ($include_entities) ? 'true' : 'false';
+}
+
+if ($skip_status !== null) {
+	$parameters['skip_status'] = ($skip_status) ? 'true' : 'false';
+}
+
+
+	// make the call
+	return $this->doCall(
+	    'lists/subscribers.json',
+	    $parameters, true
+	);
+}
+
+
+public function listsSubscribersCreate (
+	 $list_id, $slug, $owner_screen_name = null, $owner_id = null
+)
+	{
+	 // validate
+        if ($list_id== '' || $slug== '') {
+            throw new Exception('Specify a list_id and a slug.');
+        }
+
+	// build parameters
+	$parameters = array();
+
+	$parameters['list_id'] = (string) $list_id;
+	$parameters['slug'] = (string) $slug;
+
+if ($owner_screen_name != null) {
+	$parameters['owner_screen_name'] = (string) $owner_screen_name;
+}
+
+if ($owner_id != null) {
+	$parameters['owner_id'] = (string) $owner_id;
+}
+
+
+	// make the call
+	return $this->doCall(
+	    'lists/subscribers/create.json',
+	    $parameters, true, 'POST'
+	);
+}
+
+
+public function listsSubscribersShow (
+	$list_id, $slug, $user_id, $screen_name, $owner_screen_name = null, $owner_id = null, $include_entities = null, $skip_status = null
+)
+	{
+	 // validate
+        if ($list_id== '' || $slug== '' || $user_id== '' || $screen_name== '') {
+            throw new Exception('Specify a list_id, a slug, a user_id and a ScreenName.');
+        }
+
+	// build parameters
+	$parameters = array();
+
+	$parameters['list_id'] = (string) $list_id;
+	$parameters['slug'] = (string) $slug;
+	$parameters['user_id'] = (string) $user_id;
+	$parameters['screen_name'] = (string) $screen_name;
+
+if ($owner_screen_name != null) {
+	$parameters['owner_screen_name'] = (string) $owner_screen_name;
+}
+
+if ($owner_id != null) {
+	$parameters['owner_id'] = (string) $owner_id;
+}
+
+if ($include_entities !== null) {
+	$parameters['include_entities'] = ($include_entities) ? 'true' : 'false';
+}
+
+if ($skip_status !== null) {
+	$parameters['skip_status'] = ($skip_status) ? 'true' : 'false';
+}
+
+
+	// make the call
+	return $this->doCall(
+	    'lists/subscribers/show.json',
+	    $parameters, true
+	);
+}
+
+
+public function listsSubscribersDestroy (
+	$list_id, $slug, $owner_screen_name = null, $owner_id = null
+)
+	{
+	 // validate
+        if ($list_id== '' || $slug== '') {
+            throw new Exception('Specify a list_id and a slug.');
+        }
+
+	// build parameters
+	$parameters = array();
+
+	$parameters['list_id'] = (string) $list_id;
+	$parameters['slug'] = (string) $slug;
+
+if ($owner_screen_name != null) {
+	$parameters['owner_screen_name'] = (string) $owner_screen_name;
+}
+
+if ($owner_id != null) {
+	$parameters['owner_id'] = (string) $owner_id;
+}
+
+
+	// make the call
+	return $this->doCall(
+	    'lists/subscribers/destroy.json',
+	    $parameters, true, 'POST'
+	);
+}
+
+
+
+public function listsMembersCreateAll (
+	$list_id, $slug, $screen_name = null, $owner_screen_name = null, $owner_id = null
+)
+	{
+	 // validate
+        if ($list_id== '' || $slug== '') {
+            throw new Exception('Specify a list_id and a slug.');
+        }
+
+	// build parameters
+	$parameters = array();
+
+	$parameters['list_id'] = (string) $list_id;
+	$parameters['slug'] = (string) $slug;
+
+if ($screen_name != null) {
+	$parameters['screen_name'] = (string) $screen_name;
+}
+
+if ($owner_screen_name != null) {
+	$parameters['owner_screen_name'] = (string) $owner_screen_name;
+}
+
+if ($owner_id != null) {
+	$parameters['owner_id'] = (string) $owner_id;
+}
+
+
+	// make the call 
+	return $this->doCall(
+	    'lists/members/create_all.json',
+	    $parameters, true, 'POST'
+	);
+}
+
+
+
+public function listsMembersShow (
+	$list_id, $slug, $user_id, $screen_name, $owner_screen_name = null, $owner_id = null, $include_entities = null, $skip_status = null
+)
+	{
+	 // validate
+        if ($list_id== '' || $slug== '' || $user_id== '' || $screen_name== '') {
+            throw new Exception('Specify a list_id, a slug, a user_id and a ScreenName.');
+        }
+
+	// build parameters
+	$parameters = array();
+
+	$parameters['list_id'] = (string) $list_id;
+	$parameters['slug'] = (string) $slug;
+	$parameters['user_id'] = (string) $user_id;
+	$parameters['screen_name'] = (string) $screen_name;
+
+if ($owner_screen_name != null) {
+	$parameters['owner_screen_name'] = (string) $owner_screen_name;
+}
+
+if ($owner_id != null) {
+	$parameters['owner_id'] = (string) $owner_id;
+}
+
+if ($include_entities !== null) {
+	$parameters['include_entities'] = ($include_entities) ? 'true' : 'false';
+}
+
+if ($skip_status !== null) {
+	$parameters['skip_status'] = ($skip_status) ? 'true' : 'false';
+}
+
+
+	// make the call
+	return $this->doCall(
+	    'lists/members/show.json',
+	    $parameters, true
+	);
+}
+
+
+public function listsMembers (
+	$list_id, $slug, $owner_screen_name = null, $owner_id = null, $count = null, $cursor = null, $include_entities = null, $skip_status = null
+)
+	{
+	 // validate
+        if ($list_id== '' || $slug== '') {
+            throw new Exception('Specify a list_id and a slug.');
+        }
+
+	// build parameters
+	$parameters = array();
+
+	$parameters['list_id'] = (string) $list_id;
+	$parameters['slug'] = (string) $slug;
+
+if ($owner_screen_name != null) {
+	$parameters['owner_screen_name'] = (string) $owner_screen_name;
+}
+
+if ($owner_id != null) {
+	$parameters['owner_id'] = (string) $owner_id;
+}
+
+if ($count != null) {
+	$parameters['count'] = (int) $count;
+}
+
+if ($cursor != null) {
+	$parameters['cursor'] = (string) $cursor;
+}
+
+if ($include_entities !== null) {
+	$parameters['include_entities'] = ($include_entities) ? 'true' : 'false';
+}
+
+if ($skip_status !== null) {
+	$parameters['skip_status'] = ($skip_status) ? 'true' : 'false';
+}
+
+
+	// make the call
+	return $this->doCall(
+	    'lists/members.json',
+	    $parameters, true
+	);
+}
+
+public function listsMembersCreate (
+	$list_id, $slug, $user_id, $screen_name, $owner_screen_name = null, $owner_id = null
+)
+	{
+	 // validate
+        if ($list_id== '' || $slug== '' || $user_id== '' || $screen_name== '') {
+            throw new Exception('Specify a list_id, a slug, a user_id and a ScreenName.');
+        }
+
+	// build parameters
+	$parameters = array();
+
+	$parameters['list_id'] = (string) $list_id;
+	$parameters['slug'] = (string) $slug;
+	$parameters['user_id'] = (string) $user_id;
+	$parameters['screen_name'] = (string) $screen_name;
+
+if ($owner_screen_name != null) {
+	$parameters['owner_screen_name'] = (string) $owner_screen_name;
+}
+
+if ($owner_id != null) {
+	$parameters['owner_id'] = (string) $owner_id;
+}
+
+
+	// make the call
+	return $this->doCall(
+	    'lists/members/create.json',
+	    $parameters, true, 'POST'
+	);
+}
+
+
+
+public function listsDestroy (
+	$list_id, $slug, $owner_screen_name = null, $owner_id = null
+)
+	{
+	 // validate
+        if ($list_id== '' || $slug== '') {
+            throw new Exception('Specify a list_id and a slug.');
+        }
+
+	// build parameters
+	$parameters = array();
+
+	$parameters['list_id'] = (string) $list_id;
+	$parameters['slug'] = (string) $slug;
+
+if ($owner_screen_name != null) {
+	$parameters['owner_screen_name'] = (string) $owner_screen_name;
+}
+
+if ($owner_id != null) {
+	$parameters['owner_id'] = (string) $owner_id;
+}
+
+
+	// make the call
+	return $this->doCall(
+	    'lists/destroy.json',
+	    $parameters, true, 'POST'
+	);
+}
+
+
+public function listsUpdate (
+	$list_id, $slug, $name = null, $mode = null, $description = null, $owner_screen_name = null, $owner_id = null
+)
+	{
+	 // validate
+        if ($list_id== '' || $slug== '') {
+            throw new Exception('Specify a list_id and a slug.');
+        }
+
+	// build parameters
+	$parameters = array();
+
+
+	$parameters['list_id'] = (string) $list_id;
+	$parameters['slug'] = (string) $slug;
+
+if ($name != null) {
+	$parameters['name'] = (string) $name;
+}
+
+if ($mode != null) {
+	$parameters['mode'] = (string) $mode;
+}
+
+if ($description != null) {
+	$parameters['description'] = (string) $description;
+}
+
+if ($owner_screen_name != null) {
+	$parameters['owner_screen_name'] = (string) $owner_screen_name;
+}
+
+if ($owner_id != null) {
+	$parameters['owner_id'] = (string) $owner_id;
+}
+
+
+	// make the call
+	return $this->doCall(
+	    'lists/update.json',
+	    $parameters, true, 'POST'
+	);
+}
+
+
+public function listsCreate (
+	$name, $mode = null, $description = null
+)
+	{
+	 // validate
+        if ($name== '') {
+            throw new Exception('Specify a name.');
+        }
+
+	// build parameters
+	$parameters = array();
+
+	$parameters['name'] = (string) $name;
+
+if ($mode != null) {
+	$parameters['mode'] = (string) $mode;
+}
+
+if ($description != null) {
+	$parameters['description'] = (string) $description;
+}
+
+
+	// make the call
+	return $this->doCall(
+	    'lists/create.json',
+	    $parameters, true, 'POST'
+	);
+}
+
+
+
+public function listsShow (
+	$list_id, $slug, $owner_screen_name = null, $owner_id = null
+)
+	{
+	 // validate
+        if ($list_id== '' || $slug== '') {
+            throw new Exception('Specify a list_id and a slug.');
+        }
+	// build parameters
+	$parameters = array();
+
+	$parameters['list_id'] = (string) $list_id;
+	$parameters['slug'] = (string) $slug;
+
+if ($owner_screen_name != null) {
+	$parameters['owner_screen_name'] = (string) $owner_screen_name;
+}
+
+if ($owner_id != null) {
+	$parameters['owner_id'] = (string) $owner_id;
+}
+
+
+	// make the call
+	return $this->doCall(
+	    'lists/show.json',
+	    $parameters, true
+	);
+}
+
+public function listsSubscriptions (
+	$user_id = null, $screen_name = null, $count = null, $cursor = null
+)
+	{
+	// build parameters
+	$parameters = array();
+
+if ($user_id != null) {
+	$parameters['user_id'] = (string) $user_id;
+}
+
+if ($screen_name != null) {
+	$parameters['screen_name'] = (string) $screen_name;
+}
+
+if ($count != null) {
+	$parameters['count'] = (int) $count;
+}
+
+if ($cursor != null) {
+	$parameters['cursor'] = (string) $cursor;
+}
+
+
+	// make the call
+	return $this->doCall(
+	    'lists/subscriptions.json',
+	    $parameters, true
+	);
+}
+
+
+public function listsMembersDestroyAll (
+	$list_id, $slug, $user_id = null, $screen_name = null, $owner_screen_name = null, $owner_id = null
+)
+	{
+	 // validate
+        if ($list_id== '' || $slug== '') {
+            throw new Exception('Specify a list_id and a slug.');
+        }
+
+	// build parameters
+	$parameters = array();
+
+	$parameters['list_id'] = (string) $list_id;
+	$parameters['slug'] = (string) $slug;
+
+if ($user_id != null) {
+	$parameters['user_id'] = (string) $user_id;
+}
+
+if ($screen_name != null) {
+	$parameters['screen_name'] = (string) $screen_name;
+}
+
+if ($owner_screen_name != null) {
+	$parameters['owner_screen_name'] = (string) $owner_screen_name;
+}
+
+if ($owner_id != null) {
+	$parameters['owner_id'] = (string) $owner_id;
+}
+
+
+	// make the call
+	return $this->doCall(
+	    'lists/members/destroy_all.json',
+	    $parameters, true, 'POST'
+	);
+}
 
 // Saved Searches resources
     /**
